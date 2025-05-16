@@ -1,22 +1,44 @@
-// middleware.ts
 import { NextRequest, NextResponse } from "next/server";
 import { verifyToken } from "@/Lib/jwt";
 
 export async function middleware(request: NextRequest) {
   const token = request.cookies.get("token")?.value;
+  const url = request.nextUrl.clone();
 
-  if (!token) {
-    return NextResponse.redirect(new URL("/login", request.url));
-  }
+  const publicPaths = ["/login"];
 
-  try {
-    await verifyToken(token);
+  if (publicPaths.some((path) => url.pathname.startsWith(path))) {
+    if (token) {
+      try {
+        await verifyToken(token);
+        url.pathname = "/dashboard";
+        return NextResponse.redirect(url);
+      } catch {
+        return NextResponse.next();
+      }
+    }
     return NextResponse.next();
-  } catch (error) {
-    return NextResponse.redirect(new URL("/login", request.url));
   }
+
+  const protectedPaths = ["/dashboard", "/admin"];
+
+  if (protectedPaths.some((path) => url.pathname.startsWith(path))) {
+    if (!token) {
+      url.pathname = "/login";
+      return NextResponse.redirect(url);
+    }
+    try {
+      await verifyToken(token);
+      return NextResponse.next();
+    } catch {
+      url.pathname = "/login";
+      return NextResponse.redirect(url);
+    }
+  }
+
+  return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/admin/:path*"],
+  matcher: ["/login", "/dashboard/:path*", "/admin/:path*"],
 };

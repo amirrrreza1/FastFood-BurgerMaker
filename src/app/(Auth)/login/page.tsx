@@ -10,7 +10,7 @@ const LoginPage = () => {
   const [isSignup, setIsSignup] = useState(false);
 
   return (
-    <div className="w-full h-screen flex justify-center items-center bg-gray-100">
+    <div className="w-full h-screen flex justify-center items-center">
       <div className="w-[95%] h-fit max-w-[500px]">
         {isSignup ? <SignupForm /> : <LoginForm />}
         <div className="text-center mt-4">
@@ -18,7 +18,7 @@ const LoginPage = () => {
             className="text-blue-600 underline"
             onClick={() => setIsSignup(!isSignup)}
           >
-            {isSignup ? "حساب دارید؟ وارد شوید" : "ثبت‌نام کنید"}
+            {isSignup ? "حساب دارید؟ وارد شوید" : "حساب ندارید؟ ثبت‌نام کنید"}
           </button>
         </div>
         <ToastContainer />
