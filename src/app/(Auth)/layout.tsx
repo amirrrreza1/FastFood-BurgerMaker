@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
-import "./globals.css";
-import MainLayout from "@/Components/Layout/MainLayout";
+import "../globals.css";
 
 export const metadata: Metadata = {
   title: "Restaurant",
@@ -15,7 +14,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <MainLayout>{children}</MainLayout>
+        {children}
       </body>
     </html>
   );
