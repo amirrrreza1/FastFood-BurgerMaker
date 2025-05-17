@@ -70,9 +70,18 @@
   }
 }
 
+@layer components {
+  .LoginBackGround{
+    background-image: url("../../public/images/background-Pattern.jpg");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+}
+
 @theme {
   --color-primary: #1b2223;
   --color-secondary: #3a4f50;
-  --color-MainWhite: #f4fefd;
+  --color-white: #f4fefd;
   --color-MainGreen: #0ef6cc;
 }

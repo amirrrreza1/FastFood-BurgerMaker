@@ -6,8 +6,8 @@ import { useRouter } from "next/navigation";
 
 const LoginForm = () => {
   const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const router = useRouter()
+  const [password, setPassword] = useState("");
+  const router = useRouter();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,31 +35,36 @@ const LoginForm = () => {
   };
 
   return (
-    <form
-      onSubmit={handleLogin}
-      className="p-6 bg-white rounded-xl shadow-md flex flex-col gap-4"
-    >
-      <h2 className="text-xl font-bold">ورود</h2>
-      <input
-        type="email"
-        placeholder="ایمیل"
-        className="p-2 border rounded"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        required
-      />
-      <input
-        type="password"
-        placeholder="رمز عبور"
-        className="p-2 border rounded"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        required
-      />
-      <button type="submit" className="bg-green-600 text-white py-2 rounded">
-        ورود
-      </button>
-    </form>
+    <div className="p-6 bg-[var(--color-white)] rounded-xl shadow-md w-full max-w-md">
+      <form
+        onSubmit={handleLogin}
+        className="flex flex-col gap-4"
+      >
+        <h2 className="text-xl font-bold">ورود</h2>
+        <input
+          type="email"
+          placeholder="ایمیل"
+          className="p-2 border rounded"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
+        <input
+          type="password"
+          placeholder="رمز عبور"
+          className="p-2 border rounded"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
+        <button
+          type="submit"
+          className="bg-[var(--color-secondary)] text-[var(--color-white)] py-2 rounded"
+        >
+          ورود
+        </button>
+      </form>
+    </div>
   );
 };
 
