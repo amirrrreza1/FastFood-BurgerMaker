@@ -9,7 +9,7 @@ const supabase = createClient(
 export async function POST(req: NextRequest) {
   const { email, password, displayName } = await req.json();
 
-  const { error } = await supabase.auth.admin.createUser({
+  const { data, error } = await supabase.auth.admin.createUser({
     email,
     password,
     email_confirm: true,
@@ -18,8 +18,26 @@ export async function POST(req: NextRequest) {
     },
   });
 
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  if (error || !data.user) {
+    return NextResponse.json(
+      { error: error?.message || "خطا در ساخت اکانت" },
+      { status: 500 }
+    );
+  }
+
+  // ✅ اضافه کردن به جدول profiles
+  const insertResult = await supabase.from("profiles").insert({
+    id: data.user.id,
+    email,
+    display_name: displayName,
+    role: "user", // یا مثلاً بر اساس ایمیل ادمین: email === "admin@example.com" ? "admin" : "user"
+  });
+
+  if (insertResult.error) {
+    return NextResponse.json(
+      { error: insertResult.error.message },
+      { status: 500 }
+    );
   }
 
   return NextResponse.json({ message: "اکانت ساخته شد" });

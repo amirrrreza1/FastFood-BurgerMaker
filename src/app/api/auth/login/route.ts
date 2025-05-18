@@ -26,9 +26,24 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  // ✅ گرفتن role از جدول profiles
+  const { data: profile, error: profileError } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", user.id)
+    .single();
+
+  if (profileError || !profile) {
+    return NextResponse.json(
+      { error: "مشکلی در دریافت نقش کاربر پیش آمد" },
+      { status: 500 }
+    );
+  }
+
   const token = await signToken({
     uid: user.id,
-    email: user.email,
+    email: user.email!,
+    role: profile.role,
   });
 
   const response = NextResponse.json({ message: "ورود موفق بود" });
@@ -36,8 +51,7 @@ export async function POST(req: NextRequest) {
   response.cookies.set("token", token, {
     httpOnly: true,
     path: "/",
-    maxAge: 60 * 60 * 2, // 2 ساعت
-    secure: process.env.NODE_ENV === "production", // فقط در پروکشن
+    maxAge: 60 * 60 * 2,
   });
 
   return response;

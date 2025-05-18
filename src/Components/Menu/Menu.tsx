@@ -25,9 +25,8 @@ export default function Menu() {
   return (
     <div className="flex flex-col lg:flex-row gap-6">
       <div className="w-full lg:w-56 shrink-0 space-y-2">
-        {" "}
         <h3 className="text-lg font-semibold text-center lg:text-right">
-          دسته‌بندی{" "}
+          دسته‌بندی
         </h3>
         <button onClick={() => setActiveCategory("همه")}>همه</button>
         {categories.map((cat) => (
@@ -36,7 +35,6 @@ export default function Menu() {
           </button>
         ))}
       </div>
-      {/* آیتم‌های منو (سمت چپ در حالت دسکتاپ) */}
       <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
         {filteredMenu.map((item) => (
           <MenuItemCard key={item.id} item={item} />

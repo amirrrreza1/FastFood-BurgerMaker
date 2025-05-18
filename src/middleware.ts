@@ -4,14 +4,17 @@ import { verifyToken } from "@/Lib/jwt";
 export async function middleware(request: NextRequest) {
   const token = request.cookies.get("token")?.value;
   const url = request.nextUrl.clone();
+  const path = url.pathname;
 
   const publicPaths = ["/login"];
 
-  if (publicPaths.some((path) => url.pathname.startsWith(path))) {
+  // ✅ مسیرهای عمومی مثل /login
+  if (publicPaths.some((publicPath) => path.startsWith(publicPath))) {
     if (token) {
       try {
-        await verifyToken(token);
-        url.pathname = "/dashboard";
+        const payload = await verifyToken(token);
+        // اگر ادمین بود به /admin بره، اگر عادی بود به /dashboard
+        url.pathname = payload.role === "admin" ? "/admin" : "/dashboard";
         return NextResponse.redirect(url);
       } catch {
         return NextResponse.next();
@@ -20,15 +23,29 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
+  // ✅ مسیرهای محافظت‌شده
   const protectedPaths = ["/dashboard", "/admin"];
 
-  if (protectedPaths.some((path) => url.pathname.startsWith(path))) {
+  if (protectedPaths.some((protectedPath) => path.startsWith(protectedPath))) {
     if (!token) {
       url.pathname = "/login";
       return NextResponse.redirect(url);
     }
+
     try {
-      await verifyToken(token);
+      const payload = await verifyToken(token);
+
+      // 👇 محدودیت‌های دسترسی بر اساس نقش
+      if (path.startsWith("/admin") && payload.role !== "admin") {
+        url.pathname = "/dashboard";
+        return NextResponse.redirect(url);
+      }
+
+      if (path.startsWith("/dashboard") && payload.role !== "user") {
+        url.pathname = "/admin";
+        return NextResponse.redirect(url);
+      }
+
       return NextResponse.next();
     } catch {
       url.pathname = "/login";
