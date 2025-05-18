@@ -1,5 +1,6 @@
 @import "tailwindcss";
 
+
 @font-face {
   font-family: "Shabnam";
   src: url("../assets/Fonts/Shabnam.eot") format("woff2"),
@@ -57,7 +58,7 @@
 
 @layer base {
   body {
-    font-family: "Shabnam";
+    font-family: "Shabnam" !important;
     font-feature-settings: "ss01";
     direction: rtl;
     background-color: var(--color-primary);

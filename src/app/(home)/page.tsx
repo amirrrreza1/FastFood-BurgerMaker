@@ -1,3 +1,6 @@
+"use client";
+
+
 import FoodMenu from "@/Components/Menu/Menu";
 
 const HomePage = () => {

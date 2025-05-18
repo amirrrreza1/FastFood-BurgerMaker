@@ -1,4 +1,3 @@
-// app/api/signup/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 
@@ -23,5 +22,5 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  return NextResponse.json({ message: "ثبت‌نام موفق بود" });
+  return NextResponse.json({ message: "اکانت ساخته شد" });
 }

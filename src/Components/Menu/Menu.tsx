@@ -24,13 +24,12 @@ export default function Menu() {
 
   return (
     <div className="flex flex-col lg:flex-row gap-6">
-      {/* دسته‌بندی‌ها (سمت راست در حالت دسکتاپ) */}
       <div className="w-full lg:w-56 shrink-0 space-y-2">
+        {" "}
         <h3 className="text-lg font-semibold text-center lg:text-right">
-          دسته‌بندی
+          دسته‌بندی{" "}
         </h3>
         <button onClick={() => setActiveCategory("همه")}>همه</button>
-
         {categories.map((cat) => (
           <button key={cat} onClick={() => setActiveCategory(cat)}>
             {cat}
