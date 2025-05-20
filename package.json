@@ -20,7 +20,8 @@
     "react-dom": "^19.0.0",
     "react-toastify": "^11.0.5",
     "resend": "^4.5.1",
-    "sweetalert2": "^11.21.0"
+    "sweetalert2": "^11.21.0",
+    "zod": "^3.25.7"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

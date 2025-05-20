@@ -6,7 +6,7 @@ export type MenuItem = {
   description: string;
   price: number;
   image: string;
-  category: "پیتزا" | "ساندویچ" | "سوخاری" | "پیش‌غذا" | "نوشیدنی";
+  category: "پیتزا" | "ساندویچ" | "سوخاری" | "پیش‌غذا" | "نوشیدنی" | "همه";
   calories: number;
   available: boolean;
 };
