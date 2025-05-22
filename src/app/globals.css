@@ -61,7 +61,7 @@
     font-family: "Shabnam" !important;
     font-feature-settings: "ss01";
     direction: rtl;
-    background-color: var(--color-primary);
+    /* background-color: var(--color-primary); */
   }
   * {
     box-sizing: border-box;

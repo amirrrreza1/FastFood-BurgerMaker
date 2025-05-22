@@ -1,8 +1,9 @@
 "use client";
 
-import { useRef, useState } from "react";
-import { menu, MenuItem } from "@/Lib/menu";
+import { useEffect, useRef, useState } from "react";
+import { supabase } from "@/Lib/supabase";
 import MenuItemCard from "../MenuItemcard/MenuItemCard";
+import { MenuItem } from "@/types";
 
 const categories: MenuItem["category"][] = [
   "پیتزا",
@@ -10,53 +11,76 @@ const categories: MenuItem["category"][] = [
   "سوخاری",
   "پیش‌غذا",
   "نوشیدنی",
-  "همه",
 ];
 
 export default function Menu() {
-  const categoryRefs = useRef<Record<string, HTMLElement>>({});
-  const [activeCategory, setActiveCategory] = useState<
-    MenuItem["category"] | "همه"
-  >("همه");
+  const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
+  const categoryRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
-  const filteredMenu = menu;
+  useEffect(() => {
+    const fetchMenu = async () => {
+      const { data, error } = await supabase.from("menu_items").select("*");
+      if (error) {
+        console.error("خطا در بارگیری منو:", error);
+      } else {
+        setMenuItems(data || []);
+      }
+    };
+
+    fetchMenu();
+  }, []);
+
+  const scrollToCategory = (category: string) => {
+    const target = categoryRefs.current[category];
+    if (target) {
+      target.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
 
   return (
     <div className="flex flex-col lg:flex-row gap-6">
+      {/* Sidebar */}
       <div className="w-full lg:w-56 shrink-0 space-y-2">
         <h3 className="text-lg font-semibold text-center lg:text-right">
           دسته‌بندی
         </h3>
-        <button onClick={() => setActiveCategory("همه")}>همه</button>
         {categories.map((cat) => (
           <button
             key={cat}
-            onClick={() => {
-              if (cat === "همه") {
-                window.scrollTo({ top: 0, behavior: "smooth" });
-              } else {
-                const target = categoryRefs.current[cat];
-                target?.scrollIntoView({ behavior: "smooth", block: "start" });
-              }
-            }}
+            onClick={() => scrollToCategory(cat)}
+            className="block w-full text-right py-2 px-3 hover:bg-gray-100 rounded"
           >
             {cat}
           </button>
         ))}
       </div>
-      <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-        {filteredMenu.map((item) => (
-          <div
-            key={item.id}
-            ref={(el) => {
-              if (el && !categoryRefs.current[item.category]) {
-                categoryRefs.current[item.category] = el;
-              }
-            }}
-          >
-            <MenuItemCard item={item} />
-          </div>
-        ))}
+
+      {/* Menu Items */}
+      <div className="flex-1 space-y-10">
+        {categories.map((cat) => {
+          const items = menuItems.filter((item) => item.category === cat);
+
+          if (items.length === 0) return null;
+
+          return (
+            <div
+              key={cat}
+              ref={(el) => {
+                if (el) {
+                  categoryRefs.current[cat] = el; // به جای item.category از cat استفاده کن
+                }
+              }}
+              className="space-y-4"
+            >
+              <h2 className="text-2xl font-bold border-b pb-2">{cat}</h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                {items.map((item) => (
+                  <MenuItemCard key={item.id} item={item} />
+                ))}
+              </div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );

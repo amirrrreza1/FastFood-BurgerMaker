@@ -1,87 +1,183 @@
+// components/MenuManager.tsx
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { supabase } from "@/Lib/supabase"; // فرض بر اینکه فایل کانفیگ Supabase رو داری
 
 type MenuItem = {
   id: number;
   name: string;
+  description: string;
   price: number;
+  calories: number;
+  category: string;
+  image_url: string;
 };
 
-const MenuManager = () => {
+const categories = ["پیتزا", "ساندویچ", "سوخاری", "پیش‌غذا", "نوشیدنی"];
+
+export default function MenuManager() {
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
-  const [newItem, setNewItem] = useState({ name: "", price: 0 });
+  const [form, setForm] = useState<Omit<MenuItem, "id">>({
+    name: "",
+    description: "",
+    price: 0,
+    calories: 0,
+    category: categories[0],
+    image_url: "",
+  });
+  const [imageFile, setImageFile] = useState<File | null>(null);
 
-  const addItem = () => {
-    setMenuItems([
-      ...menuItems,
-      { id: Date.now(), name: newItem.name, price: newItem.price },
+  const fetchItems = async () => {
+    const { data, error } = await supabase.from("menu_items").select("*");
+    if (data) setMenuItems(data);
+  };
+
+  useEffect(() => {
+    fetchItems();
+  }, []);
+
+  const uploadImage = async (file: File) => {
+    const fileExt = file.name.split(".").pop();
+    const filePath = `menu-${Date.now()}.${fileExt}`;
+    const { data, error } = await supabase.storage
+      .from("menu-images")
+      .upload(filePath, file, {
+        contentType: file.type,
+        upsert: true,
+      });
+
+    if (error) {
+      alert("خطا در آپلود تصویر");
+      return "";
+    }
+
+    const { data: publicUrlData } = supabase.storage
+      .from("menu-images")
+      .getPublicUrl(filePath);
+    return publicUrlData?.publicUrl || "";
+  };
+
+  const handleSubmit = async () => {
+    let imageUrl = form.image_url;
+    if (imageFile) {
+      imageUrl = await uploadImage(imageFile);
+    }
+
+    const { error } = await supabase.from("menu_items").insert([
+      {
+        ...form,
+        image_url: imageUrl,
+      },
     ]);
-    setNewItem({ name: "", price: 0 });
+
+    if (!error) {
+      setForm({
+        name: "",
+        description: "",
+        price: 0,
+        calories: 0,
+        category: categories[0],
+        image_url: "",
+      });
+      setImageFile(null);
+      fetchItems();
+    } else {
+      alert("خطا در افزودن آیتم");
+    }
   };
 
-  const deleteItem = (id: number) => {
-    setMenuItems(menuItems.filter((item) => item.id !== id));
-  };
-
-  const editItem = (id: number, name: string, price: number) => {
-    setMenuItems(
-      menuItems.map((item) =>
-        item.id === id ? { ...item, name, price } : item
-      )
-    );
+  const deleteItem = async (id: number) => {
+    await supabase.from("menu_items").delete().eq("id", id);
+    fetchItems();
   };
 
   return (
-    <div>
-      <h2 className="text-xl font-bold mb-4">مدیریت آیتم‌های منو</h2>
+    <div className="p-4 max-w-2xl mx-auto">
+      <h2 className="text-xl font-bold mb-4">مدیریت منو</h2>
 
-      <div className="flex gap-2 mb-4">
+      {/* فرم افزودن آیتم */}
+      <div className="space-y-2 mb-6">
         <input
           type="text"
-          placeholder="نام آیتم"
-          value={newItem.name}
-          onChange={(e) => setNewItem({ ...newItem, name: e.target.value })}
-          className="border p-2 rounded"
+          placeholder="نام"
+          value={form.name}
+          onChange={(e) => setForm({ ...form, name: e.target.value })}
+          className="w-full border p-2 rounded"
+        />
+        <textarea
+          placeholder="توضیحات"
+          value={form.description}
+          onChange={(e) => setForm({ ...form, description: e.target.value })}
+          className="w-full border p-2 rounded"
         />
         <input
           type="number"
           placeholder="قیمت"
-          value={newItem.price}
-          onChange={(e) => setNewItem({ ...newItem, price: +e.target.value })}
-          className="border p-2 rounded"
+          value={form.price}
+          onChange={(e) => setForm({ ...form, price: +e.target.value })}
+          className="w-full border p-2 rounded"
+        />
+        <input
+          type="number"
+          placeholder="کالری"
+          value={form.calories}
+          onChange={(e) => setForm({ ...form, calories: +e.target.value })}
+          className="w-full border p-2 rounded"
+        />
+        <select
+          value={form.category}
+          onChange={(e) => setForm({ ...form, category: e.target.value })}
+          className="w-full border p-2 rounded"
+        >
+          {categories.map((cat) => (
+            <option key={cat}>{cat}</option>
+          ))}
+        </select>
+        <input
+          type="file"
+          onChange={(e) => setImageFile(e.target.files?.[0] || null)}
+          className="w-full"
         />
         <button
-          onClick={addItem}
-          className="bg-green-600 text-white px-4 rounded"
+          onClick={handleSubmit}
+          className="bg-green-600 text-white px-4 py-2 rounded"
         >
-          افزودن
+          افزودن آیتم
         </button>
       </div>
 
-      <ul className="space-y-2">
+      {/* لیست آیتم‌ها */}
+      <div className="space-y-4">
         {menuItems.map((item) => (
-          <li
+          <div
             key={item.id}
-            className="flex justify-between items-center border-b pb-2"
+            className="border rounded p-4 flex justify-between items-center"
           >
             <div>
-              {item.name} - {item.price} تومان
+              <div className="font-bold">{item.name}</div>
+              <div className="text-sm text-gray-600">{item.description}</div>
+              <div className="text-sm">
+                {item.price} تومان - {item.calories} کالری - دسته:{" "}
+                {item.category}
+              </div>
             </div>
-            <div className="space-x-2">
-              <button
-                onClick={() => deleteItem(item.id)}
-                className="bg-red-500 text-white px-2 rounded"
-              >
-                حذف
-              </button>
-              {/* در آینده ویرایش با فرم مجزا یا مودال */}
-            </div>
-          </li>
+            {item.image_url && (
+              <img
+                src={item.image_url}
+                alt={item.name}
+                className="w-16 h-16 object-cover rounded"
+              />
+            )}
+            <button
+              onClick={() => deleteItem(item.id)}
+              className="bg-red-500 text-white px-2 py-1 rounded"
+            >
+              حذف
+            </button>
+          </div>
         ))}
-      </ul>
+      </div>
     </div>
   );
-};
-
-export default MenuManager;
+}
