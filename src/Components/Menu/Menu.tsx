@@ -22,9 +22,35 @@ export default function Menu() {
       const { data, error } = await supabase.from("menu_items").select("*");
       if (error) {
         console.error("خطا در بارگیری منو:", error);
-      } else {
-        setMenuItems(data || []);
+        return;
       }
+
+      const itemsWithUrls =
+        data?.map((item) => {
+          let publicURL = "";
+
+          if (item.image_url) {
+            const res = supabase.storage
+              .from("menu-images")
+              .getPublicUrl(item.image_url);
+
+            // اگه data همونطور که فکر می‌کنیم نیست، خود res رو بررسی می‌کنیم
+            if (
+              "data" in res &&
+              res.data &&
+              typeof res.data === "object" &&
+              "publicUrl" in res.data
+            ) {
+              publicURL = res.data.publicUrl;
+            } else {
+              console.error("getPublicUrl returned unexpected data:", res);
+            }
+          }
+
+          return { ...item, image: publicURL };
+        }) || [];
+
+      setMenuItems(itemsWithUrls);
     };
 
     fetchMenu();
@@ -44,15 +70,17 @@ export default function Menu() {
         <h3 className="text-lg font-semibold text-center lg:text-right">
           دسته‌بندی
         </h3>
-        {categories.map((cat) => (
-          <button
-            key={cat}
-            onClick={() => scrollToCategory(cat)}
-            className="block w-full text-right py-2 px-3 hover:bg-gray-100 rounded"
-          >
-            {cat}
-          </button>
-        ))}
+        <div className="flex lg:flex-col gap-2">
+          {categories.map((cat) => (
+            <button
+              key={cat}
+              onClick={() => scrollToCategory(cat)}
+              className="block w-full text-right py-2 px-3 hover:bg-gray-100 rounded"
+            >
+              {cat}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Menu Items */}
@@ -67,7 +95,7 @@ export default function Menu() {
               key={cat}
               ref={(el) => {
                 if (el) {
-                  categoryRefs.current[cat] = el; // به جای item.category از cat استفاده کن
+                  categoryRefs.current[cat] = el;
                 }
               }}
               className="space-y-4"

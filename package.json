@@ -22,7 +22,8 @@
     "react-toastify": "^11.0.5",
     "resend": "^4.5.1",
     "sweetalert2": "^11.21.0",
-    "zod": "^3.25.7"
+    "zod": "^3.25.7",
+    "zustand": "^5.0.5"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

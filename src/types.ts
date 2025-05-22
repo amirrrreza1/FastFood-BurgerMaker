@@ -1,15 +1,13 @@
-// types.ts
-
 export type Category = "پیتزا" | "ساندویچ" | "سوخاری" | "پیش‌غذا" | "نوشیدنی";
 
 export interface MenuItem {
-  id: string;
+  id: number;
   name: string;
   description: string;
   price: number;
   calories: number;
   category: Category;
-  img_url: string;
+  image_url: string; // نام ستون در جدول Supabase
+  image?: string; // لینک عمومی عکس برای نمایش
   available: boolean;
-  created_at?: string;
 }

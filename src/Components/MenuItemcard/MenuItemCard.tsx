@@ -1,18 +1,9 @@
-type MenuItem = {
-  id: string;
-  name: string;
-  description: string;
-  price: number;
-  calories: number;
-  img_url: string;
-  category: string;
-  available?: boolean;
-};
+import { MenuItem } from "@/types";
 
 const fallbackImage = "/images/placeholder-food.jpg";
 
 export default function MenuItemCard({ item }: { item: MenuItem }) {
-  const imageSrc = item.img_url?.trim() !== "" ? item.img_url : fallbackImage;
+  const imageSrc = item.image_url || "/images/placeholder-food.jpg";
 
   return (
     <div
