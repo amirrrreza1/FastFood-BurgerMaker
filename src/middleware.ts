@@ -24,7 +24,7 @@ export async function middleware(request: NextRequest) {
   }
 
   // ✅ مسیرهای محافظت‌شده
-  const protectedPaths = ["/dashboard", "/admin"];
+  const protectedPaths = ["/profile", "/admin", "/checkout"];
 
   if (protectedPaths.some((protectedPath) => path.startsWith(protectedPath))) {
     if (!token) {
@@ -37,9 +37,10 @@ export async function middleware(request: NextRequest) {
 
       // 👇 محدودیت‌های دسترسی بر اساس نقش
       if (path.startsWith("/admin") && payload.role !== "admin") {
-        url.pathname = "/dashboard";
+        url.pathname = "/profile";
         return NextResponse.redirect(url);
       }
+
 
       if (path.startsWith("/dashboard") && payload.role !== "user") {
         url.pathname = "/admin";
@@ -57,5 +58,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/login", "/dashboard/:path*", "/admin/:path*"],
+  matcher: ["/login", "/profile/:path*", "/admin/:path*" , "/checkout"],
 };

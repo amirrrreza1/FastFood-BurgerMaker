@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/Lib/supabase";
 import MenuItemCard from "../MenuItemcard/MenuItemCard";
 import { MenuItem } from "@/types";
+import Cart from "../Cart/Cart";
 
 const categories: MenuItem["category"][] = [
   "پیتزا",
@@ -85,6 +86,7 @@ export default function Menu() {
 
       {/* Menu Items */}
       <div className="flex-1 space-y-10">
+        <Cart/>
         {categories.map((cat) => {
           const items = menuItems.filter((item) => item.category === cat);
 

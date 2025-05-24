@@ -28,7 +28,7 @@ const LoginForm = () => {
       }
 
       toast.success("ورود موفقیت‌آمیز بود!");
-      router.push("/dashboard");
+      router.push("/profile");
     } catch (error: any) {
       toast.error(error.message || "خطایی رخ داد");
     }

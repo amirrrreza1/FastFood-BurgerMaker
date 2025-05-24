@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import MainLayout from "@/Components/Layout/MainLayout";
+import { ToastContainer } from "react-toastify";
 
 export const metadata: Metadata = {
   title: "Restaurant",
@@ -13,8 +14,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="fa">
-      <body>{children}</body>
+    <html lang="en">
+      <body>
+        {children}
+        <ToastContainer rtl position="top-right" />
+      </body>
     </html>
   );
 }

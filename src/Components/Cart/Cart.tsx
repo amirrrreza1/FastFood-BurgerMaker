@@ -1,7 +1,9 @@
 "use client";
 
-import { useCartStore } from "@/app/store/cartStore";
+import { useCartStore } from "@/store/cartStore";
 import Image from "next/image";
+import { useRouter } from "next/navigation"; // 🔥 اضافه کردن این
+// ...
 
 export default function Cart() {
   const {
@@ -11,6 +13,8 @@ export default function Cart() {
     incrementQuantity,
     decrementQuantity,
   } = useCartStore();
+
+  const router = useRouter(); // 🔥 استفاده از useRouter
 
   const total = items.reduce(
     (sum, item) => sum + item.price * item.quantity,
@@ -69,12 +73,21 @@ export default function Cart() {
         <span>{total.toLocaleString()} تومان</span>
       </div>
 
-      <button
-        onClick={clearCart}
-        className="mt-4 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded"
-      >
-        پاک‌کردن کل سبد
-      </button>
+      <div className="flex gap-4 mt-4">
+        <button
+          onClick={clearCart}
+          className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded"
+        >
+          پاک‌کردن کل سبد
+        </button>
+
+        <button
+          onClick={() => router.push("/checkout")} // 🔥 هدایت به صفحه checkout
+          className="bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded flex-1"
+        >
+          ادامه به مرحله نهایی خرید
+        </button>
+      </div>
     </div>
   );
 }
