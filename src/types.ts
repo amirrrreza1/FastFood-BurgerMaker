@@ -11,3 +11,25 @@ export type MenuItem = {
   image_url: string;
   image?: string; // ← این خط لازمه برای کارت
 };
+
+// types.ts
+export type BurgerOptions = {
+  sauces: string[]; // ترتیب مهمه
+  toppings: string[]; // ترتیب مهمه
+  meatCount: number;
+  extraBread: boolean;
+};
+
+export type BurgerCartItem = {
+  id: string; // unique
+  name: "همبرگر سفارشی";
+  image: "/burger-preview.jpg"; // یا تصویری از نمای کلی
+  quantity: number;
+  price: number;
+  options: BurgerOptions;
+};
+
+// types.ts
+export type Ingredient = "cheese" | "lettuce" | "tomato" | "onion" | "pickle";
+export type Sauce = "ketchup" | "mayo" | "mustard" | "hot";
+
