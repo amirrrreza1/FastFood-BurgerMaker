@@ -1,6 +1,6 @@
 "use client";
 
-import ProfileSideBar from "@/Components/ProfileSidebar/profileSidebar";
+import ProfileSideBar from "@/Components/ProfileSidebar";
 import React, { useState } from "react";
 
 export default function ProfileLayout({
