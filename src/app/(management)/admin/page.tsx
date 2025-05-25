@@ -10,7 +10,7 @@ const AdminPage = () => {
 
   return (
     <div className="flex min-h-screen">
-      <Sidebar onSelect={setSelectedPage} selected={selectedPage} />
+      <Sidebar onselect={setSelectedPage} selected={selectedPage} />
       <div className="flex-1 p-6">
         {selectedPage === "menu" && <MenuManager />}
       </div>

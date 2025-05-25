@@ -1,6 +1,8 @@
+import { Dispatch, SetStateAction } from "react";
+
 interface SidebarProps {
   selected: string;
-  onselect: (item: string) => void;
+  onselect: Dispatch<SetStateAction<"menu">>;
 }
 
 function Sidebar({ selected, onselect }: SidebarProps) {

@@ -16,7 +16,7 @@ export default function ProfileLayout({
 
   return (
     <div className="flex min-h-screen">
-      <ProfileSideBar selected={selected} onselect={handleSelect} />
+      <ProfileSideBar />
       <main className="flex-1 p-4">{children}</main>
     </div>
   );
