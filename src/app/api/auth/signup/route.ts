@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 
 const supabase = createClient(
-  process.env.SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
     id: data.user.id,
     email,
     display_name: displayName,
-    role: "user", // یا مثلاً بر اساس ایمیل ادمین: email === "admin@example.com" ? "admin" : "user"
+    role: "user",
   });
 
   if (insertResult.error) {

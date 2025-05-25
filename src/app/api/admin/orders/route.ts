@@ -2,6 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { supabase } from "@/Lib/supabase";
 import { any } from "zod";
 
+interface OrderUpdate {
+  status: string;
+  rejection_reason?: string;
+}
+
 export async function GET() {
   const { data, error } = await supabase
     .from("orders")
@@ -21,11 +26,10 @@ export async function GET() {
 export async function PATCH(req: NextRequest) {
   const { orderId, status, cancelReason } = await req.json();
 
-  const updates = { status };
+  const updates: OrderUpdate = { status };
   if (status === "cancelled") {
-    updates["rejection_reason"] = cancelReason;
+    updates.rejection_reason = cancelReason;
   }
-
   const { error } = await supabase
     .from("orders")
     .update(updates)

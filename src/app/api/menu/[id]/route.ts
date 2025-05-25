@@ -7,15 +7,14 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
-// Type definition for route parameters
-interface Params {
+interface RouteContext {
   params: {
     id: string;
   };
 }
 
-export async function GET(req: NextRequest, { params }: Params) {
-  const id = params.id;
+export async function GET(req: NextRequest, context: any) {
+  const id = (context as RouteContext).params.id;
 
   if (!id) {
     return NextResponse.json({ error: "شناسه ارسال نشده" }, { status: 400 });
