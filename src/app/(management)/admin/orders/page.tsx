@@ -92,7 +92,7 @@ export default function AdminOrdersPage() {
 
             {order.status !== "cancelled" && order.status !== "delivered" && (
               <div className="flex flex-wrap gap-2 items-center mt-2">
-                {order.status === "در انتظار تایید" && (
+                {order.status === "pending" && (
                   <>
                     <button
                       className="bg-green-600 text-white px-4 py-1 rounded"

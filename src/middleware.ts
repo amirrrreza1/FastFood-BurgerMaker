@@ -8,13 +8,11 @@ export async function middleware(request: NextRequest) {
 
   const publicPaths = ["/login"];
 
-  // ✅ مسیرهای عمومی مثل /login
   if (publicPaths.some((publicPath) => path.startsWith(publicPath))) {
     if (token) {
       try {
         const payload = await verifyToken(token);
-        // اگر ادمین بود به /admin بره، اگر عادی بود به /dashboard
-        url.pathname = payload.role === "admin" ? "/admin" : "/dashboard";
+        url.pathname = payload.role === "admin" ? "/admin" : "/profile";
         return NextResponse.redirect(url);
       } catch {
         return NextResponse.next();
@@ -23,7 +21,6 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // ✅ مسیرهای محافظت‌شده
   const protectedPaths = ["/profile", "/admin", "/checkout"];
 
   if (protectedPaths.some((protectedPath) => path.startsWith(protectedPath))) {
@@ -35,7 +32,6 @@ export async function middleware(request: NextRequest) {
     try {
       const payload = await verifyToken(token);
 
-      // 👇 محدودیت‌های دسترسی بر اساس نقش
       if (path.startsWith("/admin") && payload.role !== "admin") {
         url.pathname = "/profile";
         return NextResponse.redirect(url);

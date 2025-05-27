@@ -1,10 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { cookies } from "next/headers";
 import { verifyToken } from "@/Lib/jwt";
 import { supabase } from "@/Lib/supabase";
 
 export async function GET(req: NextRequest) {
-  const token = req.cookies.get("token")?.value; // اگر TypeScript گیر نده
+  const token = req.cookies.get("token")?.value;
 
   if (!token) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

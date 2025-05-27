@@ -25,7 +25,6 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  // ✅ اضافه کردن به جدول profiles
   const insertResult = await supabase.from("profiles").insert({
     id: data.user.id,
     email,

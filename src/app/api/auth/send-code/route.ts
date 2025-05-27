@@ -13,12 +13,12 @@ export async function POST(req: NextRequest) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        origin: "http://localhost", // اختیاری؛ EmailJS گاهی چک می‌کنه
+        origin: "http://localhost",
       },
       body: JSON.stringify({
         service_id: process.env.EMAILJS_SERVICE_ID,
         template_id: process.env.EMAILJS_TEMPLATE_ID,
-        user_id: process.env.EMAILJS_API_KEY, // توجه: این همون Public key نیست
+        user_id: process.env.EMAILJS_API_KEY,
         template_params: {
           email: email,
           name: displayName,

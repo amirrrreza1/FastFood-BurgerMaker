@@ -1,11 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabase } from "@/Lib/supabase";
-import { any } from "zod";
+import { OrderUpdate } from "@/types";
 
-interface OrderUpdate {
-  status: string;
-  rejection_reason?: string;
-}
 
 export async function GET() {
   const { data, error } = await supabase

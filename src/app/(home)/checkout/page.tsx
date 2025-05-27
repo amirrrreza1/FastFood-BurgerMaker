@@ -77,7 +77,7 @@ export default function CheckoutPage() {
           <div className="text-lg font-semibold">
             مجموع:{" "}
             {items
-              .reduce((sum, i) => sum + i.price * i.quantity, 0)
+              .reduce((sum, item) => sum + item.price * item.quantity, 0)
               .toLocaleString()}{" "}
             تومان
           </div>

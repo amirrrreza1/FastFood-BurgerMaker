@@ -63,7 +63,7 @@ const SignupForm = () => {
       }
 
       toast.success("ثبت‌نام با موفقیت انجام شد");
-      router.push("/login");
+      window.location.reload();
     } catch (error: any) {
       toast.error(error.message || "خطا در ثبت‌نام");
     }

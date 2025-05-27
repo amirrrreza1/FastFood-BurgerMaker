@@ -12,6 +12,12 @@ export type MenuItem = {
   image?: string; // ← این خط لازمه برای کارت
 };
 
+export type OrderUpdate = {
+  status: string;
+  rejection_reason?: string;
+}
+
+
 // types.ts
 export type BurgerOptions = {
   sauces: string[]; // ترتیب مهمه

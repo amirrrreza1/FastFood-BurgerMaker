@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyToken } from "@/Lib/jwt";
-import { cookies } from "next/headers";
 import { supabase } from "@/Lib/supabase";
 
 export async function POST(req: NextRequest) {
@@ -17,7 +16,7 @@ export async function POST(req: NextRequest) {
     const { error } = await supabase.from("orders").insert([
       {
         user_id: user.uid,
-        status: "در انتظار تایید",
+        status: "pending",
         total_price: total,
         items,
       },

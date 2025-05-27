@@ -19,14 +19,6 @@ export async function POST(req: NextRequest) {
 
   const user = data.user;
 
-  if (!user.email_confirmed_at) {
-    return NextResponse.json(
-      { error: "ایمیل شما هنوز تأیید نشده است" },
-      { status: 403 }
-    );
-  }
-
-  // ✅ گرفتن role از جدول profiles
   const { data: profile, error: profileError } = await supabase
     .from("profiles")
     .select("role")
