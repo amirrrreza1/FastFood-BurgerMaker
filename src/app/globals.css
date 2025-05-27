@@ -1,9 +1,9 @@
 @import "tailwindcss";
 
-
 @font-face {
   font-family: "Shabnam";
-  src: url("../assets/Fonts/Shabnam.eot") format("woff2"),
+  src:
+    url("../assets/Fonts/Shabnam.eot") format("woff2"),
     url("../assets/Fonts/Shabnam.woff") format("woff"),
     url("../assets/Fonts/Shabnam.ttf") format("truetype"),
     url("../assets/Fonts/Shabnam.eot") format("embedded-opentype");
@@ -14,7 +14,8 @@
 
 @font-face {
   font-family: "Shabnam";
-  src: url("../assets/Fonts/Shabnam-Bold.eot") format("woff2"),
+  src:
+    url("../assets/Fonts/Shabnam-Bold.eot") format("woff2"),
     url("../assets/Fonts/Shabnam-Bold.woff") format("woff"),
     url("../assets/Fonts/Shabnam-Bold.ttf") format("truetype"),
     url("../assets/Fonts/Shabnam-Bold.eot") format("embedded-opentype");
@@ -25,7 +26,8 @@
 
 @font-face {
   font-family: "Shabnam";
-  src: url("../assets/Fonts/Shabnam-Light.eot") format("woff2"),
+  src:
+    url("../assets/Fonts/Shabnam-Light.eot") format("woff2"),
     url("../assets/Fonts/Shabnam-Light.woff") format("woff"),
     url("../assets/Fonts/Shabnam-Light.ttf") format("truetype"),
     url("../assets/Fonts/Shabnam-Light.eot") format("embedded-opentype");
@@ -36,7 +38,8 @@
 
 @font-face {
   font-family: "Shabnam";
-  src: url("../assets/Fonts/Shabnam-Medium.eot") format("woff2"),
+  src:
+    url("../assets/Fonts/Shabnam-Medium.eot") format("woff2"),
     url("../assets/Fonts/Shabnam-Medium.woff") format("woff"),
     url("../assets/Fonts/Shabnam-Medium.ttf") format("truetype"),
     url("../assets/Fonts/Shabnam-Medium.eot") format("embedded-opentype");
@@ -47,7 +50,8 @@
 
 @font-face {
   font-family: "Shabnam";
-  src: url("../assets/Fonts/Shabnam-FD.eot") format("woff2"),
+  src:
+    url("../assets/Fonts/Shabnam-FD.eot") format("woff2"),
     url("../assets/Fonts/Shabnam-FD.woff") format("woff"),
     url("../assets/Fonts/Shabnam-FD.ttf") format("truetype"),
     url("../assets/Fonts/Shabnam-FD.eot") format("embedded-opentype");
@@ -72,7 +76,7 @@
 }
 
 @layer components {
-  .LoginBackGround{
+  .LoginBackGround {
     background-image: url("../../public/images/background-Pattern.jpg");
     background-size: cover;
     background-repeat: no-repeat;
@@ -85,4 +89,21 @@
   --color-secondary: #3a4f50;
   --color-white: #f4fefd;
   --color-MainGreen: #0ef6cc;
+}
+
+#burger-preview {
+  position: relative;
+  width: 300px;
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: white;
+  padding: 16px;
+  border-radius: 16px;
+}
+
+#burger-preview img {
+  width: 100%;
+  object-fit: contain;
 }

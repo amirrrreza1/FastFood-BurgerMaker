@@ -20,6 +20,7 @@
     "@supabase/auth-helpers-nextjs": "^0.10.0",
     "@supabase/ssr": "^0.6.1",
     "@supabase/supabase-js": "^2.49.4",
+    "html-to-image": "^1.11.13",
     "html2canvas": "^1.4.1",
     "jose": "^6.0.11",
     "next": "15.3.2",

@@ -1,22 +1,36 @@
+// app/api/send-code/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import { Resend } from "resend";
-import { codeStore } from "@/Lib/codeStore"; // مسیر رو بر اساس ساختار پروژه تنظیم کن
-
-const resend = new Resend(process.env.RESEND_API_KEY!);
+import { codeStore } from "@/Lib/codeStore";
 
 export async function POST(req: NextRequest) {
   const { email, displayName } = await req.json();
 
-  const code = Math.floor(100000 + Math.random() * 900000).toString();
-  codeStore.set(email, code);
+  const Vcode = Math.floor(100000 + Math.random() * 900000).toString();
+  codeStore.set(email, Vcode);
 
   try {
-    await resend.emails.send({
-      from: "Auth <onboarding@resend.dev>",
-      to: email,
-      subject: "کد تأیید ایمیل",
-      html: `<p>سلام ${displayName} 👋</p><p>کد تأیید شما: <strong>${code}</strong></p>`,
+    const res = await fetch("https://api.emailjs.com/api/v1.0/email/send", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        origin: "http://localhost", // اختیاری؛ EmailJS گاهی چک می‌کنه
+      },
+      body: JSON.stringify({
+        service_id: process.env.EMAILJS_SERVICE_ID,
+        template_id: process.env.EMAILJS_TEMPLATE_ID,
+        user_id: process.env.EMAILJS_API_KEY, // توجه: این همون Public key نیست
+        template_params: {
+          email: email,
+          name: displayName,
+          code: Vcode,
+        },
+      }),
     });
+
+    if (!res.ok) {
+      const errorText = await res.text();
+      throw new Error(`خطا در ارسال ایمیل: ${errorText}`);
+    }
 
     return NextResponse.json({ message: "کد ارسال شد" });
   } catch (error: any) {

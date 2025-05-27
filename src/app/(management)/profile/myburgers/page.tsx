@@ -71,17 +71,6 @@ export default function CustomBurgersPage() {
 
               <h2 className="font-bold text-lg mb-2">{burger.name}</h2>
 
-              <ul className="text-sm text-gray-600 space-y-1 mb-4">
-                <li>🍖 گوشت: {burger.options.meatCount} عدد</li>
-                <li>🧂 سس: {burger.options.sauces.join("، ") || "ندارد"}</li>
-                <li>
-                  🥬 افزودنی: {burger.options.toppings.join("، ") || "ندارد"}
-                </li>
-                <li>
-                  🍞 نان اضافه: {burger.options.extraBread ? "دارد" : "ندارد"}
-                </li>
-              </ul>
-
               <div className="mt-auto flex gap-2">
                 <button
                   onClick={() =>

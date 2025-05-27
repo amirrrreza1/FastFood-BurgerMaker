@@ -4,7 +4,7 @@ import { redirect, usePathname } from "next/navigation";
 const links = [
   { href: "/profile/account", label: "حساب کاربری" },
   { href: "/profile/orders", label: "سفارش‌ها" },
-  { href: "/profile/custom-burgers", label: "همبرگرهای من" },
+  { href: "/profile/myburgers", label: "همبرگرهای من" },
 ];
 
 export default function ProfileSideBar() {

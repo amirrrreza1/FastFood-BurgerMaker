@@ -4,9 +4,6 @@ import { Canvas } from "@react-three/fiber";
 import { OrbitControls, Environment } from "@react-three/drei";
 import { Suspense, useState } from "react";
 import Swal from "sweetalert2";
-import html2canvas from "html2canvas";
-import { supabase } from "@/Lib/supabase"; // آدرس فایل اتصال به Supabase
-import { v4 as uuidv4 } from "uuid";
 
 import {
   DndContext,
@@ -22,6 +19,8 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { ScreenshotButton } from "../ScreenshotButton";
+import { ScreenshotHelper } from "@/app/ScreenshotHelper";
 
 type Ingredient =
   | "meat"
@@ -43,68 +42,16 @@ type LayerItem = {
 
 export default function BurgerBuilderComponent() {
   const [layers, setLayers] = useState<LayerItem[]>([]);
+  const [canvas, setCanvas] = useState<HTMLCanvasElement | null>(null);
 
-  const handleSaveBurger = async () => {
-    if (layers.length === 0) {
-      return Swal.fire("خطا", "ابتدا همبرگر را بسازید", "error");
-    }
 
-    // 1. دریافت user_id
-    const meRes = await fetch("/api/auth/userID");
-    const me = await meRes.json();
-
-    if (!meRes.ok) {
-      return Swal.fire("خطا", "برای ذخیره‌سازی باید وارد شوید", "error");
-    }
-
-    const userId = me.user_id;
-
-    // 2. گرفتن اسکرین‌شات از canvas
-    const canvasElement = document.querySelector("canvas");
-    if (!canvasElement) return;
-
-    const screenshot = await html2canvas(canvasElement, { useCORS: true });
-    const blob = await new Promise<Blob | null>((resolve) =>
-      screenshot.toBlob(resolve)
-    );
-
-    if (!blob) {
-      console.error("blob خالی است");
-      return;
-    }
-
-    const fileName = `burger-${Math.random().toString(36).substring(2, 15)}.png`;
-
-    const { data, error: uploadError } = await supabase.storage
-      .from("burgers")
-      .upload(fileName, blob, {
-        contentType: "image/png",
-        upsert: true,
-      });
-
-    if (uploadError) {
-      console.error("خطای آپلود:", uploadError.message);
-      return Swal.fire("خطا", "آپلود تصویر انجام نشد", "error");
-    }
-  
-
-    const imageUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/burgers/${fileName}`;
-
-    const { error: insertError } = await supabase
-      .from("custom_burgers")
-      .insert({
-        user_id: userId,
-        layers: layers.map((l) => l.type),
-        image: imageUrl,
-        created_at: new Date().toISOString(),
-      });
-
-    if (insertError) {
-      return Swal.fire("خطا", "ثبت همبرگر در دیتابیس انجام نشد", "error");
-    }
-
-    Swal.fire("ثبت شد", "همبرگر با موفقیت ذخیره شد", "success");
-    setLayers([]);
+  const takeScreenshot = () => {
+    if (!canvas) return;
+    const dataURL = canvas.toDataURL("image/png");
+    const link = document.createElement("a");
+    link.href = dataURL;
+    link.download = "burger.png";
+    link.click();
   };
 
   const sauceTypes: Ingredient[] = ["ketchup", "mustard", "mayo", "hot"];
@@ -229,12 +176,6 @@ export default function BurgerBuilderComponent() {
         >
           افزودن نان اضافه
         </button>
-        <button
-          onClick={handleSaveBurger}
-          className="bg-blue-600 text-white py-2 px-4 rounded w-full mt-4"
-        >
-          ذخیره همبرگر 🍔
-        </button>
 
         <div className="mt-6 space-y-2">
           <h3 className="font-semibold">لایه‌ها:</h3>
@@ -262,34 +203,24 @@ export default function BurgerBuilderComponent() {
 
       {/* Canvas */}
       <div className="flex-1">
-        <div className="flex h-[100vh]">
-          <Canvas
-            camera={{ position: [0, 5, 12], fov: 50 }}
-            style={{ width: "100%" }}
-          >
+        <div className="relative w-full h-[500px]">
+          <Canvas camera={{ position: [0, 5, 12], fov: 50 }}>
             <ambientLight intensity={0.4} />
             <directionalLight position={[0, 5, 5]} intensity={1} />
-
-            <Suspense fallback={null}>
-              <BurgerBreadBottom />
-              {layers.map((layer, index) => (
-                <BurgerLayer key={layer.id} type={layer.type} index={index} />
-              ))}
-              <BurgerBreadTop y={0.5 + layers.length * 0.3} />
-            </Suspense>
-
-            <OrbitControls
-              enableZoom={true} // اجازه زوم
-              enablePan={true} // اجازه حرکت افقی و عمودی
-              enableRotate={true} // اجازه چرخش
-              minDistance={5} // حداقل فاصله دوربین
-              maxDistance={30} // حداکثر فاصله دوربین
-              maxPolarAngle={Math.PI} // اجازه چرخش کامل عمودی
-              minPolarAngle={0} // اجازه چرخش کامل عمودی
-            />
-
+            <Suspense fallback={null}>{/* burger layers... */}</Suspense>
+            <OrbitControls />
             <Environment preset="sunset" />
+            <ScreenshotHelper onReady={(canvas) => setCanvas(canvas)} />
           </Canvas>
+
+          {canvas && (
+            <button
+              onClick={takeScreenshot}
+              className="absolute top-4 right-4 z-10 bg-green-600 text-white px-4 py-2 rounded"
+            >
+              📸 عکس بگیر
+            </button>
+          )}
         </div>
       </div>
     </div>
