@@ -1,4 +1,4 @@
-import BurgerBuilderComponent from "@/Components/burgerMaker/BurgerMaker";
+import BurgerBuilderComponent from "@/Components/BurgerMaker";
 
 const BurgerBuilderPage = () => {
   return (

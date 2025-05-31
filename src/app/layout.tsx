@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import MainLayout from "@/Components/Layout/MainLayout";
+import MainLayout from "@/Components/MainLayout";
 import { ToastContainer } from "react-toastify";
 
 export const metadata: Metadata = {

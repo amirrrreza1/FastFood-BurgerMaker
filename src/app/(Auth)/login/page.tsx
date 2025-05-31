@@ -1,7 +1,7 @@
 "use client";
 
-import LoginForm from "@/Components/LoginForm/LoginForm";
-import SignupForm from "@/Components/SignupForm/SignupForm";
+import LoginForm from "@/Components/LoginForm";
+import SignupForm from "@/Components/SignupForm";
 import { useState } from "react";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";

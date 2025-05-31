@@ -2,9 +2,9 @@
 
 import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/Lib/supabase";
-import MenuItemCard from "../MenuItemcard/MenuItemCard";
+import MenuItemCard from "./MenuItemCard";
 import { MenuItem } from "@/types";
-import Cart from "../Cart/Cart";
+import Cart from "./Cart";
 
 const categories: MenuItem["category"][] = [
   "پیتزا",

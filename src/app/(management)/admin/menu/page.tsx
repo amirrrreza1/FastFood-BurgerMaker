@@ -1,4 +1,4 @@
-import MenuManager from "@/Components/MenuManager/MenuManager";
+import MenuManager from "@/Components/MenuManager";
 
 const Menu = () => {
   return (

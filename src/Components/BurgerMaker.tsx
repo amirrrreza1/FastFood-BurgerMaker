@@ -2,7 +2,7 @@
 
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, Environment } from "@react-three/drei";
-import { Suspense, useState } from "react";
+import { Suspense, useRef, useState } from "react";
 import Swal from "sweetalert2";
 
 import {
@@ -19,8 +19,7 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { ScreenshotButton } from "../ScreenshotButton";
-import { ScreenshotHelper } from "@/app/ScreenshotHelper";
+import ScreenshotHelper from "./ScreenshotHelper";
 
 type Ingredient =
   | "meat"
@@ -42,16 +41,17 @@ type LayerItem = {
 
 export default function BurgerBuilderComponent() {
   const [layers, setLayers] = useState<LayerItem[]>([]);
-  const [canvas, setCanvas] = useState<HTMLCanvasElement | null>(null);
 
+  const screenshotRef = useRef<{ takeScreenshot: () => string }>(null);
 
-  const takeScreenshot = () => {
-    if (!canvas) return;
-    const dataURL = canvas.toDataURL("image/png");
-    const link = document.createElement("a");
-    link.href = dataURL;
-    link.download = "burger.png";
-    link.click();
+  const handleScreenshot = () => {
+    if (screenshotRef.current) {
+      const dataUrl = screenshotRef.current.takeScreenshot();
+      const link = document.createElement("a");
+      link.href = dataUrl;
+      link.download = "burger.png";
+      link.click();
+    }
   };
 
   const sauceTypes: Ingredient[] = ["ketchup", "mustard", "mayo", "hot"];
@@ -106,7 +106,6 @@ export default function BurgerBuilderComponent() {
 
   return (
     <div className="flex h-screen w-full">
-      {/* Sidebar */}
       <div className="w-1/4 bg-gray-100 p-4 space-y-4 overflow-y-auto">
         <h2 className="text-xl font-bold mb-4">ساخت همبرگر 🍔</h2>
 
@@ -176,6 +175,12 @@ export default function BurgerBuilderComponent() {
         >
           افزودن نان اضافه
         </button>
+        <button
+          onClick={handleScreenshot}
+          className="bg-blue-500 text-white px-4 py-2 rounded"
+        >
+          📸 ذخیره عکس همبرگر
+        </button>
 
         <div className="mt-6 space-y-2">
           <h3 className="font-semibold">لایه‌ها:</h3>
@@ -201,26 +206,22 @@ export default function BurgerBuilderComponent() {
         </div>
       </div>
 
-      {/* Canvas */}
       <div className="flex-1">
-        <div className="relative w-full h-[500px]">
+        <div className="relative w-full h-full bg-red-300">
           <Canvas camera={{ position: [0, 5, 12], fov: 50 }}>
             <ambientLight intensity={0.4} />
             <directionalLight position={[0, 5, 5]} intensity={1} />
-            <Suspense fallback={null}>{/* burger layers... */}</Suspense>
+            <Suspense fallback={<span>در حال بارگذاری...</span>}>
+              <BurgerBreadBottom />
+              {layers.map((layer, index) => (
+                <BurgerLayer key={layer.id} type={layer.type} index={index} />
+              ))}
+              <BurgerBreadTop y={0.5 + layers.length * 0.3} />
+              <ScreenshotHelper ref={screenshotRef} />
+            </Suspense>
             <OrbitControls />
             <Environment preset="sunset" />
-            <ScreenshotHelper onReady={(canvas) => setCanvas(canvas)} />
           </Canvas>
-
-          {canvas && (
-            <button
-              onClick={takeScreenshot}
-              className="absolute top-4 right-4 z-10 bg-green-600 text-white px-4 py-2 rounded"
-            >
-              📸 عکس بگیر
-            </button>
-          )}
         </div>
       </div>
     </div>
