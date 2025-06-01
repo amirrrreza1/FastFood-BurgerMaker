@@ -22,13 +22,14 @@ const LoginForm = () => {
       });
 
       const data = await res.json();
+      console.log(data);
+      
 
       if (!res.ok) {
         throw new Error(data.error || "ورود ناموفق بود");
       }
 
-      toast.success("ورود موفقیت‌آمیز بود!");
-      router.push("/profile");
+      router.refresh();
     } catch (error: any) {
       toast.error(error.message || "خطایی رخ داد");
     }

@@ -38,7 +38,7 @@ export async function middleware(request: NextRequest) {
       }
 
 
-      if (path.startsWith("/dashboard") && payload.role !== "user") {
+      if (path.startsWith("/profile") && payload.role !== "user") {
         url.pathname = "/admin";
         return NextResponse.redirect(url);
       }
