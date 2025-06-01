@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
+import { signupSchema, verifyCodeSchema } from "@/Lib/schemas/signup";
 
 const SignupForm = () => {
   const [step, setStep] = useState<"form" | "verify">("form");
@@ -16,6 +17,12 @@ const SignupForm = () => {
 
   const handleSendCode = async (e?: React.FormEvent) => {
     e?.preventDefault();
+
+    const validation = signupSchema.safeParse({ email, password, displayName });
+    if (!validation.success) {
+      toast.error(validation.error.errors.map((err) => err.message).join("، "));
+      return;
+    }
 
     try {
       const res = await fetch("/api/auth/send-code", {
@@ -35,9 +42,15 @@ const SignupForm = () => {
       toast.error(error.message || "خطا در ارسال کد");
     }
   };
-
+  
   const handleVerifyAndSignup = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    const validation = verifyCodeSchema.safeParse({ email, code });
+    if (!validation.success) {
+      toast.error(validation.error.errors.map((err) => err.message).join("، "));
+      return;
+    }
 
     try {
       const verifyRes = await fetch("/api/auth/verify-code", {
@@ -68,6 +81,7 @@ const SignupForm = () => {
       toast.error(error.message || "خطا در ثبت‌نام");
     }
   };
+  
 
   const handleResendCode = async () => {
     try {

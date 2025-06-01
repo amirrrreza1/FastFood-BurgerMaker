@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/Lib/supabase";
 import { toast } from "react-toastify";
+import { addressSchema, profileSchema } from "@/Lib/schemas/account";
 
 export default function AccountPage() {
   const [firstName, setFirstName] = useState("");
@@ -54,6 +55,20 @@ export default function AccountPage() {
   }, []);
 
   const handleSave = async () => {
+    const result = profileSchema.safeParse({
+      firstName,
+      lastName,
+      phone,
+    });
+
+    if (!result.success) {
+      toast.error(
+        "فرم نامعتبر است: " +
+          result.error.errors.map((e) => e.message).join("، ")
+      );
+      return;
+    }
+
     setLoading(true);
 
     const { error } = await supabase.from("profiles").upsert(
@@ -61,7 +76,7 @@ export default function AccountPage() {
         id: userId,
         name: firstName,
         lastName: lastName,
-        phoneNum : phone,
+        phoneNum: phone,
       },
       { onConflict: "id" }
     );
@@ -71,8 +86,19 @@ export default function AccountPage() {
 
     setLoading(false);
   };
+  
 
   const handleAddAddress = async () => {
+    const result = addressSchema.safeParse({ address: newAddress });
+
+    if (!result.success) {
+      toast.error(
+        "آدرس نامعتبر است: " +
+          result.error.errors.map((e) => e.message).join("، ")
+      );
+      return;
+    }
+
     const { error } = await supabase
       .from("addresses")
       .insert({ user_id: userId, address: newAddress });
@@ -83,6 +109,7 @@ export default function AccountPage() {
       setNewAddress("");
     }
   };
+  
 
   const handleDeleteAddress = async (address: string) => {
     if (!userId) return;

@@ -2,7 +2,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { supabase } from "@/Lib/supabase"; // فرض بر اینکه فایل کانفیگ Supabase رو داری
+import { supabase } from "@/Lib/supabase";
+import { MenuItemSchema } from "@/Lib/schemas/menuSchema";
+import { toast } from "react-toastify";
 
 type MenuItem = {
   id: number;
@@ -60,8 +62,20 @@ export default function MenuManager() {
 
   const handleSubmit = async () => {
     let imageUrl = form.image_url;
+
     if (imageFile) {
       imageUrl = await uploadImage(imageFile);
+    }
+
+    const result = MenuItemSchema.safeParse({
+      ...form,
+      image_url: imageUrl,
+      available: true,
+    });
+
+    if (!result.success) {
+      toast.error("فرم اضافه کردن غذا غلط است لطفا دوباره بررسی کنید");
+      return;
     }
 
     const { error } = await supabase.from("menu_items").insert([

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
+import { loginSchema } from "@/Lib/schemas/login";
 
 const LoginForm = () => {
   const [email, setEmail] = useState("");
@@ -11,6 +12,16 @@ const LoginForm = () => {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    const result = loginSchema.safeParse({ email, password });
+
+    if (!result.success) {
+      toast.error(
+        "ورود نامعتبر است: " +
+          result.error.errors.map((e) => e.message).join("، ")
+      );
+      return;
+    }
 
     try {
       const res = await fetch("api/auth/login", {
@@ -22,8 +33,6 @@ const LoginForm = () => {
       });
 
       const data = await res.json();
-      console.log(data);
-      
 
       if (!res.ok) {
         throw new Error(data.error || "ورود ناموفق بود");
@@ -37,10 +46,7 @@ const LoginForm = () => {
 
   return (
     <div className="p-6 bg-[var(--color-white)] rounded-xl shadow-md w-full max-w-md">
-      <form
-        onSubmit={handleLogin}
-        className="flex flex-col gap-4"
-      >
+      <form onSubmit={handleLogin} className="flex flex-col gap-4">
         <h2 className="text-xl font-bold">ورود</h2>
         <input
           type="email"
