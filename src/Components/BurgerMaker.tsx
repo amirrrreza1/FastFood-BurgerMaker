@@ -5,6 +5,20 @@ import { OrbitControls, Environment } from "@react-three/drei";
 import { Suspense, useRef, useState } from "react";
 import Swal from "sweetalert2";
 
+const prices: Record<Ingredient, number> = {
+  meat: 30000,
+  cheese: 10000,
+  lettuce: 5000,
+  tomato: 5000,
+  pickle: 5000,
+  onion: 4000,
+  ketchup: 2000,
+  mustard: 2000,
+  mayo: 2000,
+  hot: 3000,
+  bread: 8000,
+};
+
 import {
   DndContext,
   closestCenter,
@@ -20,6 +34,7 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import ScreenshotHelper from "./ScreenshotHelper";
+import { supabase } from "@/Lib/supabase";
 
 type Ingredient =
   | "meat"
@@ -41,18 +56,60 @@ type LayerItem = {
 
 export default function BurgerBuilderComponent() {
   const [layers, setLayers] = useState<LayerItem[]>([]);
+  const [totalPrice, setTotalPrice] = useState(0);
 
-  const screenshotRef = useRef<{ takeScreenshot: () => string }>(null);
+  const handleScreenshot = async () => {
+    if (!layers.some((l) => l.type === "meat")) {
+      return Swal.fire(
+        "خطا",
+        "برای ذخیره عکس، باید حداقل یک لایه گوشت اضافه کنید",
+        "error"
+      );
+    }
 
-  const handleScreenshot = () => {
     if (screenshotRef.current) {
       const dataUrl = screenshotRef.current.takeScreenshot();
-      const link = document.createElement("a");
-      link.href = dataUrl;
-      link.download = "burger.png";
-      link.click();
+
+      const file = dataURLtoFile(dataUrl, `burger-${Date.now()}.png`);
+      const filePath = `burgers/${Date.now()}.png`;
+
+      const { data, error: uploadError } = await supabase.storage
+        .from("burgers")
+        .upload(filePath, file);
+
+      if (uploadError) {
+        return Swal.fire("خطا", "خطا در ذخیره‌سازی عکس", "error");
+      }
+
+      const imageUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/burgers/${filePath}`;
+
+      const res = await fetch("/api/auth/userID");
+      const user = await res.json();
+      console.log(user);
+      if (!res.ok) {
+        return Swal.fire("خطا", "خطا در دریافت شناسه کاربر", "error");
+      }
+      const { error } = await supabase.from("custom_burgers").insert({
+        name: `همبرگر ${Date.now()}`,
+        user_id: user.user_id,
+        layers: layers.map((l) => l.type),
+        image_url: imageUrl,
+        total_price: totalPrice,
+      });
+
+      if (error) {
+        return Swal.fire(
+          "خطا",
+          "ثبت همبرگر در دیتابیس با مشکل مواجه شد",
+          "error"
+        );
+      }
+
+      Swal.fire("موفق!", "همبرگر با موفقیت ذخیره شد", "success");
     }
   };
+
+  const screenshotRef = useRef<{ takeScreenshot: () => string }>(null);
 
   const sauceTypes: Ingredient[] = ["ketchup", "mustard", "mayo", "hot"];
 
@@ -75,6 +132,14 @@ export default function BurgerBuilderComponent() {
       return Swal.fire("محدودیت!", "حداکثر ۳ لایه گوشت مجاز است", "warning");
     }
 
+    if (type === "bread" && layers.some((l) => l.type === "bread")) {
+      return Swal.fire(
+        "محدودیت!",
+        "فقط یک نان اضافه می‌توانید انتخاب کنید",
+        "warning"
+      );
+    }
+
     if (
       ["cheese", "lettuce", "tomato", "pickle", "onion"].includes(type) &&
       veggieCount >= 3
@@ -87,10 +152,15 @@ export default function BurgerBuilderComponent() {
     }
 
     setLayers([...layers, { id: Date.now(), type }]);
+    setTotalPrice((prev) => prev + prices[type]);
   };
 
   const removeLayer = (id: string) => {
     setLayers((prev) => prev.filter((layer) => layer.id !== id));
+    const removed = layers.find((l) => l.id === id);
+    if (removed) {
+      setTotalPrice((prev) => prev - prices[removed.type]);
+    }
   };
 
   const sensors = useSensors(useSensor(PointerSensor));
@@ -106,6 +176,10 @@ export default function BurgerBuilderComponent() {
 
   return (
     <div className="flex h-screen w-full">
+      <div className="absolute top-0 left-0 bg-gray-200 p-4 text-center z-5">
+        قیمت نهایی: {totalPrice.toLocaleString()} تومان
+      </div>
+
       <div className="w-1/4 bg-gray-100 p-4 space-y-4 overflow-y-auto">
         <h2 className="text-xl font-bold mb-4">ساخت همبرگر 🍔</h2>
 
@@ -352,4 +426,16 @@ function getLabel(type: Ingredient) {
     case "bread":
       return "نان اضافه";
   }
+}
+
+function dataURLtoFile(dataUrl: string, filename: string): File {
+  const arr = dataUrl.split(",");
+  const mime = arr[0].match(/:(.*?);/)![1];
+  const bstr = atob(arr[1]);
+  let n = bstr.length;
+  const u8arr = new Uint8Array(n);
+
+  while (n--) u8arr[n] = bstr.charCodeAt(n);
+
+  return new File([u8arr], filename, { type: mime });
 }

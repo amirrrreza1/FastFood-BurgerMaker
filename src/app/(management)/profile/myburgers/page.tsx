@@ -1,15 +1,18 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { supabase } from "@/Lib/supabase"; // مسیر اتصال به Supabase
+import { supabase } from "@/Lib/supabase";
 import { BurgerOptions } from "@/types";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { log } from "console";
 
 type CustomBurger = {
   id: string;
   user_id: string;
   name: string;
+  image_url: string;
   options: BurgerOptions;
   created_at: string;
 };
@@ -25,6 +28,8 @@ export default function CustomBurgersPage() {
       .from("custom_burgers")
       .select("*")
       .order("created_at", { ascending: false });
+
+    console.log(data);
 
     if (!error) setBurgers(data as CustomBurger[]);
     setLoading(false);
@@ -50,7 +55,15 @@ export default function CustomBurgersPage() {
 
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold mb-6">🍔 همبرگرهای من</h1>
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-2xl font-bold">🍔 همبرگرهای من</h1>
+        <Link
+          href="/new-burger"
+          className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded shadow"
+        >
+          + افزودن همبرگر جدید
+        </Link>
+      </div>
 
       {burgers.length === 0 ? (
         <p className="text-gray-500">شما هنوز هیچ همبرگر سفارشی نساخته‌اید.</p>
@@ -61,13 +74,15 @@ export default function CustomBurgersPage() {
               key={burger.id}
               className="border rounded-xl p-4 shadow-sm flex flex-col"
             >
-              <Image
-                src="/burger-preview.jpg"
+              <img src={burger.image_url} alt="burger" width={300} height={300} />
+
+              {/* <img
+                src={burger.image_url}
                 alt="Custom Burger"
                 width={300}
                 height={200}
                 className="rounded mb-4 object-cover w-full h-[180px]"
-              />
+              /> */}
 
               <h2 className="font-bold text-lg mb-2">{burger.name}</h2>
 

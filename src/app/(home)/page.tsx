@@ -1,10 +1,7 @@
-"use client";
-
-
-import FoodMenu from "@/Components/Menu/Menu";
+import Menu from "@/Components/Menu";
 
 const HomePage = () => {
-  return <><FoodMenu /></>;
+  return <><Menu /></>;
 };
 
 export default HomePage;

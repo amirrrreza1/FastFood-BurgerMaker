@@ -15,7 +15,7 @@ export default function MenuItemCard({ item }: Props) {
   const decrementQuantity = useCartStore((state) => state.decrementQuantity);
   const cartItems = useCartStore((state) => state.items);
 
-  const imageSrc = item.image || fallbackImage;
+  const imageSrc = item.image_url || fallbackImage;
   const cartItem = cartItems.find((i) => i.id === item.id);
 
   const handleAddToCart = () => {
