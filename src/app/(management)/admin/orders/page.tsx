@@ -64,13 +64,13 @@ export default function AdminOrdersPage() {
     <div className="space-y-6">
       <h1 className="text-xl font-bold">مدیریت سفارش‌ها</h1>
 
-      {orders.map((order) => {
+      {orders.map((order , index) => {
         const comment = cancelComments[order.id] || "";
 
         return (
           <div key={order.id} className="border rounded p-4 space-y-2">
             <div className="flex justify-between">
-              <div>سفارش #{order.id}</div>
+              <div>سفارش {index + 1}</div>
               <div>{new Date(order.created_at).toLocaleString("fa-IR")}</div>
             </div>
 

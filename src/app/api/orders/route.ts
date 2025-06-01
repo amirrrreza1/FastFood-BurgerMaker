@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const user = await verifyToken(token);
-    const { items, total } = await req.json();
+    const { items, total , address } = await req.json();
 
     const { error } = await supabase.from("orders").insert([
       {
@@ -19,6 +19,7 @@ export async function POST(req: NextRequest) {
         status: "pending",
         total_price: total,
         items,
+        address: address
       },
     ]);
 

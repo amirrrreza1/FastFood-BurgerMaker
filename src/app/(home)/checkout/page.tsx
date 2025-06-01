@@ -94,7 +94,7 @@ export default function CheckoutPage() {
 
         setAddresses(data);
         if (data.length > 0) {
-          setSelectedAddressId(data[0].id);
+          setSelectedAddress(data[0].address);
         } else setIsAddressModalOpen(true);
       } catch {
         toast.error("خطا در دریافت آدرس‌ها");
@@ -154,7 +154,7 @@ export default function CheckoutPage() {
           <select
             className="w-full border p-2 rounded"
             value={selectedAddressId ?? ""}
-            onChange={(e) => setSelectedAddressId(e.target.value)}
+            onChange={(e) => setSelectedAddress(e.target.value)}
           >
             {addresses.map((addr: any) => (
               <option key={addr.id} value={addr.id}>
