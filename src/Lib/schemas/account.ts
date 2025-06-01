@@ -14,3 +14,10 @@ export const profileSchema = z.object({
 export const addressSchema = z.object({
   address: z.string().min(10, "آدرس باید حداقل ۱۰ حرف باشد"),
 });
+
+export const detailedAddressSchema = z.object({
+  street: z.string().min(2, "نام خیابان خیلی کوتاه است"),
+  alley: z.string().min(2, "نام کوچه خیلی کوتاه است"),
+  plaque: z.string().min(1, "پلاک الزامی است"),
+  unit: z.string().min(1, "واحد الزامی است"),
+});

@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/Lib/supabase";
 import { toast } from "react-toastify";
 import { addressSchema, profileSchema } from "@/Lib/schemas/account";
+import AddAddressModal from "@/Components/AddAddressModal";
+import EditProfileModal from "@/Components/ProfileModal";
 
 export default function AccountPage() {
   const [firstName, setFirstName] = useState("");
@@ -13,6 +15,11 @@ export default function AccountPage() {
   const [newAddress, setNewAddress] = useState("");
   const [loading, setLoading] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
+
+  const [showProfileModal, setShowProfileModal] = useState(false);
+
+  const [showModal, setShowModal] = useState(false);
+  const [editAddress, setEditAddress] = useState<string | undefined>(undefined);
 
   const loadUserData = async () => {
     try {
@@ -86,7 +93,6 @@ export default function AccountPage() {
 
     setLoading(false);
   };
-  
 
   const handleAddAddress = async () => {
     const result = addressSchema.safeParse({ address: newAddress });
@@ -109,7 +115,6 @@ export default function AccountPage() {
       setNewAddress("");
     }
   };
-  
 
   const handleDeleteAddress = async (address: string) => {
     if (!userId) return;
@@ -126,84 +131,137 @@ export default function AccountPage() {
   };
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-xl font-bold">اطلاعات حساب کاربری</h1>
+    <>
+      <div className="space-y-6">
+        <h1 className="text-xl font-bold">اطلاعات حساب کاربری</h1>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <label>
-          <span className="text-sm">نام:</span>
-          <input
-            type="text"
-            className="w-full mt-1 p-2 border rounded"
-            value={firstName}
-            onChange={(e) => setFirstName(e.target.value)}
-          />
-        </label>
+        <div className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <span className="text-sm">نام:</span>
+              <p className="p-2 border rounded">{firstName || "-"}</p>
+            </div>
 
-        <label>
-          <span className="text-sm">نام خانوادگی:</span>
-          <input
-            type="text"
-            className="w-full mt-1 p-2 border rounded"
-            value={lastName}
-            onChange={(e) => setLastName(e.target.value)}
-          />
-        </label>
+            <div>
+              <span className="text-sm">نام خانوادگی:</span>
+              <p className="p-2 border rounded">{lastName || "-"}</p>
+            </div>
 
-        <label className="md:col-span-2">
-          <span className="text-sm">شماره همراه:</span>
-          <input
-            type="tel"
-            className="w-full mt-1 p-2 border rounded"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-          />
-        </label>
-      </div>
-
-      <button
-        onClick={handleSave}
-        disabled={loading}
-        className="bg-amber-500 text-white py-2 px-4 rounded hover:bg-amber-600"
-      >
-        {loading ? "در حال ذخیره..." : "ذخیره تغییرات"}
-      </button>
-
-      <hr />
-
-      <h2 className="font-bold">آدرس‌ها</h2>
-      <div className="space-y-2">
-        {addresses.map((address) => (
-          <div
-            key={address}
-            className="flex items-center justify-between border p-2 rounded"
-          >
-            <span>{address}</span>
-            <button
-              onClick={() => handleDeleteAddress(address)}
-              className="text-red-500 text-sm"
-            >
-              حذف
-            </button>
+            <div className="md:col-span-2">
+              <span className="text-sm">شماره همراه:</span>
+              <p className="p-2 border rounded">{phone || "-"}</p>
+            </div>
           </div>
-        ))}
 
-        <div className="flex gap-2">
-          <input
-            type="text"
-            className="flex-1 p-2 border rounded"
-            placeholder="آدرس جدید"
-            value={newAddress}
-            onChange={(e) => setNewAddress(e.target.value)}
-          />
           <button
-            onClick={handleAddAddress}
-            className="bg-green-600 text-white px-4 rounded"
+            onClick={() => setShowProfileModal(true)}
+            className="bg-amber-500 text-white py-2 px-4 rounded hover:bg-amber-600"
           >
-            افزودن
+            ویرایش اطلاعات
           </button>
         </div>
+
+        <hr />
+
+        <h2 className="font-bold">آدرس‌ها</h2>
+        <div className="space-y-2">
+          {addresses.map((address) => (
+            <div
+              key={address}
+              className="flex items-center justify-between border p-2 rounded"
+            >
+              <span>{address}</span>
+              <button
+                onClick={() => handleDeleteAddress(address)}
+                className="text-red-500 text-sm"
+              >
+                حذف
+              </button>
+              <button
+                onClick={() => {
+                  setEditAddress(address);
+                  setShowModal(true);
+                }}
+                className="text-blue-500 text-sm ml-2"
+              >
+                ویرایش
+              </button>
+            </div>
+          ))}
+
+          <div className="flex gap-2">
+            <button
+              onClick={() => {
+                setEditAddress(undefined);
+                setShowModal(true);
+              }}
+              className="bg-green-600 text-white px-4 rounded"
+            >
+              افزودن
+            </button>
+          </div>
+        </div>
       </div>
-    </div>
+
+      <AddAddressModal
+        isOpen={showModal}
+        onClose={() => {
+          setShowModal(false);
+          setEditAddress(undefined);
+        }}
+        initialAddress={editAddress}
+        onSubmit={async (newAddress, oldAddress) => {
+          const result = addressSchema.safeParse({ address: newAddress });
+
+          if (!result.success) {
+            toast.error(
+              "آدرس نامعتبر است: " +
+                result.error.errors.map((e) => e.message).join("، ")
+            );
+            return;
+          }
+
+          if (oldAddress) {
+            // update address
+            const { error } = await supabase
+              .from("addresses")
+              .update({ address: newAddress })
+              .eq("user_id", userId)
+              .eq("address", oldAddress);
+
+            if (error) toast.error("خطا در ویرایش آدرس");
+            else {
+              setAddresses((prev) =>
+                prev.map((a) => (a === oldAddress ? newAddress : a))
+              );
+              toast.success("آدرس ویرایش شد");
+            }
+          } else {
+            // insert new address
+            const { error } = await supabase
+              .from("addresses")
+              .insert({ user_id: userId, address: newAddress });
+
+            if (error) toast.error("خطا در افزودن آدرس");
+            else {
+              setAddresses((prev) => [...prev, newAddress]);
+              toast.success("آدرس افزوده شد");
+            }
+          }
+        }}
+      />
+
+      <EditProfileModal
+        isOpen={showProfileModal}
+        onClose={() => setShowProfileModal(false)}
+        userId={userId}
+        initialData={{ firstName, lastName, phone }}
+        onSave={({ firstName, lastName, phone }) => {
+          setFirstName(firstName);
+          setLastName(lastName);
+          setPhone(phone);
+        }}
+      />
+    </>
   );
 }
