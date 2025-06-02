@@ -9,6 +9,20 @@ export const profileSchema = z.object({
       /^09\d{9}$/,
       "شماره تلفن نامعتبر است (باید با 09 شروع شود و 11 رقم باشد)"
     ),
+  birthDate: z
+    .string()
+    .optional()
+    .refine(
+      (date) => {
+        if (!date) return true;
+        const now = new Date();
+        const input = new Date(date);
+        const hundredYearsAgo = new Date();
+        hundredYearsAgo.setFullYear(now.getFullYear() - 100);
+        return input <= now && input >= hundredYearsAgo;
+      },
+      { message: "تاریخ تولد نامعتبر است" }
+    ),
 });
 
 export const addressSchema = z.object({

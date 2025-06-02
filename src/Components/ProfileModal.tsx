@@ -1,10 +1,13 @@
-// components/EditProfileModal.tsx
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { profileSchema } from "@/Lib/schemas/account";
 import { toast } from "react-toastify";
 import { supabase } from "@/Lib/supabase";
+
+import DatePicker from "react-multi-date-picker";
+import persian from "react-date-object/calendars/persian";
+import persian_fa from "react-date-object/locales/persian_fa";
 
 interface Props {
   isOpen: boolean;
@@ -13,12 +16,14 @@ interface Props {
     firstName: string;
     lastName: string;
     phone: string;
+    birthDate: string | null;
   };
   userId: string | null;
   onSave: (data: {
     firstName: string;
     lastName: string;
     phone: string;
+    birthDate?: string;
   }) => void;
 }
 
@@ -29,13 +34,32 @@ export default function EditProfileModal({
   userId,
   onSave,
 }: Props) {
-  const [firstName, setFirstName] = useState(initialData.firstName);
-  const [lastName, setLastName] = useState(initialData.lastName);
-  const [phone, setPhone] = useState(initialData.phone);
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [birthDate, setBirthDate] = useState<any>(null);
   const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    if (isOpen) {
+      setFirstName(initialData.firstName || "");
+      setLastName(initialData.lastName || "");
+      setPhone(initialData.phone || "");
+      // تبدیل رشته تاریخ میلادی به آبجکت DatePicker شمسی
+      if (initialData.birthDate) {
+        setBirthDate(new Date(initialData.birthDate));
+      } else {
+        setBirthDate(null);
+      }
+    }
+  }, [isOpen, initialData]);
+
   const handleSubmit = async () => {
-    const result = profileSchema.safeParse({ firstName, lastName, phone });
+    const result = profileSchema.safeParse({
+      firstName,
+      lastName,
+      phone,
+    });
 
     if (!result.success) {
       toast.error(
@@ -46,25 +70,37 @@ export default function EditProfileModal({
     }
 
     setLoading(true);
+
+    // ذخیره تاریخ به فرمت YYYY-MM-DD میلادی در دیتابیس
+    const birthDateISO = birthDate
+      ? birthDate.toDate().toISOString().split("T")[0]
+      : null;
+
     const { error } = await supabase.from("profiles").upsert(
       {
         id: userId,
         name: firstName,
         lastName: lastName,
         phoneNum: phone,
+        birthDate: birthDateISO,
       },
       { onConflict: "id" }
     );
 
+    setLoading(false);
+
     if (error) {
       toast.error("خطا در ذخیره اطلاعات");
     } else {
-      toast.success("اطلاعات ویرایش شد");
-      onSave({ firstName, lastName, phone });
+      toast.success("اطلاعات با موفقیت ذخیره شد");
+      onSave({
+        firstName,
+        lastName,
+        phone,
+        birthDate: birthDateISO || undefined,
+      });
       onClose();
     }
-
-    setLoading(false);
   };
 
   if (!isOpen) return null;
@@ -80,6 +116,7 @@ export default function EditProfileModal({
           value={firstName}
           onChange={(e) => setFirstName(e.target.value)}
           placeholder="نام"
+          disabled={loading}
         />
         <input
           type="text"
@@ -87,6 +124,7 @@ export default function EditProfileModal({
           value={lastName}
           onChange={(e) => setLastName(e.target.value)}
           placeholder="نام خانوادگی"
+          disabled={loading}
         />
         <input
           type="tel"
@@ -94,6 +132,18 @@ export default function EditProfileModal({
           value={phone}
           onChange={(e) => setPhone(e.target.value)}
           placeholder="شماره همراه"
+          disabled={loading}
+        />
+
+        <DatePicker
+          calendar={persian}
+          locale={persian_fa}
+          value={birthDate}
+          onChange={setBirthDate}
+          inputClass="w-full p-2 border rounded"
+          placeholder="تاریخ تولد"
+          disabled={loading}
+          format="YYYY/MM/DD"
         />
 
         <div className="flex justify-end gap-2">
@@ -105,7 +155,7 @@ export default function EditProfileModal({
             لغو
           </button>
           <button
-            className="bg-amber-500 text-white px-4 py-2 rounded"
+            className="bg-amber-500 text-white px-4 py-2 rounded hover:bg-amber-600"
             onClick={handleSubmit}
             disabled={loading}
           >
