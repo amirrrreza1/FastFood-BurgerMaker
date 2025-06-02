@@ -5,8 +5,9 @@ import { redirect, usePathname } from "next/navigation";
 import clsx from "clsx";
 
 const menuItems = [
-    { label: "مدیریت منو", href: "/admin/menu" },
-    { label: "مدیریت سفارش", href: "/admin/orders" },
+  { label: "مدیریت منو", href: "/admin/menu" },
+  { label: "مدیریت سفارش", href: "/admin/orders" },
+  { label: "مدیریت کاربران", href: "/admin/users" },
   // می‌تونی آیتم‌های بیشتر به این آرایه اضافه کنی
 ];
 

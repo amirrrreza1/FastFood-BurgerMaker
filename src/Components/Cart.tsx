@@ -41,7 +41,7 @@ export default function Cart() {
           <div className="flex-1 space-y-1">
             <h3 className="font-semibold">{item.name}</h3>
             <div className="text-sm text-gray-500">
-              قیمت: {item.price.toLocaleString()} تومان
+              {(item.price ?? 0).toLocaleString()} تومان{" "}
             </div>
             <div className="flex items-center gap-2 mt-2">
               <button

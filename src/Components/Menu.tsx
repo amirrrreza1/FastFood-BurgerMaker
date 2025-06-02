@@ -5,6 +5,8 @@ import { supabase } from "@/Lib/supabase";
 import MenuItemCard from "./MenuItemCard";
 import { MenuItem } from "@/types";
 import Cart from "./Cart";
+import { useRouter } from "next/navigation";
+import CustomBurgerCard from "./CustomBurgersCard";
 
 const categories: MenuItem["category"][] = [
   "پیتزا",
@@ -14,9 +16,18 @@ const categories: MenuItem["category"][] = [
   "نوشیدنی",
 ];
 
+type CustomBurger = {
+  id: string;
+  name: string;
+  total_price: number;
+  image_url: string;
+};
+
 export default function Menu() {
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
+  const [customBurgers, setCustomBurgers] = useState<CustomBurger[]>([]);
   const categoryRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const router = useRouter();
 
   useEffect(() => {
     const fetchMenu = async () => {
@@ -35,7 +46,6 @@ export default function Menu() {
               .from("menu-images")
               .getPublicUrl(item.image_url);
 
-            // اگه data همونطور که فکر می‌کنیم نیست، خود res رو بررسی می‌کنیم
             if (
               "data" in res &&
               res.data &&
@@ -54,7 +64,22 @@ export default function Menu() {
       setMenuItems(itemsWithUrls);
     };
 
+    const fetchCustomBurgers = async () => {
+      try {
+        const res = await fetch("/api/user/hamburgers");
+        const json = await res.json();
+        if (res.ok) {
+          setCustomBurgers(json.burgers || []);
+        } else {
+          console.error("خطا در دریافت همبرگرهای سفارشی:", json.error);
+        }
+      } catch (err) {
+        console.error("خطا در ارتباط با سرور:", err);
+      }
+    };
+
     fetchMenu();
+    fetchCustomBurgers();
   }, []);
 
   const scrollToCategory = (category: string) => {
@@ -86,19 +111,40 @@ export default function Menu() {
 
       {/* Menu Items */}
       <div className="flex-1 space-y-10">
-        <Cart/>
+        <Cart />
+
+        {/* بخش همبرگرهای کاربر */}
+        <div className="space-y-4">
+          <h2 className="text-2xl font-bold border-b pb-2">همبرگرهای من</h2>
+          {customBurgers.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+              {customBurgers.map((burger) => (
+                <CustomBurgerCard key={burger.id} burger={burger} />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center">
+              <p className="text-gray-600">شما هنوز هیچ همبرگری نساختید.</p>
+              <button
+                onClick={() => router.push("/new-burger")}
+                className="mt-4 px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 transition"
+              >
+                ساخت همبرگر جدید 🍔
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* بقیه دسته‌بندی‌های منو */}
         {categories.map((cat) => {
           const items = menuItems.filter((item) => item.category === cat);
-
           if (items.length === 0) return null;
 
           return (
             <div
               key={cat}
               ref={(el) => {
-                if (el) {
-                  categoryRefs.current[cat] = el;
-                }
+                if (el) categoryRefs.current[cat] = el;
               }}
               className="space-y-4"
             >

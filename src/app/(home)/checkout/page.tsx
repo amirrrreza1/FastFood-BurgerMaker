@@ -9,6 +9,8 @@ import { toast } from "react-toastify";
 export default function CheckoutPage() {
   const { items, clearCart } = useCartStore();
   const [isLoading, setIsLoading] = useState(false);
+  const [orderNote, setOrderNote] = useState("");
+
   const router = useRouter();
   const [addresses, setAddresses] = useState<string[]>([]);
   const [selectedAddress, setSelectedAddress] = useState<string | null>(null);
@@ -65,6 +67,7 @@ export default function CheckoutPage() {
           })),
           total,
           address: selectedAddress, // اضافه شد
+          note: orderNote,
         }),
       });
 
@@ -136,6 +139,19 @@ export default function CheckoutPage() {
                 .reduce((sum, item) => sum + item.price * item.quantity, 0)
                 .toLocaleString()}{" "}
               تومان
+            </div>
+            <div>
+              <label htmlFor="note" className="block text-sm font-medium mb-1">
+                توضیحات سفارش (اختیاری)
+              </label>
+              <textarea
+                id="note"
+                className="w-full border rounded p-2 text-sm"
+                rows={3}
+                placeholder="مثلاً: لطفاً زنگ نزنید، با نگهبان هماهنگ شود..."
+                value={orderNote}
+                onChange={(e) => setOrderNote(e.target.value)}
+              />
             </div>
 
             <button
