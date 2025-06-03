@@ -15,8 +15,7 @@ export type MenuItem = {
 export type OrderUpdate = {
   status: string;
   rejection_reason?: string;
-}
-
+};
 
 // types.ts
 export type BurgerOptions = {
@@ -39,3 +38,10 @@ export type BurgerCartItem = {
 export type Ingredient = "cheese" | "lettuce" | "tomato" | "onion" | "pickle";
 export type Sauce = "ketchup" | "mayo" | "mustard" | "hot";
 
+export type CartItem = {
+  id: string;
+  name: string;
+  price: number;
+  image: string;
+  quantity: number;
+};

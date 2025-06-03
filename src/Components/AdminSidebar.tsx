@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { redirect, usePathname } from "next/navigation";
-import clsx from "clsx";
 
 const menuItems = [
   { label: "مدیریت منو", href: "/admin/menu" },
@@ -29,12 +28,13 @@ export default function AdminSidebar() {
           <Link
             key={item.href}
             href={item.href}
-            className={clsx(
-              "block text-sm px-2 py-1 rounded transition",
-              pathname === item.href
-                ? "bg-amber-100 text-black font-semibold"
-                : "text-gray-700 hover:text-black hover:bg-gray-100"
-            )}
+            className={`
+              block text-sm px-2 py-1 rounded transition ${
+                pathname === item.href
+                  ? "bg-amber-100 text-black font-semibold"
+                  : "text-gray-700 hover:text-black hover:bg-gray-100"
+              }
+                `}
           >
             {item.label}
           </Link>

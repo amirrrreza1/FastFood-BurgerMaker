@@ -1,13 +1,8 @@
 // stores/cartStore.ts
+import { CartItem } from "@/types";
 import { create } from "zustand";
 
-export type CartItem = {
-  id: string;
-  name: string;
-  price: number;
-  image: string;
-  quantity: number;
-};
+
 
 type CartState = {
   items: CartItem[];
