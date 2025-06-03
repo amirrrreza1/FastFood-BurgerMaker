@@ -8,7 +8,6 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
       <AdminSidebar />
       <main className="flex-1 p-6">
         {children}
-        <ToastContainer position="top-center" />
       </main>
     </div>
   );

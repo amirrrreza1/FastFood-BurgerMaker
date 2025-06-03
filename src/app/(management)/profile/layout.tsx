@@ -14,7 +14,6 @@ export default function ProfileLayout({
       <ProfileSideBar />
       <main className="flex-1 p-4">
         {children}
-        <ToastContainer position="top-right" />
       </main>
     </div>
   );

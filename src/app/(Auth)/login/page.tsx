@@ -3,7 +3,6 @@
 import LoginForm from "@/Components/LoginForm";
 import SignupForm from "@/Components/SignupForm";
 import { useState } from "react";
-import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const LoginPage = () => {
@@ -21,7 +20,6 @@ const LoginPage = () => {
             {isSignup ? "حساب دارید؟ وارد شوید" : "حساب ندارید؟ ثبت‌نام کنید"}
           </button>
         </div>
-        <ToastContainer />
       </div>
     </div>
   );

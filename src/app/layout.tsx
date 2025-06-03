@@ -17,7 +17,7 @@ export default function RootLayout({
     <html lang="en">
       <body>
         {children}
-        <ToastContainer rtl position="top-right" />
+        <ToastContainer position="top-right" />
       </body>
     </html>
   );
