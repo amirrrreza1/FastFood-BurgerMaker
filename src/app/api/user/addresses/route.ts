@@ -7,10 +7,7 @@ import { NextRequest, NextResponse } from "next/server";
 export async function GET(req: NextRequest) {
   const token = req.cookies.get("token")?.value;
   const user = await verifyToken(token as string);
-    const user_id = user.uid;
-    
-    console.log(user_id);
-    
+  const user_id = user.uid;
 
   const { data, error } = await supabase
     .from("addresses")
@@ -29,11 +26,9 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-    const token = req.cookies.get("token")?.value;
-    const user = await verifyToken(token as string);
-    const user_id = user.uid;
-
-
+  const token = req.cookies.get("token")?.value;
+  const user = await verifyToken(token as string);
+  const user_id = user.uid;
 
   const body = await req.json();
   const { address } = body;

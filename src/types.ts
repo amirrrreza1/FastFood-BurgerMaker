@@ -45,3 +45,9 @@ export type CartItem = {
   image: string;
   quantity: number;
 };
+
+export type RouteContext = {
+  params: {
+    id: string;
+  };
+}

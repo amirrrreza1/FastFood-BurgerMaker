@@ -1,12 +1,8 @@
 // /app/api/admin/orders/[id]/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { supabase } from "@/Lib/supabase";
+import { RouteContext } from "@/types";
 
-interface RouteContext {
-  params: {
-    id: string;
-  };
-}
 
 export async function PATCH(req: NextRequest, context: any) {
   const id = (context as RouteContext).params.id;

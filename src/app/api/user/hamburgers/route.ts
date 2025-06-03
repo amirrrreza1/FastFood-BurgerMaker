@@ -5,10 +5,9 @@ import { supabase } from "@/Lib/supabase";
 export async function GET(req: NextRequest) {
   const token = req.cookies.get("token")?.value;
 
-  // ⛔ توکن وجود ندارد
   if (!token) {
     return NextResponse.json(
-      { error: "Unauthorized - Token missing" },
+      { error: "توکن دریافت نشده" },
       { status: 401 }
     );
   }
@@ -18,9 +17,8 @@ export async function GET(req: NextRequest) {
   try {
     user = await verifyToken(token);
   } catch (err) {
-    // ⛔ توکن نامعتبر
     return NextResponse.json(
-      { error: "Unauthorized - Invalid token" },
+      { error: "توکن نامعتبر است" },
       { status: 401 }
     );
   }
@@ -38,7 +36,6 @@ export async function GET(req: NextRequest) {
   }
 
 
-  // ✅ دریافت برگرهای سفارشی
   const { data: burgers, error } = await supabase
     .from("custom_burgers")
     .select("id, name, image_url , total_price")
