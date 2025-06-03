@@ -32,6 +32,12 @@ export async function middleware(request: NextRequest) {
     try {
       const payload = await verifyToken(token);
 
+      if (!payload.is_active) {
+        url.pathname = "/blocked";
+        return NextResponse.redirect(url);
+      }
+      
+
       if (path.startsWith("/admin") && payload.role !== "admin") {
         url.pathname = "/profile";
         return NextResponse.redirect(url);

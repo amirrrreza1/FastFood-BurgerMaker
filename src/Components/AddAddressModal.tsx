@@ -8,8 +8,13 @@ import { detailedAddressSchema } from "@/Lib/schemas/account";
 type AddAddressModalProps = {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (newAddress: string, oldAddress?: string) => Promise<void>;
+  onSubmit: (
+    newAddress: string,
+    oldAddress?: string,
+    isDefault?: boolean
+  ) => Promise<void>;
   initialAddress?: string;
+  initialIsDefault?: boolean;
 };
 
 export default function AddAddressModal({
@@ -17,11 +22,13 @@ export default function AddAddressModal({
   onClose,
   onSubmit,
   initialAddress,
+  initialIsDefault = false,
 }: AddAddressModalProps) {
   const [street, setStreet] = useState("");
   const [alley, setAlley] = useState("");
   const [plaque, setPlaque] = useState("");
   const [unit, setUnit] = useState("");
+  const [isDefault, setIsDefault] = useState(false);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -35,13 +42,15 @@ export default function AddAddressModal({
         setPlaque(match[3]);
         setUnit(match[4]);
       }
+      setIsDefault(initialIsDefault);
     } else {
       setStreet("");
       setAlley("");
       setPlaque("");
       setUnit("");
+      setIsDefault(false);
     }
-  }, [initialAddress, isOpen]);
+  }, [initialAddress, isOpen, initialIsDefault]);
 
   if (!isOpen) return null;
 
@@ -63,7 +72,7 @@ export default function AddAddressModal({
     const fullAddress = `خیابان ${street}، کوچه ${alley}، پلاک ${plaque}، واحد ${unit}`;
 
     setLoading(true);
-    await onSubmit(fullAddress, initialAddress);
+    await onSubmit(fullAddress, initialAddress, isDefault);
     setLoading(false);
     onClose();
   };
@@ -104,6 +113,15 @@ export default function AddAddressModal({
             value={unit}
             onChange={(e) => setUnit(e.target.value)}
           />
+
+          <label className="flex items-center gap-2 mt-2">
+            <input
+              type="checkbox"
+              checked={isDefault}
+              onChange={(e) => setIsDefault(e.target.checked)}
+            />
+            <span className="text-sm">این آدرس به عنوان پیش‌فرض تنظیم شود</span>
+          </label>
         </div>
 
         <div className="flex justify-end gap-2 pt-4">

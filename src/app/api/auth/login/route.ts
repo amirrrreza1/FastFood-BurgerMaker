@@ -21,7 +21,7 @@ export async function POST(req: NextRequest) {
 
   const { data: profile, error: profileError } = await supabase
     .from("profiles")
-    .select("role")
+    .select("role , is_active")
     .eq("id", user.id)
     .single();
 
@@ -36,6 +36,7 @@ export async function POST(req: NextRequest) {
     uid: user.id,
     email: user.email!,
     role: profile.role,
+    is_active: profile.is_active,
   });
 
   const response = NextResponse.json({ message: "ورود موفق بود" });

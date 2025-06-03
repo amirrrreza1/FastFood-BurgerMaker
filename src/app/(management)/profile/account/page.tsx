@@ -7,19 +7,26 @@ import { addressSchema } from "@/Lib/schemas/account";
 import AddAddressModal from "@/Components/AddAddressModal";
 import EditProfileModal from "@/Components/ProfileModal";
 
+type AddressItem = {
+  address: string;
+  is_default: boolean;
+};
+
 export default function AccountPage() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [phone, setPhone] = useState("");
   const [birthDate, setBirthDate] = useState<string | null>(null);
 
-  const [addresses, setAddresses] = useState<string[]>([]);
+  const [addresses, setAddresses] = useState<AddressItem[]>([]);
   const [userId, setUserId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const [editAddress, setEditAddress] = useState<string | undefined>(undefined);
+  const [editAddress, setEditAddress] = useState<AddressItem | undefined>(
+    undefined
+  );
 
   const loadUserData = async () => {
     setLoading(true);
@@ -47,11 +54,11 @@ export default function AccountPage() {
 
       const { data: addressData } = await supabase
         .from("addresses")
-        .select("address")
+        .select("address, is_default")
         .eq("user_id", user_id);
 
       if (addressData) {
-        setAddresses(addressData.map((a) => a.address));
+        setAddresses(addressData);
       }
     } catch (error) {
       toast.error("خطا در دریافت اطلاعات کاربر");
@@ -74,7 +81,7 @@ export default function AccountPage() {
       .eq("address", address);
 
     if (!error) {
-      setAddresses((prev) => prev.filter((a) => a !== address));
+      setAddresses((prev) => prev.filter((a) => a.address !== address));
       toast.success("آدرس حذف شد");
     } else {
       toast.error("خطا در حذف آدرس");
@@ -82,13 +89,10 @@ export default function AccountPage() {
   };
 
   const birthDateFormatted = birthDate
-    ? new Date(birthDate).toLocaleDateString("fa-IR") // یا دستی فرمت کن
+    ? new Date(birthDate).toLocaleDateString("fa-IR")
     : "-";
 
-
-  if (loading) {
-    return <p>در حال بارگذاری...</p>;
-  }
+  if (loading) return <p>در حال بارگذاری...</p>;
 
   return (
     <>
@@ -130,22 +134,63 @@ export default function AccountPage() {
 
         <h2 className="font-bold">آدرس‌ها</h2>
         <div className="space-y-2">
-          {addresses.map((address) => (
+          {addresses.map((item) => (
             <div
-              key={address}
+              key={item.address}
               className="flex items-center justify-between border p-2 rounded"
             >
-              <span>{address}</span>
+              <span>
+                {item.address}
+                {item.is_default && (
+                  <span className="text-green-600 text-sm mr-2">(پیش‌فرض)</span>
+                )}
+              </span>
               <div className="flex gap-2">
+                {!item.is_default && (
+                  <button
+                    onClick={async () => {
+                      if (!userId) return;
+                      try {
+                        // مرحله 1: حذف پیش‌فرض قبلی در دیتابیس
+                        await supabase
+                          .from("addresses")
+                          .update({ is_default: false })
+                          .eq("user_id", userId);
+
+                        // مرحله 2: تعیین آدرس جدید به عنوان پیش‌فرض
+                        await supabase
+                          .from("addresses")
+                          .update({ is_default: true })
+                          .eq("user_id", userId)
+                          .eq("address", item.address);
+
+                        // مرحله 3: آپدیت دستی state addresses
+                        setAddresses((prev) =>
+                          prev.map((a) => ({
+                            ...a,
+                            is_default: a.address === item.address,
+                          }))
+                        );
+
+                        toast.success("آدرس به عنوان پیش‌فرض انتخاب شد");
+                      } catch {
+                        toast.error("خطا در تنظیم آدرس پیش‌فرض");
+                      }
+                    }}
+                    className="text-amber-600 text-sm"
+                  >
+                    انتخاب به عنوان پیش‌فرض
+                  </button>
+                )}
                 <button
-                  onClick={() => handleDeleteAddress(address)}
+                  onClick={() => handleDeleteAddress(item.address)}
                   className="text-red-500 text-sm"
                 >
                   حذف
                 </button>
                 <button
                   onClick={() => {
-                    setEditAddress(address);
+                    setEditAddress(item);
                     setShowModal(true);
                   }}
                   className="text-blue-500 text-sm"
@@ -176,10 +221,10 @@ export default function AccountPage() {
           setShowModal(false);
           setEditAddress(undefined);
         }}
-        initialAddress={editAddress}
-        onSubmit={async (newAddress, oldAddress) => {
+        initialAddress={editAddress?.address}
+        initialIsDefault={editAddress?.is_default ?? false}
+        onSubmit={async (newAddress, oldAddress, isDefault) => {
           const result = addressSchema.safeParse({ address: newAddress });
-
           if (!result.success) {
             toast.error(
               "آدرس نامعتبر است: " +
@@ -188,29 +233,38 @@ export default function AccountPage() {
             return;
           }
 
+          if (!userId) return;
+
+          if (isDefault) {
+            await supabase
+              .from("addresses")
+              .update({ is_default: false })
+              .eq("user_id", userId);
+          }
+
           if (oldAddress) {
             const { error } = await supabase
               .from("addresses")
-              .update({ address: newAddress })
+              .update({ address: newAddress, is_default: isDefault || false })
               .eq("user_id", userId)
               .eq("address", oldAddress);
 
             if (error) toast.error("خطا در ویرایش آدرس");
             else {
-              setAddresses((prev) =>
-                prev.map((a) => (a === oldAddress ? newAddress : a))
-              );
+              await loadUserData();
               toast.success("آدرس ویرایش شد");
               setShowModal(false);
             }
           } else {
-            const { error } = await supabase
-              .from("addresses")
-              .insert({ user_id: userId, address: newAddress });
+            const { error } = await supabase.from("addresses").insert({
+              user_id: userId,
+              address: newAddress,
+              is_default: isDefault || false,
+            });
 
             if (error) toast.error("خطا در افزودن آدرس");
             else {
-              setAddresses((prev) => [...prev, newAddress]);
+              await loadUserData();
               toast.success("آدرس افزوده شد");
               setShowModal(false);
             }
@@ -226,7 +280,7 @@ export default function AccountPage() {
           firstName,
           lastName,
           phone,
-          birthDate: birthDate,
+          birthDate,
         }}
         onSave={({ firstName, lastName, phone, birthDate }) => {
           setFirstName(firstName);

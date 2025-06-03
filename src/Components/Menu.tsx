@@ -27,6 +27,8 @@ export default function Menu() {
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [customBurgers, setCustomBurgers] = useState<CustomBurger[]>([]);
   const categoryRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const [isAuthenticated, setIsAuthenticated] = useState(true); // فرض بر این که ابتدا لاگین هست
+
   const router = useRouter();
 
   useEffect(() => {
@@ -68,13 +70,19 @@ export default function Menu() {
       try {
         const res = await fetch("/api/user/hamburgers");
         const json = await res.json();
+
         if (res.ok) {
           setCustomBurgers(json.burgers || []);
         } else {
-          console.error("خطا در دریافت همبرگرهای سفارشی:", json.error);
+          if (res.status === 401 || res.status === 403) {
+            setIsAuthenticated(false);
+          } else {
+            console.error("خطا در دریافت همبرگرهای سفارشی:", json.error);
+          }
         }
       } catch (err) {
         console.error("خطا در ارتباط با سرور:", err);
+        setIsAuthenticated(false);
       }
     };
 
@@ -114,9 +122,23 @@ export default function Menu() {
         <Cart />
 
         {/* بخش همبرگرهای کاربر */}
+        {/* بخش همبرگرهای کاربر */}
         <div className="space-y-4">
           <h2 className="text-2xl font-bold border-b pb-2">همبرگرهای من</h2>
-          {customBurgers.length > 0 ? (
+
+          {!isAuthenticated ? (
+            <div className="text-center">
+              <p className="text-gray-600">
+                برای دیدن همبرگرهای خود ابتدا وارد شوید.
+              </p>
+              <button
+                onClick={() => router.push("/login")}
+                className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+              >
+                ورود به حساب
+              </button>
+            </div>
+          ) : customBurgers.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
               {customBurgers.map((burger) => (
                 <CustomBurgerCard key={burger.id} burger={burger} />
