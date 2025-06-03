@@ -28,7 +28,7 @@ export async function GET(req: NextRequest) {
   const user_id = user.uid;
 
   const { data: userData, error: userError } = await supabase
-    .from("users")
+    .from("profiles")
     .select("is_active")
     .eq("id", user_id)
     .single();

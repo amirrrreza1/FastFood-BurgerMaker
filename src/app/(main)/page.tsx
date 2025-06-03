@@ -1,7 +1,12 @@
+
 import Menu from "@/Components/Menu";
 
 const HomePage = () => {
-  return <><Menu /></>;
+  return (
+    <>
+      <Menu />
+    </>
+  );
 };
 
 export default HomePage;

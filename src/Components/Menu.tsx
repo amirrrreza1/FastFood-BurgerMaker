@@ -119,7 +119,6 @@ export default function Menu() {
 
       {/* Menu Items */}
       <div className="flex-1 space-y-10">
-        <Cart />
 
         {/* بخش همبرگرهای کاربر */}
         {/* بخش همبرگرهای کاربر */}
