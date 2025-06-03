@@ -7,7 +7,7 @@ interface RouteContext {
   };
 }
 
-export async function GET(req: NextRequest, context: any) {
+export async function POST(req: NextRequest, context: any) {
   const id = (context as RouteContext).params.id;
   const { is_active } = await req.json();
 

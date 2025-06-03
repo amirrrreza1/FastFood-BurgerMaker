@@ -15,6 +15,9 @@ interface Order {
   status: string;
   created_at: string;
   items: OrderItem[];
+  user_name?: string;
+  user_phone?: string;
+  note?: string;
 }
 
 const STATUS_FLOW: Record<string, string> = {
@@ -25,29 +28,39 @@ const STATUS_FLOW: Record<string, string> = {
 
 export default function KitchenDisplayPage() {
   const [orders, setOrders] = useState<Order[]>([]);
-  const [loading, setLoading] = useState(false);
 
   const fetchOrders = async () => {
     try {
-        const res = await axios.get("/api/admin/orders");
+      const res = await axios.get("/api/admin/orders");
       const filtered = res.data.filter((o: Order) =>
         ["pending", "preparing", "delivering"].includes(o.status)
       );
-      setOrders(res.data);
+      setOrders(filtered);
     } catch (err) {
       toast.error("خطا در دریافت سفارش‌ها");
     }
   };
 
-  useEffect(() => {
+  const advanceStatus = async (orderId: number, currentStatus: string) => {
+    const nextStatus = STATUS_FLOW[currentStatus];
+    if (!nextStatus) return;
+
+    try {
+      await axios.patch(`/api/admin/orders/${orderId}`, {
+        status: nextStatus,
+      });
+      toast.success("وضعیت سفارش به‌روزرسانی شد");
       fetchOrders();
-      console.log(orders);
-      
+    } catch (err) {
+      toast.error("خطا در تغییر وضعیت سفارش");
+    }
+  };
+
+  useEffect(() => {
+    fetchOrders();
     const interval = setInterval(fetchOrders, 5000);
     return () => clearInterval(interval);
   }, []);
-
-
 
   return (
     <div className="p-6">
@@ -74,9 +87,29 @@ export default function KitchenDisplayPage() {
               ))}
             </ul>
 
-            <div className="text-sm text-gray-700">وضعیت: {order.status}</div>
 
+            {order.note && (
+              <div className="text-sm text-gray-700">
+                📝 توضیحات: {order.note}
+              </div>
+            )}
 
+            <div className="text-sm text-gray-700">
+              وضعیت فعلی: <span className="font-semibold">{order.status}</span>
+            </div>
+
+            {STATUS_FLOW[order.status] ? (
+              <button
+                onClick={() => advanceStatus(order.id, order.status)}
+                className="mt-2 w-full bg-blue-600 hover:bg-blue-700 text-white py-1 px-3 rounded text-sm"
+              >
+                تغییر به "{STATUS_FLOW[order.status]}"
+              </button>
+            ) : (
+              <div className="text-green-600 font-bold mt-2 text-center text-sm">
+                سفارش نهایی شده ✅
+              </div>
+            )}
           </div>
         ))}
       </div>
