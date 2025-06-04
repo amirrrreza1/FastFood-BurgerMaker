@@ -38,6 +38,7 @@ export default function AccountPage() {
 
       const user_id = json.user_id;
       setUserId(user_id);
+      
 
       const { data: profile } = await supabase
         .from("profiles")
@@ -262,7 +263,7 @@ export default function AccountPage() {
               is_default: isDefault || false,
             });
 
-            if (error) toast.error("خطا در افزودن آدرس");
+            if (error) toast.error("خطا در افزودن آدرس" + error.message);
             else {
               await loadUserData();
               toast.success("آدرس افزوده شد");

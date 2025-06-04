@@ -76,6 +76,11 @@ export default function EditProfileModal({
       ? birthDate.toDate().toISOString().split("T")[0]
       : null;
 
+    if (!userId) {
+      toast.error("شناسه کاربر نامشخص است");
+      return;
+    }
+
     const { error } = await supabase.from("profiles").upsert(
       {
         id: userId,
@@ -90,7 +95,10 @@ export default function EditProfileModal({
     setLoading(false);
 
     if (error) {
-      toast.error("خطا در ذخیره اطلاعات");
+      if (error) {
+        console.error("Error saving profile:", error);
+        toast.error("خطا در ذخیره اطلاعات: " + error.message);
+      }
     } else {
       toast.success("اطلاعات با موفقیت ذخیره شد");
       onSave({
