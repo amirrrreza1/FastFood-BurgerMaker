@@ -2,16 +2,17 @@
 
 import Link from "next/link";
 import { redirect, usePathname } from "next/navigation";
+import { useState } from "react";
 
 const menuItems = [
   { label: "مدیریت منو", href: "/admin/menu" },
   { label: "مدیریت سفارش", href: "/admin/orders" },
   { label: "مدیریت کاربران", href: "/admin/users" },
-  // می‌تونی آیتم‌های بیشتر به این آرایه اضافه کنی
 ];
 
 export default function AdminSidebar() {
   const pathname = usePathname();
+  const [isOpen, setIsOpen] = useState(false);
 
   const handleLogout = async () => {
     await fetch("/api/auth/logout", {
@@ -21,26 +22,77 @@ export default function AdminSidebar() {
   };
 
   return (
-    <aside className="w-64 bg-white shadow-md p-4 space-y-4">
-      <h2 className="text-lg font-bold mb-6">پنل ادمین</h2>
-      <nav className="space-y-2">
-        {menuItems.map((item) => (
-          <Link
-            key={item.href}
-            href={item.href}
-            className={`
-              block text-sm px-2 py-1 rounded transition ${
-                pathname === item.href
-                  ? "bg-amber-100 text-black font-semibold"
-                  : "text-gray-700 hover:text-black hover:bg-gray-100"
-              }
-                `}
-          >
-            {item.label}
-          </Link>
-        ))}
-        <button onClick={() => handleLogout()}>خروج</button>
-      </nav>
-    </aside>
+    <>
+      {/* Mobile Menu Button */}
+      <div className="md:hidden flex items-center justify-center rounded-2xl bg-white shadow w-10 h-10 absolute right-4 top-4 z-50">
+        <button onClick={() => setIsOpen(true)}>
+          <img src="/images/SVG/menu.svg" alt="menu" width={25} />
+        </button>
+      </div>
+
+      {/* Mobile Sidebar Drawer */}
+      <div
+        className={`fixed inset-0 z-40 bg-black/50 transition-opacity duration-200 ${
+          isOpen ? "opacity-100 visible" : "opacity-0 invisible"
+        } md:hidden`}
+        onClick={() => setIsOpen(false)}
+      >
+        <aside
+          className="absolute right-0 top-0 w-64 h-full bg-gray-100 p-4 shadow-lg flex flex-col"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-bold">پنل ادمین</h2>
+            <button onClick={() => setIsOpen(false)}>
+              <img src="/images/SVG/close.svg" alt="close" width={25} />
+            </button>
+          </div>
+          <ul className="flex-1 space-y-2 overflow-y-auto">
+            {menuItems.map((item) => (
+              <li key={item.href}>
+                <Link
+                  href={item.href}
+                  onClick={() => setIsOpen(false)}
+                  className={`block p-2 rounded hover:bg-gray-200 ${
+                    pathname === item.href ? "bg-gray-300 font-bold" : ""
+                  }`}
+                >
+                  {item.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+          <div className="mt-4">
+            <button className="DeleteBTN w-full" onClick={handleLogout}>
+              خروج
+            </button>
+          </div>
+        </aside>
+      </div>
+
+      {/* Desktop Sidebar */}
+      <aside className="hidden md:flex w-60 bg-gray-100 p-4 border-l flex-col">
+        <h2 className="text-xl font-bold mb-4">پنل ادمین</h2>
+        <ul className="flex-1 space-y-2 overflow-y-auto">
+          {menuItems.map((item) => (
+            <li key={item.href}>
+              <Link
+                href={item.href}
+                className={`block p-2 rounded hover:bg-gray-200 ${
+                  pathname === item.href ? "bg-gray-300 font-bold" : ""
+                }`}
+              >
+                {item.label}
+              </Link>
+            </li>
+          ))}
+        </ul>
+        <div className="mt-4">
+          <button className="DeleteBTN w-full" onClick={handleLogout}>
+            خروج
+          </button>
+        </div>
+      </aside>
+    </>
   );
 }

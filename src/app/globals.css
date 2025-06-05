@@ -114,16 +114,16 @@
     border-color: #ffd700;
   }
   .ConfirmBTN {
-    @apply px-6 py-2 rounded-xl bg-green-500 text-white shadow-md transform transition-all duration-300 hover:scale-105 hover:shadow-green-400 hover:-translate-y-1;
+    @apply px-6 py-2 rounded-xl bg-green-500 text-white shadow-md transform transition-all duration-300 hover:scale-105 hover:shadow-green-400 hover:-translate-y-1 cursor-pointer;
   }
   .CancelBTN {
-    @apply px-6 py-2 rounded-xl bg-gray-200 text-gray-800 shadow-md transform transition-all duration-300 hover:scale-105 hover:shadow-gray-400 hover:-translate-y-1;
+    @apply px-6 py-2 rounded-xl bg-gray-200 text-gray-800 shadow-md transform transition-all duration-300 hover:scale-105 hover:shadow-gray-400 hover:-translate-y-1 cursor-pointer;
   }
   .DeleteBTN {
-    @apply px-6 py-2 rounded-xl bg-red-500 text-white shadow-md transform transition-all duration-300 hover:scale-110 hover:shadow-red-500 hover:-translate-y-1 active:scale-95;
+    @apply px-6 py-2 rounded-xl bg-red-500 text-white shadow-md transform transition-all duration-300 hover:scale-110 hover:shadow-red-500 hover:-translate-y-1 active:scale-95 cursor-pointer;
   }
   .EditBTN {
-    @apply flex items-center gap-2 px-6 py-2 rounded-xl bg-blue-500 text-white shadow-md transform transition-all duration-300 hover:scale-105 hover:shadow-blue-400 hover:-translate-y-1 active:scale-95;
+    @apply flex items-center gap-2 px-6 py-2 rounded-xl bg-blue-500 text-white shadow-md transform transition-all duration-300 hover:scale-105 hover:shadow-blue-400 hover:-translate-y-1 active:scale-95 cursor-pointer;
   }
 }
 

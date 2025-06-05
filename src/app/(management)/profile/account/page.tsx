@@ -5,6 +5,8 @@ import { supabase } from "@/Lib/supabase";
 import { toast } from "react-toastify";
 import AddAddressModal from "@/Components/AddAddressModal";
 import EditProfileModal from "@/Components/ProfileModal";
+import Swal from "sweetalert2";
+import LoadingSpinner from "@/Components/Loading";
 
 type AddressItem = {
   address: string;
@@ -81,7 +83,6 @@ export default function AccountPage() {
 
     if (!error) {
       setAddresses((prev) => prev.filter((a) => a.address !== address));
-      toast.success("آدرس حذف شد");
     } else {
       toast.error("خطا در حذف آدرس");
     }
@@ -91,96 +92,96 @@ export default function AccountPage() {
     ? new Date(birthDate).toLocaleDateString("fa-IR")
     : "-";
 
-  if (loading) return <p>در حال بارگذاری...</p>;
+  if (loading) return <LoadingSpinner text="در حال دریافت اطلاعات حساب کاربری..." />;
 
   return (
     <>
-      <div className="space-y-6">
-        <h1 className="text-xl font-bold">اطلاعات حساب کاربری</h1>
+      <div className="container mx-auto px-4 py-6 space-y-6">
+        <h1 className="text-xl font-bold text-center md:text-right">
+          اطلاعات حساب کاربری
+        </h1>
 
-        <div className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <span className="text-sm">نام:</span>
-              <p className="p-2 border rounded">{firstName || "-"}</p>
-            </div>
-
-            <div>
-              <span className="text-sm">نام خانوادگی:</span>
-              <p className="p-2 border rounded">{lastName || "-"}</p>
-            </div>
-
-            <div className="md:col-span-2">
-              <span className="text-sm">شماره همراه:</span>
-              <p className="p-2 border rounded">{phone || "-"}</p>
-            </div>
-
-            <div className="md:col-span-2">
-              <span className="text-sm">تاریخ تولد:</span>
-              <p className="p-2 border rounded">{birthDateFormatted}</p>
-            </div>
+        <div className="grid sm:grid-cols-2 gap-4">
+          <div>
+            <span className="text-sm text-gray-700">نام:</span>
+            <p className="p-2 border rounded bg-white">{firstName || "-"}</p>
           </div>
 
+          <div>
+            <span className="text-sm text-gray-700">نام خانوادگی:</span>
+            <p className="p-2 border rounded bg-white">{lastName || "-"}</p>
+          </div>
+
+          <div>
+            <span className="text-sm text-gray-700">شماره همراه:</span>
+            <p className="p-2 border rounded bg-white">{phone || "-"}</p>
+          </div>
+
+          <div>
+            <span className="text-sm text-gray-700">تاریخ تولد:</span>
+            <p className="p-2 border rounded bg-white">{birthDateFormatted}</p>
+          </div>
+        </div>
+
+        <div className="text-center sm:text-right">
           <button
             onClick={() => setShowProfileModal(true)}
-            className="EditBTN"
+            className="EditBTN mt-4 sm:mt-0"
           >
             ویرایش اطلاعات
           </button>
         </div>
 
-        <hr />
+        <hr className="my-6" />
 
-        <h2 className="font-bold">آدرس‌ها</h2>
-        <div className="space-y-2">
+        <h2 className="font-bold text-center sm:text-right">آدرس‌ها</h2>
+        <div className="space-y-4">
           {addresses.map((item) => (
             <div
               key={item.address}
-              className="flex items-center justify-between border p-2 rounded"
+              className="flex flex-col sm:flex-row sm:items-center justify-between border gap-3 p-4 rounded bg-white"
             >
-              <span>
-                {item.address}
-                {item.is_default && (
-                  <span className="text-green-600 text-sm mr-2">(پیش‌فرض)</span>
-                )}
-              </span>
-              <div className="flex gap-2">
-                {!item.is_default && (
-                  <button
-                    onClick={async () => {
-                      if (!userId) return;
-                      try {
-                        // مرحله 1: حذف پیش‌فرض قبلی در دیتابیس
-                        await supabase
-                          .from("addresses")
-                          .update({ is_default: false })
-                          .eq("user_id", userId);
+              <div className="flex items-center gap-2 w-full sm:w-auto">
+                {/* Radio button برای انتخاب پیش‌فرض */}
+                <input
+                  type="radio"
+                  name="defaultAddress"
+                  checked={item.is_default}
+                  onChange={async () => {
+                    if (!userId) return;
+                    try {
+                      // مرحله 1: حذف پیش‌فرض قبلی
+                      await supabase
+                        .from("addresses")
+                        .update({ is_default: false })
+                        .eq("user_id", userId);
 
-                        // مرحله 2: تعیین آدرس جدید به عنوان پیش‌فرض
-                        await supabase
-                          .from("addresses")
-                          .update({ is_default: true })
-                          .eq("user_id", userId)
-                          .eq("address", item.address);
+                      // مرحله 2: تعیین آدرس فعلی به عنوان پیش‌فرض
+                      await supabase
+                        .from("addresses")
+                        .update({ is_default: true })
+                        .eq("user_id", userId)
+                        .eq("address", item.address);
 
-                        // مرحله 3: آپدیت دستی state addresses
-                        setAddresses((prev) =>
-                          prev.map((a) => ({
-                            ...a,
-                            is_default: a.address === item.address,
-                          }))
-                        );
+                      // مرحله 3: به‌روزرسانی state
+                      setAddresses((prev) =>
+                        prev.map((a) => ({
+                          ...a,
+                          is_default: a.address === item.address,
+                        }))
+                      );
 
-                        toast.success("آدرس به عنوان پیش‌فرض انتخاب شد");
-                      } catch {
-                        toast.error("خطا در تنظیم آدرس پیش‌فرض");
-                      }
-                    }}
-                    className="text-amber-600 text-sm"
-                  >
-                    انتخاب به عنوان پیش‌فرض
-                  </button>
-                )}
+                      toast.success("آدرس به عنوان پیش‌فرض انتخاب شد");
+                    } catch {
+                      toast.error("خطا در تنظیم آدرس پیش‌فرض");
+                    }
+                  }}
+                  className="accent-green-600"
+                />
+                <div className="text-sm break-words">{item.address}</div>
+              </div>
+
+              <div className="flex flex-wrap gap-2 w-full sm:w-auto justify-start sm:justify-end">
                 <button
                   className="EditBTN"
                   onClick={() => {
@@ -191,7 +192,27 @@ export default function AccountPage() {
                   ویرایش
                 </button>
                 <button
-                  onClick={() => handleDeleteAddress(item.address)}
+                  onClick={() => {
+                    Swal.fire({
+                      title: "آیا مطمئن هستید؟",
+                      text: "این آدرس برای همیشه حذف خواهد شد!",
+                      icon: "warning",
+                      showCancelButton: true,
+                      confirmButtonText: "بله، حذف کن",
+                      cancelButtonText: "لغو",
+                      confirmButtonColor: "#d33",
+                      cancelButtonColor: "#3085d6",
+                    }).then((result) => {
+                      if (result.isConfirmed) {
+                        handleDeleteAddress(item.address);
+                        Swal.fire(
+                          "حذف شد!",
+                          "آدرس با موفقیت حذف شد.",
+                          "success"
+                        );
+                      }
+                    });
+                  }}
                   className="DeleteBTN"
                 >
                   حذف
@@ -200,7 +221,7 @@ export default function AccountPage() {
             </div>
           ))}
 
-          <div>
+          <div className="text-center sm:text-right">
             <button
               onClick={() => {
                 setEditAddress(undefined);
@@ -214,6 +235,7 @@ export default function AccountPage() {
         </div>
       </div>
 
+      {/* Modals */}
       <AddAddressModal
         isOpen={showModal}
         onClose={() => {
