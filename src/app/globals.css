@@ -71,19 +71,16 @@
 }
 
 @layer components {
-  .LoginBackGround {
-    background-image: url("../../public/images/background-Pattern.jpg");
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-position: center;
-  }
-  .SocialIconFooter{
+  .SocialIconFooter {
     transition: scale 0.3s ease;
     &:hover {
       scale: 1.1;
     }
   }
-  .login-btn {
+  .Input {
+    @apply p-2 border rounded;
+  }
+  .CustomBTN {
     color: white;
     border: 1px solid white;
     padding: 6px 12px;
@@ -93,8 +90,11 @@
     overflow: hidden;
     z-index: 1;
   }
-
-  .login-btn::before {
+  .LoginFormBtn {
+    @apply bg-primary rounded-lg px-4 py-2 hover:bg-gray;
+    transition: all 0.3s ease;
+  }
+  .CustomBTN::before {
     content: "";
     position: absolute;
     top: 0;
@@ -106,19 +106,28 @@
     z-index: -1;
     transition: width 0.3s ease;
   }
-
-  .login-btn:hover::before {
+  .CustomBTN:hover::before {
     width: 100%;
   }
-  .login-btn:hover {
+  .CustomBTN:hover {
     color: #ffd700;
     border-color: #ffd700;
+  }
+  .ConfirmBTN {
+    @apply px-6 py-2 rounded-xl bg-green-500 text-white shadow-md transform transition-all duration-300 hover:scale-105 hover:shadow-green-400 hover:-translate-y-1;
+  }
+  .CancelBTN {
+    @apply px-6 py-2 rounded-xl bg-gray-200 text-gray-800 shadow-md transform transition-all duration-300 hover:scale-105 hover:shadow-gray-400 hover:-translate-y-1;
+  }
+  .DeleteBTN {
+    @apply px-6 py-2 rounded-xl bg-red-500 text-white shadow-md transform transition-all duration-300 hover:scale-110 hover:shadow-red-500 hover:-translate-y-1 active:scale-95;
+  }
+  .EditBTN {
+    @apply flex items-center gap-2 px-6 py-2 rounded-xl bg-blue-500 text-white shadow-md transform transition-all duration-300 hover:scale-105 hover:shadow-blue-400 hover:-translate-y-1 active:scale-95;
   }
 }
 
 @theme {
-  --color-primary: #1b2223;
-  --color-secondary: #3a4f50;
-  --color-white: #f4fefd;
-  --color-MainGreen: #0ef6cc;
+  --color-primary: #ffd700;
+  --color-gray: #e2ceca;
 }

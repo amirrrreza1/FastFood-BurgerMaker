@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/Lib/supabase";
 import { toast } from "react-toastify";
-import { addressSchema } from "@/Lib/schemas/account";
 import AddAddressModal from "@/Components/AddAddressModal";
 import EditProfileModal from "@/Components/ProfileModal";
 
@@ -38,7 +37,6 @@ export default function AccountPage() {
 
       const user_id = json.user_id;
       setUserId(user_id);
-      
 
       const { data: profile } = await supabase
         .from("profiles")
@@ -125,7 +123,7 @@ export default function AccountPage() {
 
           <button
             onClick={() => setShowProfileModal(true)}
-            className="bg-amber-500 text-white py-2 px-4 rounded hover:bg-amber-600"
+            className="EditBTN"
           >
             ویرایش اطلاعات
           </button>
@@ -184,19 +182,19 @@ export default function AccountPage() {
                   </button>
                 )}
                 <button
-                  onClick={() => handleDeleteAddress(item.address)}
-                  className="text-red-500 text-sm"
-                >
-                  حذف
-                </button>
-                <button
+                  className="EditBTN"
                   onClick={() => {
                     setEditAddress(item);
                     setShowModal(true);
                   }}
-                  className="text-blue-500 text-sm"
                 >
                   ویرایش
+                </button>
+                <button
+                  onClick={() => handleDeleteAddress(item.address)}
+                  className="DeleteBTN"
+                >
+                  حذف
                 </button>
               </div>
             </div>
@@ -208,7 +206,7 @@ export default function AccountPage() {
                 setEditAddress(undefined);
                 setShowModal(true);
               }}
-              className="bg-green-600 text-white px-4 py-2 rounded"
+              className="ConfirmBTN"
             >
               افزودن آدرس جدید
             </button>
@@ -225,15 +223,6 @@ export default function AccountPage() {
         initialAddress={editAddress?.address}
         initialIsDefault={editAddress?.is_default ?? false}
         onSubmit={async (newAddress, oldAddress, isDefault) => {
-          const result = addressSchema.safeParse({ address: newAddress });
-          if (!result.success) {
-            toast.error(
-              "آدرس نامعتبر است: " +
-                result.error.errors.map((e) => e.message).join("، ")
-            );
-            return;
-          }
-
           if (!userId) return;
 
           if (isDefault) {

@@ -21,6 +21,7 @@
     "next": "15.3.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-jalali-datepicker": "^0.2.66",
     "react-multi-date-picker": "^4.5.2",
     "react-toastify": "^11.0.5",
     "sweetalert2": "^11.21.0",

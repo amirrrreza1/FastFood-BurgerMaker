@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { z } from "zod";
 import { toast } from "react-toastify";
 import { detailedAddressSchema } from "@/Lib/schemas/account";
 
@@ -78,8 +77,14 @@ export default function AddAddressModal({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg shadow p-6 w-full max-w-md space-y-4">
+    <div
+      className="fixed inset-0 bg-black/50 bg-opacity-50 flex items-center justify-center z-50"
+      onClick={onClose}
+    >
+      <div
+        className="bg-white rounded-lg shadow p-6 w-full max-w-md space-y-4"
+        onClick={(e) => e.stopPropagation()}
+      >
         <h2 className="text-lg font-bold">
           {initialAddress ? "ویرایش آدرس" : "افزودن آدرس جدید"}
         </h2>
@@ -88,56 +93,57 @@ export default function AddAddressModal({
           <input
             type="text"
             placeholder="خیابان"
-            className="w-full border p-2 rounded"
+            className="Input w-full"
             value={street}
             onChange={(e) => setStreet(e.target.value)}
           />
           <input
             type="text"
             placeholder="کوچه"
-            className="w-full border p-2 rounded"
+            className="Input w-full"
             value={alley}
             onChange={(e) => setAlley(e.target.value)}
           />
           <input
             type="text"
             placeholder="پلاک"
-            className="w-full border p-2 rounded"
+            className="Input w-full"
             value={plaque}
             onChange={(e) => setPlaque(e.target.value)}
           />
           <input
             type="text"
             placeholder="واحد"
-            className="w-full border p-2 rounded"
+            className="Input w-full"
             value={unit}
             onChange={(e) => setUnit(e.target.value)}
           />
 
-          <label className="flex items-center gap-2 mt-2">
+          <label className="flex items-center gap-2 mt-2 cursor-pointer">
             <input
               type="checkbox"
               checked={isDefault}
               onChange={(e) => setIsDefault(e.target.checked)}
+              className="w-4 h-4 text-indigo-600 bg-white border-gray-300 rounded"
             />
             <span className="text-sm">این آدرس به عنوان پیش‌فرض تنظیم شود</span>
           </label>
         </div>
 
         <div className="flex justify-end gap-2 pt-4">
-          <button onClick={onClose} className="text-gray-600">
+          <button onClick={onClose} className="CancelBTN">
             انصراف
           </button>
           <button
             onClick={handleSubmit}
-            className="bg-green-600 text-white px-4 py-1 rounded"
+            className="ConfirmBTN"
             disabled={loading}
           >
             {loading
               ? "در حال ذخیره..."
               : initialAddress
-                ? "ذخیره تغییرات"
-                : "افزودن"}
+              ? "ذخیره تغییرات"
+              : "افزودن"}
           </button>
         </div>
       </div>

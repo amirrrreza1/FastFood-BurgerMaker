@@ -113,8 +113,8 @@ const SignupForm = () => {
 
           <input
             type="text"
-            placeholder="نام نمایشی"
-            className="p-2 border rounded"
+            placeholder="نام کاربری"
+            className="Input"
             value={displayName}
             onChange={(e) => setDisplayName(e.target.value)}
             required
@@ -123,7 +123,7 @@ const SignupForm = () => {
           <input
             type="email"
             placeholder="ایمیل"
-            className="p-2 border rounded"
+            className="Input"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
@@ -132,7 +132,7 @@ const SignupForm = () => {
           <input
             type="password"
             placeholder="رمز عبور"
-            className="p-2 border rounded"
+            className="Input"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
@@ -140,7 +140,7 @@ const SignupForm = () => {
 
           <button
             type="submit"
-            className="bg-[var(--color-secondary)] text-white py-2 rounded"
+            className="LoginFormBtn"
           >
             ارسال کد تأیید
           </button>
@@ -152,7 +152,7 @@ const SignupForm = () => {
           <input
             type="text"
             placeholder="کد ارسال‌شده به ایمیل"
-            className="p-2 border rounded"
+            className="Input"
             value={code}
             onChange={(e) => setCode(e.target.value)}
             required
@@ -160,26 +160,9 @@ const SignupForm = () => {
 
           <button
             type="submit"
-            className="bg-green-600 text-white py-2 rounded"
+            className="LoginFormBtn"
           >
             تأیید و ساخت اکانت
-          </button>
-
-          <button
-            type="button"
-            className="text-sm text-blue-600 underline mt-2"
-            onClick={handleResendCode}
-            disabled={resending}
-          >
-            {resending ? "در حال ارسال مجدد..." : "ارسال دوباره کد تأیید"}
-          </button>
-
-          <button
-            type="button"
-            className="text-sm text-gray-600 underline"
-            onClick={() => setStep("form")}
-          >
-            بازگشت به مرحله قبل
           </button>
         </form>
       )}

@@ -7,14 +7,17 @@ export const metadata: Metadata = {
   description: "Restaurant Website made with Next.js",
 };
 
-export default function RootLayout({
+const RootLayout = ({
   children,
 }: Readonly<{
   children: React.ReactNode;
-}>) {
+}>) => {
   return (
     <main>
-      {children} <ToastContainer position="top-right" />
+      {children}
+      <ToastContainer position="top-right" />
     </main>
   );
-}
+};
+
+export default RootLayout;
