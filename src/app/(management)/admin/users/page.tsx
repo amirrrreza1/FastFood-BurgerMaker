@@ -1,5 +1,6 @@
 "use client";
 
+import LoadingSpinner from "@/Components/Loading";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
@@ -76,22 +77,25 @@ export default function AdminUsersPage() {
   });
 
   return (
-    <div className="p-6">
-      <h2 className="text-2xl font-bold mb-4">مدیریت کاربران</h2>
+    <div className="p-6 max-w-6xl mx-auto">
+      <h2 className="text-2xl font-bold mb-4 text-center">مدیریت کاربران</h2>
 
       <input
         type="text"
         placeholder="جستجو بر اساس نام، ایمیل، شماره و..."
-        className="w-full p-2 border rounded mb-4"
+        className="w-full p-2 border rounded mb-6"
         value={search}
         onChange={(e) => setSearch(e.target.value)}
       />
 
       {loading ? (
-        <p>در حال بارگذاری...</p>
+        <LoadingSpinner text="در حال بارگذاری کاربران..." />
+      ) : filteredUsers.length === 0 ? (
+        <p className="text-center">کاربری یافت نشد.</p>
       ) : (
-        <div className="overflow-auto">
-          <table className="w-full text-sm border">
+        <div className="overflow-x-auto">
+          {/* نمایش جدول در سایزهای بزرگ */}
+          <table className="hidden lg:table w-full text-sm border">
             <thead className="bg-gray-100">
               <tr>
                 <th className="p-2 border">نام</th>
@@ -107,12 +111,20 @@ export default function AdminUsersPage() {
             <tbody>
               {filteredUsers.map((user) => (
                 <tr key={user.id}>
-                  <td className="p-2 border">{user.name}</td>
-                  <td className="p-2 border">{user.lastName}</td>
-                  <td className="p-2 border">{user.email}</td>
-                  <td className="p-2 border">{user.phoneNum}</td>
-                  <td className="p-2 border">{user.subscription_number}</td>
-                  <td className="p-2 border">
+                  <td className="p-2 border text-center">{user.name || "-"}</td>
+                  <td className="p-2 border text-center">
+                    {user.lastName || "-"}
+                  </td>
+                  <td className="p-2 border text-center">
+                    {user.email || "-"}
+                  </td>
+                  <td className="p-2 border text-center">
+                    {user.phoneNum || "-"}
+                  </td>
+                  <td className="p-2 border text-center">
+                    {user.subscription_number || "-"}
+                  </td>
+                  <td className="p-2 border text-center">
                     {new Date(user.created_at).toLocaleDateString("fa-IR")}
                   </td>
                   <td className="p-2 border text-center">
@@ -135,9 +147,54 @@ export default function AdminUsersPage() {
             </tbody>
           </table>
 
-          {filteredUsers.length === 0 && (
-            <p className="text-center mt-4">کاربری یافت نشد.</p>
-          )}
+          {/* نمایش کارت‌ها در موبایل */}
+          <div className="lg:hidden flex flex-col gap-4">
+            {filteredUsers.map((user) => (
+              <div
+                key={user.id}
+                className="border rounded-lg p-4 shadow-sm bg-white space-y-2"
+              >
+                <div>
+                  <strong>نام:</strong> {user.name || "-"}
+                </div>
+                <div>
+                  <strong>نام خانوادگی:</strong> {user.lastName || "-"}
+                </div>
+                <div>
+                  <strong>ایمیل:</strong> {user.email || "-"}
+                </div>
+                <div>
+                  <strong>شماره همراه:</strong> {user.phoneNum || "-"}
+                </div>
+                <div>
+                  <strong>شماره اشتراک:</strong>{" "}
+                  {user.subscription_number || "-"}
+                </div>
+                <div>
+                  <strong>تاریخ ساخت:</strong>{" "}
+                  {new Date(user.created_at).toLocaleDateString("fa-IR")}
+                </div>
+                <div>
+                  <strong>فعال:</strong>{" "}
+                  {user.is_active ? (
+                    <span className="text-green-600">✅</span>
+                  ) : (
+                    <span className="text-red-600">❌</span>
+                  )}
+                </div>
+                <div>
+                  <button
+                    className={`px-3 py-1 rounded w-full ${
+                      user.is_active ? "bg-red-500" : "bg-green-500"
+                    } text-white`}
+                    onClick={() => handleToggleActive(user.id, user.is_active)}
+                  >
+                    {user.is_active ? "غیرفعال کردن" : "فعال‌سازی"}
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       )}
     </div>

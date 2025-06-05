@@ -32,7 +32,7 @@ export default function AdminSidebar() {
 
       {/* Mobile Sidebar Drawer */}
       <div
-        className={`fixed inset-0 z-40 bg-black/50 transition-opacity duration-200 ${
+        className={`fixed inset-0  bg-black/50 transition-opacity duration-200 z-50 ${
           isOpen ? "opacity-100 visible" : "opacity-0 invisible"
         } md:hidden`}
         onClick={() => setIsOpen(false)}
