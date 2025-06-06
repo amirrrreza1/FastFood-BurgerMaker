@@ -18,7 +18,7 @@ export default function MenuItemCard({ item }: Props) {
   const decrementQuantity = useCartStore((state) => state.decrementQuantity);
   const cartItems = useCartStore((state) => state.items);
 
-  const imageSrc = item.image || item.image_url || fallbackImage;
+  const imageSrc = item.image_url || fallbackImage;
   const cartItem = cartItems.find((i) => i.id === item.id);
 
   const handleAddToCart = () => {
@@ -35,67 +35,66 @@ export default function MenuItemCard({ item }: Props) {
   return (
     <>
       <div
-        className={`relative rounded-xl overflow-hidden shadow-md transition ${
+        className={`relative rounded-xl overflow-hidden shadow-sm hover:shadow-md transition duration-300 ${
           item.available === false
-            ? "bg-gray-200 opacity-60 cursor-not-allowed"
+            ? "bg-gray-100 opacity-60 cursor-not-allowed"
             : "bg-white"
         }`}
       >
         <img
           src={imageSrc}
           alt={item.name}
-          className="w-full h-48 object-cover"
+          className="w-full h-44 sm:h-48 md:h-52 object-cover rounded-t-xl"
         />
 
-        <div className="p-4 space-y-2">
-          <h3 className="text-lg font-bold">{item.name}</h3>
-          <div className="text-sm text-gray-600 line-clamp-2">
-            {item.description}
+        <div className="p-3 sm:p-4 space-y-2 text-center sm:text-right">
+          <h3 className="text-base sm:text-lg font-bold text-gray-800 flex items-center justify-center sm:justify-start gap-1">
+            🍽️ {item.name}
+          </h3>
+
+          <div className="text-xs text-gray-500 flex items-center justify-center sm:justify-start gap-1">
+            🔥 کالری: {item.calories}
           </div>
-          <div className="text-xs text-gray-500">کالری: {item.calories}</div>
-          <div className="font-semibold text-amber-600">
+
+          <div className="text-base font-semibold text-amber-600">
             {item.price.toLocaleString()} تومان
           </div>
 
           {item.available === false ? (
-            <div className="text-red-600 text-sm mt-2">ناموجود</div>
+            <div className="text-red-600 text-sm mt-2 flex items-center justify-center gap-1">
+              ⚠️ ناموجود
+            </div>
           ) : cartItem ? (
-            <div className="flex items-center gap-2 mt-3">
+            <div className="flex items-center justify-center sm:justify-start gap-2 mt-3">
               <button
                 onClick={() => decrementQuantity(item.id)}
-                className="px-2 py-1 bg-red-500 text-white rounded"
+                className="w-7 h-7 bg-gray-100 hover:bg-gray-200 rounded text-lg"
               >
                 -
               </button>
               <span className="text-sm font-medium">{cartItem.quantity}</span>
               <button
                 onClick={() => incrementQuantity(item.id)}
-                className="px-2 py-1 bg-green-500 text-white rounded"
+                className="w-7 h-7 bg-gray-100 hover:bg-gray-200 rounded text-lg"
               >
                 +
               </button>
             </div>
           ) : (
-            <button
-              onClick={handleAddToCart}
-              className="mt-3 w-full py-2 bg-amber-500 hover:bg-amber-600 text-white rounded"
-            >
-              افزودن به سبد خرید
+            <button onClick={handleAddToCart} className="AddTocartBTN">
+              🛒 افزودن به سبد خرید
             </button>
           )}
 
-          <button
-            onClick={() => setShowModal(true)}
-            className="mt-2 w-full py-1 border border-amber-500 text-amber-600 rounded text-sm hover:bg-amber-50"
-          >
-            مشاهده جزئیات
+          <button onClick={() => setShowModal(true)} className="SeeDetailsBTN">
+            🔍 مشاهده جزئیات
           </button>
         </div>
 
         {item.available === false && (
-          <div className="absolute top-2 left-2 bg-red-500 text-white text-xs px-2 py-1 rounded-md">
-            ناموجود
-          </div>
+          <span className="absolute top-2 right-2 bg-red-500 text-white text-xs px-2 py-1 rounded-md shadow flex items-center gap-1">
+            ⚠️ ناموجود
+          </span>
         )}
       </div>
 

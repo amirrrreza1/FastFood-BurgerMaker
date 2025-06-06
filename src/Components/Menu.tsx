@@ -21,14 +21,16 @@ type CustomBurger = {
   name: string;
   total_price: number;
   image_url: string;
+  calories: number;
+  description: string;
 };
 
 export default function Menu() {
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [customBurgers, setCustomBurgers] = useState<CustomBurger[]>([]);
   const categoryRefs = useRef<Record<string, HTMLDivElement | null>>({});
-  const [isAuthenticated, setIsAuthenticated] = useState(true); // فرض بر این که ابتدا لاگین هست
-
+  const [isAuthenticated, setIsAuthenticated] = useState(true);
+  const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -94,36 +96,39 @@ export default function Menu() {
     const target = categoryRefs.current[category];
     if (target) {
       target.scrollIntoView({ behavior: "smooth", block: "start" });
+      setActiveCategory(category);
     }
   };
 
   return (
-    <div className="flex flex-col lg:flex-row gap-6">
+    <div className="flex flex-col lg:flex-row gap-6 px-4 md:px-8 py-6 min-h-screen">
       {/* Sidebar */}
-      <div className="w-full lg:w-56 shrink-0 space-y-2">
-        <h3 className="text-lg font-semibold text-center lg:text-right">
-          دسته‌بندی
-        </h3>
-        <div className="flex lg:flex-col gap-2">
-          {categories.map((cat) => (
-            <button
-              key={cat}
-              onClick={() => scrollToCategory(cat)}
-              className="block w-full text-right py-2 px-3 hover:bg-gray-100 rounded"
-            >
-              {cat}
-            </button>
-          ))}
+      <aside className="w-full lg:w-60 shrink-0">
+        <div className="bg-white shadow-md rounded-lg p-4 space-y-4 sticky top-16">
+          <h3 className="text-xl font-bold text-center lg:text-right border-b pb-2">
+            دسته‌بندی‌ها
+          </h3>
+          <div className="flex gap-2 overflow-x-auto no-scrollbar sm:flex-wrap sm:overflow-visible">
+            {categories.map((cat) => (
+              <button
+                key={cat}
+                onClick={() => scrollToCategory(cat)}
+                className="lg:w-full flex-shrink-0 px-4 py-2 mb-1 text-sm bg-white rounded shadow hover:bg-gray-100 transition whitespace-nowrap"
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
         </div>
-      </div>
+      </aside>
 
       {/* Menu Items */}
-      <div className="flex-1 space-y-10">
-
-        {/* بخش همبرگرهای کاربر */}
-        {/* بخش همبرگرهای کاربر */}
-        <div className="space-y-4">
-          <h2 className="text-2xl font-bold border-b pb-2">همبرگرهای من</h2>
+      <main className="flex-1 space-y-12">
+        {/* Custom Burgers Section */}
+        <section className="space-y-4">
+          <h2 className="text-2xl font-bold text-gray-800 border-b pb-2">
+            🍔 همبرگرهای من
+          </h2>
 
           {!isAuthenticated ? (
             <div className="text-center">
@@ -154,31 +159,34 @@ export default function Menu() {
               </button>
             </div>
           )}
-        </div>
+        </section>
 
-        {/* بقیه دسته‌بندی‌های منو */}
+        {/* Menu Categories */}
         {categories.map((cat) => {
           const items = menuItems.filter((item) => item.category === cat);
           if (items.length === 0) return null;
 
           return (
-            <div
+            <section
               key={cat}
               ref={(el) => {
-                if (el) categoryRefs.current[cat] = el;
+                if (el) categoryRefs.current[cat] = el as HTMLDivElement;
               }}
-              className="space-y-4"
+              className="scroll-mt-24 space-y-6 sm:space-y-8 md:space-y-10"
             >
-              <h2 className="text-2xl font-bold border-b pb-2">{cat}</h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+              <h2 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-gray-800 border-b border-gray-300 pb-2">
+                {cat}
+              </h2>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5 lg:gap-6">
                 {items.map((item) => (
                   <MenuItemCard key={item.id} item={item} />
                 ))}
               </div>
-            </div>
+            </section>
           );
         })}
-      </div>
+      </main>
     </div>
   );
 }

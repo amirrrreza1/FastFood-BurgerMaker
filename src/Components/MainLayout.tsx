@@ -24,7 +24,7 @@ const MainLayout = async ({ children }: Props) => {
             </Link>
           </section>
           <section className="flex items-center gap-4">
-            <Link href={"/login"} className="login-btn">
+            <Link href={"/login"} className="CustomBTN">
               {token ? "داشبورد" : "ورود | ثبت‌نام"}
             </Link>
             {token && <CartModalButton />}
@@ -33,19 +33,19 @@ const MainLayout = async ({ children }: Props) => {
       </header>
       <main>{children}</main>
       <footer className="w-full bg-[#A58A01] text-white p-5 mt-10">
-        <div className="w-full max-w-[1200px] mx-auto mb-5 flex justify-between items-center">
+        <div className="w-full max-w-[1200px] mx-auto mb-5 flex flex-col-reverse md:flex-row justify-between items-center gap-3">
           <div>
             طراحی و توسعه توسط <strong>امیررضا آذریون</strong>
           </div>
           <div className="flex justify-center md:justify-end">
-            <Link href={"#top"} className="login-btn">
+            <Link href={"#top"} className="CustomBTN">
               بازگشت به بالا
             </Link>
           </div>
         </div>
         <div className="max-w-[1200px] m-auto flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="flex gap-2">
-            <h3 className="text-lg font-semibold mb-2"> اطلاعات من :</h3>
+            <h3 className="text-lg font-semibold mb-2"> ارتباط با من :</h3>
             <div className="flex gap-4 text-2xl">
               <Link
                 href="https://t.me/amirreza_work"
@@ -54,7 +54,7 @@ const MainLayout = async ({ children }: Props) => {
                 aria-label="Telegram"
               >
                 <img
-                  src="/images/svg/telegram.svg"
+                  src="/images/SVG/telegram.svg"
                   width={30}
                   className="SocialIconFooter"
                   alt="telegram"
@@ -68,7 +68,7 @@ const MainLayout = async ({ children }: Props) => {
       "
               >
                 <img
-                  src="/images/svg/github.svg"
+                  src="/images/SVG/github.svg"
                   width={30}
                   className="SocialIconFooter"
                   alt="github"
@@ -82,7 +82,7 @@ const MainLayout = async ({ children }: Props) => {
                 aria-label="LinkedIn"
               >
                 <img
-                  src="/images/svg/linkedin.svg"
+                  src="/images/SVG/linkedin.svg"
                   width={30}
                   className="SocialIconFooter"
                   alt="linkedin"

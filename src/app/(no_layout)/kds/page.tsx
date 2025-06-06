@@ -63,23 +63,29 @@ export default function KitchenDisplayPage() {
   }, []);
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-6">صفحه سفارش‌های آشپزخانه</h1>
+    <div className="p-4 sm:p-6 bg-gray-100 min-h-screen">
+      <h1 className="text-2xl font-bold mb-6 text-center sm:text-right">
+        سفارش‌های آشپزخانه
+      </h1>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 xl:grid-cols-3">
         {orders.map((order) => (
           <div
             key={order.id}
-            className="bg-white shadow rounded-lg p-4 space-y-3 border"
+            className="bg-white border border-gray-200 rounded-xl shadow-sm p-4 flex flex-col justify-between"
           >
-            <div className="flex justify-between items-center">
-              <span className="font-bold text-lg">سفارش #{order.id}</span>
-              <span className="text-xs text-gray-500">
+            {/* Header */}
+            <div className="flex justify-between items-center mb-3">
+              <span className="text-lg font-bold text-blue-800">
+                سفارش #{order.id}
+              </span>
+              <span className="text-xs text-gray-500 whitespace-nowrap">
                 {new Date(order.created_at).toLocaleTimeString("fa-IR")}
               </span>
             </div>
 
-            <ul className="list-disc px-5 text-sm">
+            {/* Items */}
+            <ul className="text-sm list-disc px-4 space-y-1 mb-2 text-gray-800">
               {order.items.map((item) => (
                 <li key={item.id}>
                   {item.name} × {item.quantity}
@@ -87,29 +93,35 @@ export default function KitchenDisplayPage() {
               ))}
             </ul>
 
-
+            {/* Note */}
             {order.note && (
-              <div className="text-sm text-gray-700">
-                📝 توضیحات: {order.note}
+              <div className="text-sm bg-yellow-50 border-l-4 border-yellow-400 p-2 rounded text-gray-700 mb-2">
+                📝 <span className="font-semibold">توضیح:</span> {order.note}
               </div>
             )}
 
-            <div className="text-sm text-gray-700">
-              وضعیت فعلی: <span className="font-semibold">{order.status}</span>
+            {/* Status */}
+            <div className="mt-auto">
+              <div className="text-sm text-gray-600 mb-2">
+                وضعیت فعلی:{" "}
+                <span className="font-bold text-indigo-700">
+                  {order.status}
+                </span>
+              </div>
+
+              {STATUS_FLOW[order.status] ? (
+                <button
+                  onClick={() => advanceStatus(order.id, order.status)}
+                  className="w-full py-2 rounded bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold transition"
+                >
+                  تغییر وضعیت به "{STATUS_FLOW[order.status]}"
+                </button>
+              ) : (
+                <div className="text-green-600 font-bold text-center mt-2 text-sm">
+                  ✅ سفارش نهایی شده
+                </div>
+              )}
             </div>
-
-            {STATUS_FLOW[order.status] ? (
-              <button
-                onClick={() => advanceStatus(order.id, order.status)}
-                className="mt-2 w-full bg-blue-600 hover:bg-blue-700 text-white py-1 px-3 rounded text-sm"
-              >
-                تغییر به "{STATUS_FLOW[order.status]}"
-              </button>
-            ) : (
-              <div className="text-green-600 font-bold mt-2 text-center text-sm">
-                سفارش نهایی شده ✅
-              </div>
-            )}
           </div>
         ))}
       </div>

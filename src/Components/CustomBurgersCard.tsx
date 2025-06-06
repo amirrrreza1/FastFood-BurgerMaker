@@ -1,5 +1,5 @@
-// components/CustomBurgerCard.tsx
 "use client";
+
 import { useCartStore } from "@/store/cartStore";
 
 type CustomBurger = {
@@ -7,34 +7,74 @@ type CustomBurger = {
   name: string;
   image_url: string;
   total_price: number;
+  calories: number;
+  description: string;
 };
 
 export default function CustomBurgerCard({ burger }: { burger: CustomBurger }) {
   const addToCart = useCartStore((state) => state.addToCart);
+  const increment = useCartStore((state) => state.incrementQuantity);
+  const decrement = useCartStore((state) => state.decrementQuantity);
+  const cartItem = useCartStore((state) =>
+    state.items.find((item) => item.id === burger.id)
+  );
 
   const handleAdd = () => {
     addToCart({
-        id: burger.id,
-        name: burger.name,
-        price: burger.total_price,
-        image: burger.image_url || "/images/placeholder-food.jpg",
-      });
+      id: burger.id,
+      name: burger.name,
+      price: burger.total_price,
+      image: burger.image_url || "/images/placeholder-food.jpg",
+    });
   };
 
   return (
-    <div className="border rounded-xl p-4 space-y-2 shadow hover:shadow-lg transition">
+    <div className="relative rounded-xl overflow-hidden shadow-sm hover:shadow-md transition duration-300 border bg-white">
       <img
-        src={burger.image_url}
+        src={burger.image_url || "/images/placeholder-food.jpg"}
         alt={burger.name}
-        className="rounded-xl object-cover w-full h-48"
+        className="w-full h-44 sm:h-48 md:h-52 object-cover rounded-t-xl"
       />
-      <h3 className="text-lg font-semibold text-center">{burger.name}</h3>
-      <button
-        onClick={handleAdd}
-        className="block w-full mt-2 py-2 px-4 bg-green-600 text-white rounded hover:bg-green-700 transition"
-      >
-        افزودن به سبد خرید
-      </button>
+
+      <div className="p-4 space-y-2 text-center sm:text-right">
+        <h3 className="text-base sm:text-lg font-bold text-gray-800 flex items-center justify-center sm:justify-start gap-1">
+          🍔 {burger.name}
+        </h3>
+
+        <p className="text-sm text-gray-600 line-clamp-2">
+          {burger.description}
+        </p>
+
+        {burger.calories > 0 && (
+          <div className="text-xs text-gray-500">کالری: {burger.calories}</div>
+        )}
+
+        <div className="font-semibold text-amber-600 text-base">
+          {burger.total_price.toLocaleString()} تومان
+        </div>
+
+        {cartItem ? (
+          <div className="flex items-center justify-center sm:justify-start gap-2 text-sm">
+            <button
+              onClick={() => decrement(burger.id)}
+              className="w-7 h-7 bg-gray-100 hover:bg-gray-200 rounded text-lg"
+            >
+              -
+            </button>
+            <span className="px-1">{cartItem.quantity}</span>
+            <button
+              onClick={() => increment(burger.id)}
+              className="w-7 h-7 bg-gray-100 hover:bg-gray-200 rounded text-lg"
+            >
+              +
+            </button>
+          </div>
+        ) : (
+          <button onClick={handleAdd} className="AddTocartBTN">
+            🛒 افزودن به سبد خرید
+          </button>
+        )}
+      </div>
     </div>
   );
 }

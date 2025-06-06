@@ -19,60 +19,72 @@ export default function CartModalButton() {
       {/* Trigger Button */}
       <button
         onClick={() => setIsOpen(true)}
-        className="relative w-[25px] h-[25px] cursor-pointer"
+        className="relative w-[30px] h-[30px] cursor-pointer"
       >
-        <img src={"/images/svg/cart.svg"} alt="Cart" width={30} height={30} />
-        <span className="absolute -top-2 text-sm -right-1 w-[15px] h-[15px] bg-white rounded-full">
-          {items.length}
-        </span>
+        <img src={"/images/SVG/cart.svg"} alt="Cart" width={30} height={30} />
+        {items.length > 0 && (
+          <span className="absolute -top-1 -right-2 text-xs w-5 h-5 bg-black text-white rounded-full flex items-center justify-center">
+            {items.length}
+          </span>
+        )}
       </button>
 
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
-          <div className="bg-white rounded-xl p-6 w-full max-w-lg space-y-4 relative">
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-2"
+          onClick={() => setIsOpen(false)}
+        >
+          <div
+            className="bg-white rounded-xl p-4 sm:p-6 w-full max-w-md space-y-4 relative shadow-lg"
+            onClick={(e) => e.stopPropagation()}
+          >
             <button
-              className="absolute top-4 left-4 text-gray-500 hover:text-black"
+              className="absolute top-4 left-4 cursor-pointer"
               onClick={() => setIsOpen(false)}
             >
-              fdgfdgdf
+              <img src="/images/SVG/close.svg" alt="close" width={20} height={20} />
             </button>
 
-            <h2 className="text-xl font-bold border-b pb-2">سبد خرید شما</h2>
+            <h2 className="text-lg sm:text-xl font-bold border-b pb-2 text-center">
+              🛒 سبد خرید شما
+            </h2>
 
             {items.length === 0 ? (
               <p className="text-gray-500 text-center py-10">
-                سبد خرید خالی است.
+                سبد خرید شما خالی است.
               </p>
             ) : (
-              <div className="space-y-4 max-h-80 overflow-y-auto">
+              <div className="space-y-4 max-h-[50vh] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent px-1">
                 {items.map((item) => (
                   <div
                     key={item.id}
                     className="flex justify-between items-center border-b pb-2"
                   >
-                    <div>
-                      <h3 className="font-semibold">{item.name}</h3>
-                      <p className="text-sm text-gray-600">
-                        قیمت: {item.price} × {item.quantity}
+                    <div className="w-2/3">
+                      <h3 className="font-semibold text-sm sm:text-base">
+                        {item.name}
+                      </h3>
+                      <p className="text-xs text-gray-600 mt-1">
+                        قیمت: {item.price.toLocaleString()} × {item.quantity}
                       </p>
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-1 text-sm">
                       <button
                         onClick={() => decrementQuantity(item.id)}
-                        className="px-2 py-1 bg-gray-200 rounded"
+                        className="w-7 h-7 bg-gray-100 hover:bg-gray-200 rounded text-lg"
                       >
                         -
                       </button>
-                      <span>{item.quantity}</span>
+                      <span className="px-1">{item.quantity}</span>
                       <button
                         onClick={() => incrementQuantity(item.id)}
-                        className="px-2 py-1 bg-gray-200 rounded"
+                        className="w-7 h-7 bg-gray-100 hover:bg-gray-200 rounded text-lg"
                       >
                         +
                       </button>
                       <button
                         onClick={() => removeFromCart(item.id)}
-                        className="text-red-500 text-sm"
+                        className="text-red-500 text-xs hover:underline"
                       >
                         حذف
                       </button>
@@ -84,17 +96,17 @@ export default function CartModalButton() {
 
             {/* Total & Checkout */}
             {items.length > 0 && (
-              <div className="flex flex-col gap-2">
-                <p className="text-lg font-bold">
+              <div className="pt-4 border-t space-y-3">
+                <p className="text-base font-semibold text-center">
                   مجموع:{" "}
-                  <span className="text-amber-600">
+                  <span className="text-amber-600 font-bold">
                     {totalPrice.toLocaleString()} تومان
                   </span>
                 </p>
                 <Link
                   href="/checkout"
                   onClick={() => setIsOpen(false)}
-                  className="block text-center bg-amber-500 hover:bg-amber-600 text-white py-2 rounded"
+                  className="block text-center bg-amber-500 hover:bg-amber-600 text-white py-2 rounded font-medium transition"
                 >
                   ادامه خرید
                 </Link>
