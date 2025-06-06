@@ -56,7 +56,7 @@ export default function MenuItemCard({ item }: Props) {
             🔥 کالری: {item.calories}
           </div>
 
-          <div className="text-base font-semibold text-amber-600">
+          <div className="text-base font-semibold text-[var(--color-primary)]">
             {item.price.toLocaleString()} تومان
           </div>
 

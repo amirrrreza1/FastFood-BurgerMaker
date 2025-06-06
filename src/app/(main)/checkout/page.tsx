@@ -9,6 +9,7 @@ import { toast } from "react-toastify";
 type Address = {
   id: string;
   address: string;
+  is_default: boolean; // برای مشخص کردن آدرس پیش‌فرض
 };
 
 export default function CheckoutPage() {
@@ -77,7 +78,7 @@ export default function CheckoutPage() {
           total,
           address: selectedAddress,
           note: orderNote,
-          paymentMethod, // اگر خواستید ارسال کنید
+          payment_method: paymentMethod, // اگر خواستید ارسال کنید
         }),
       });
 
@@ -107,8 +108,14 @@ export default function CheckoutPage() {
         setAddresses(data);
 
         if (data.length > 0) {
-          setSelectedAddressId(data[0].id);
-          setSelectedAddress(data[0].address);
+          const defaultAddress = data.find((addr) => addr.is_default);
+          if (defaultAddress) {
+            setSelectedAddressId(defaultAddress.id);
+            setSelectedAddress(defaultAddress.address);
+          } else {
+            setSelectedAddressId(data[0].id);
+            setSelectedAddress(data[0].address);
+          }
         } else {
           setIsAddressModalOpen(true);
         }
@@ -141,13 +148,23 @@ export default function CheckoutPage() {
                 <label className="block text-sm font-medium mb-1">
                   انتخاب آدرس
                 </label>
-                {addresses.length > 0 ? (
+                <div className="space-y-2">
+                  {selectedAddress && (
+                    <div className="bg-gray-50 border border-[var(--color-primary)] rounded-lg p-3 text-sm text-gray-700 shadow-sm">
+                      <p className="mb-1 font-medium">آدرس انتخاب شده:</p>
+                      <p>{selectedAddress}</p>
+                    </div>
+                  )}
+
+                  <label className="block text-sm font-medium mb-1">
+                    تغییر آدرس
+                  </label>
                   <select
-                    className="w-full border p-2 rounded text-sm"
+                    className="w-full border p-2 rounded text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
                     value={selectedAddressId}
                     onChange={(e) => {
                       const id = e.target.value;
-                      const selected = addresses.find((a) => a.id === id);
+                      const selected = addresses.find((a) => a.is_default);
                       setSelectedAddressId(id);
                       setSelectedAddress(selected ? selected.address : "");
                     }}
@@ -158,15 +175,11 @@ export default function CheckoutPage() {
                       </option>
                     ))}
                   </select>
-                ) : (
-                  <p className="text-sm text-gray-500">
-                    شما هیچ آدرسی ثبت نکرده‌اید.
-                  </p>
-                )}
+                </div>
 
                 <button
                   onClick={() => setIsAddressModalOpen(true)}
-                  className="mt-2 text-blue-600 hover:underline text-sm"
+                  className="p-2 mt-2 bg-[var(--color-primary)] text-white rounded-lg hover:-translate-y-1 transition-all duration-300 hover:shadow-l"
                   type="button"
                 >
                   {addresses.length === 0
@@ -211,7 +224,7 @@ export default function CheckoutPage() {
               {/* دکمه نهایی کردن */}
               <button
                 onClick={handlePlaceOrder}
-                className="w-full py-2 bg-amber-500 hover:bg-amber-600 text-white text-sm rounded font-semibold"
+                className="w-full py-2 bg-[var(--color-primary)] text-white rounded-lg hover:-translate-y-1 transition-all duration-300 hover:shadow-lg"
                 disabled={isLoading}
               >
                 {isLoading ? "در حال ثبت سفارش..." : "ثبت سفارش"}
@@ -240,8 +253,8 @@ export default function CheckoutPage() {
                 <span className="text-gray-700">20,000 تومان</span>
               </div>
 
-              <div className="text-right text-lg font-bold text-amber-600 mt-2">
-                مجموع کل:{" "}
+              <div className="text-right text-lg font-bold text-[var(--color-primary)] mt-2">
+                مجموع کل:
                 {(
                   items.reduce(
                     (sum, item) => sum + item.price * item.quantity,

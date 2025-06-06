@@ -130,13 +130,13 @@ export default function Menu() {
           </h2>
 
           {!isAuthenticated ? (
-            <div className="text-center">
-              <p className="text-gray-600">
+            <div className="bg-[var(--color-primary)] p-3 rounded-lg text-center h-48 flex flex-col items-center justify-center gap-2 shadow-md">
+              <p className="text-white">
                 برای دیدن همبرگرهای خود ابتدا وارد شوید.
               </p>
               <button
                 onClick={() => router.push("/login")}
-                className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+                className="CustomBTN"
               >
                 ورود به حساب
               </button>
@@ -148,11 +148,11 @@ export default function Menu() {
               ))}
             </div>
           ) : (
-            <div className="text-center">
-              <p className="text-gray-600">شما هنوز هیچ همبرگری نساختید.</p>
+            <div className="bg-[var(--color-primary)] p-3 rounded-lg text-center h-48 flex flex-col items-center justify-center gap-2">
+              <p className="text-white">شما هنوز هیچ همبرگری نساختید.</p>
               <button
                 onClick={() => router.push("/new-burger")}
-                className="mt-4 px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 transition"
+                className="CustomBTN"
               >
                 ساخت همبرگر جدید 🍔
               </button>

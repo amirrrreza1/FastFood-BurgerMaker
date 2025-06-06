@@ -5,7 +5,7 @@ export async function GET() {
   const { data, error } = await supabase
     .from("profiles")
     .select(
-      "id, name , email, lastName, phoneNum ,subscription_number , created_at , is_active , display_name"
+      "id, name , email, lastName, phoneNum ,subscription_number , created_at , is_active , display_name , role"
     )
     .order("created_at");
 

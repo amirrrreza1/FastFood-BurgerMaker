@@ -90,34 +90,49 @@ export default function AddAddressModal({
         </h2>
 
         <div className="space-y-2">
-          <input
-            type="text"
-            placeholder="خیابان"
-            className="Input w-full"
-            value={street}
-            onChange={(e) => setStreet(e.target.value)}
-          />
-          <input
-            type="text"
-            placeholder="کوچه"
-            className="Input w-full"
-            value={alley}
-            onChange={(e) => setAlley(e.target.value)}
-          />
-          <input
-            type="text"
-            placeholder="پلاک"
-            className="Input w-full"
-            value={plaque}
-            onChange={(e) => setPlaque(e.target.value)}
-          />
-          <input
-            type="text"
-            placeholder="واحد"
-            className="Input w-full"
-            value={unit}
-            onChange={(e) => setUnit(e.target.value)}
-          />
+          <div>
+            <label className="block text-sm font-medium mb-1">خیابان</label>
+            <input
+              type="text"
+              placeholder="مثلاً ولیعصر"
+              className="Input w-full"
+              value={street}
+              onChange={(e) => setStreet(e.target.value)}
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-1">کوچه</label>
+            <input
+              type="text"
+              placeholder="مثلاً ۱۲"
+              className="Input w-full"
+              value={alley}
+              onChange={(e) => setAlley(e.target.value)}
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-1">پلاک</label>
+            <input
+              type="text"
+              placeholder="مثلاً ۸"
+              className="Input w-full"
+              value={plaque}
+              onChange={(e) => setPlaque(e.target.value)}
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-1">واحد</label>
+            <input
+              type="text"
+              placeholder="مثلاً ۲"
+              className="Input w-full"
+              value={unit}
+              onChange={(e) => setUnit(e.target.value)}
+            />
+          </div>
 
           <label className="flex items-center gap-2 mt-2 cursor-pointer">
             <input

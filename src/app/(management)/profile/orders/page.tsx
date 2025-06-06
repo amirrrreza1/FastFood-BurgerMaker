@@ -6,15 +6,26 @@ import { useEffect, useState } from "react";
 const getStatusLabel = (status: string) => {
   switch (status) {
     case "pending":
-      return "در انتظار تأیید";
+      return "⏳ در انتظار تأیید";
     case "preparing":
-      return "در حال آماده‌سازی";
+      return "🧑‍🍳 در حال آماده‌سازی";
     case "delivering":
-      return "در حال ارسال";
+      return "🚚 در حال ارسال";
     case "canceled":
-      return "لغو شده";
+      return "❌ لغو شده";
     default:
-      return "نامشخص";
+      return "❓ نامشخص";
+  }
+};
+
+const getPaymentLabel = (method: string) => {
+  switch (method) {
+    case "cash":
+      return "💵 پرداخت نقدی";
+    case "pos":
+      return "💳 کارت‌خوان سیار";
+    default:
+      return "❓ نامشخص";
   }
 };
 
@@ -68,16 +79,23 @@ export default function OrdersPage() {
                 </span>
               </div>
 
-              <div className="text-sm text-gray-800">
-                مجموع: {order.total_price.toLocaleString()} تومان
+              <div className="flex justify-between text-sm text-gray-800">
+                <span>مجموع:</span>
+                <span>{order.total_price.toLocaleString()} تومان</span>
+              </div>
+
+              <div className="flex justify-between text-sm text-gray-800">
+                <span>روش پرداخت:</span>
+                <span>{getPaymentLabel(order.payment_method)}</span>
               </div>
 
               <div className="text-xs text-gray-500">
-                تاریخ ثبت: {new Date(order.created_at).toLocaleString("fa-IR")}
+                🗓️ تاریخ ثبت:{" "}
+                {new Date(order.created_at).toLocaleString("fa-IR")}
               </div>
 
               <div className="mt-2">
-                <h3 className="text-sm font-semibold mb-2">آیتم‌ها:</h3>
+                <h3 className="text-sm font-semibold mb-2">📦 آیتم‌ها:</h3>
                 <ul className="space-y-1 text-sm text-gray-700">
                   {order.items?.map((item: any, index: number) => (
                     <li

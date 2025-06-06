@@ -10,6 +10,7 @@ interface UserProfile {
   name: string | null;
   lastName: string | null;
   phoneNum: number | null;
+  role: string;
   subscription_number: number | null;
   created_at: string;
   is_active?: boolean;
@@ -19,6 +20,24 @@ export default function AdminUsersPage() {
   const [users, setUsers] = useState<UserProfile[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+
+  const handleMakeAdmin = async (userId: string) => {
+    const res = await fetch(`/api/admin/users/${userId}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ role: "admin" }),
+    });
+
+    if (!res.ok) {
+      toast.error("خطا در ارتقای کاربر به ادمین");
+      return;
+    }
+
+    setUsers((prev) =>
+      prev.map((u) => (u.id === userId ? { ...u, role: "admin" } : u))
+    );
+    toast.success("کاربر با موفقیت ادمین شد");
+  };
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -130,17 +149,23 @@ export default function AdminUsersPage() {
                   <td className="p-2 border text-center">
                     {user.is_active ? "✅" : "❌"}
                   </td>
-                  <td className="p-2 border text-center">
+                  <td className="p-2 border text-center flex flex-col gap-2 ">
                     <button
-                      className={`px-3 py-1 rounded ${
-                        user.is_active ? "bg-red-500" : "bg-green-500"
-                      } text-white`}
+                      className={` ${user.is_active ? "DeleteBTN" : "EditBTN"}`}
                       onClick={() =>
                         handleToggleActive(user.id, user.is_active)
                       }
                     >
                       {user.is_active ? "غیرفعال کردن" : "فعال‌سازی"}
                     </button>
+                    {user.role !== "admin" && (
+                      <button
+                        className="EditBTN flex justify-center mt-2"
+                        onClick={() => handleMakeAdmin(user.id)}
+                      >
+                        ارتقا به ادمین
+                      </button>
+                    )}
                   </td>
                 </tr>
               ))}
@@ -183,14 +208,30 @@ export default function AdminUsersPage() {
                   )}
                 </div>
                 <div>
+                  <strong>ادمین:</strong>{" "}
+                  {user.role === "admin" ? (
+                    <span className="text-green-600">✅</span>
+                  ) : (
+                    <span className="text-red-600">❌</span>
+                  )}
+                </div>
+                <div>
                   <button
-                    className={`px-3 py-1 rounded w-full ${
-                      user.is_active ? "bg-red-500" : "bg-green-500"
+                    className={`w-full ${
+                      user.is_active ? "DeleteBTN" : "ConfirmBTN"
                     } text-white`}
                     onClick={() => handleToggleActive(user.id, user.is_active)}
                   >
                     {user.is_active ? "غیرفعال کردن" : "فعال‌سازی"}
                   </button>
+                  {user.role !== "admin" && (
+                    <button
+                      className="EditBTN w-full flex justify-center mt-2"
+                      onClick={() => handleMakeAdmin(user.id)}
+                    >
+                      ارتقا به ادمین
+                    </button>
+                  )}
                 </div>
               </div>
             ))}
