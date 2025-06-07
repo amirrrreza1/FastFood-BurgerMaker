@@ -11,6 +11,8 @@ const getStatusLabel = (status: string) => {
       return "🧑‍🍳 در حال آماده‌سازی";
     case "delivering":
       return "🚚 در حال ارسال";
+    case "delivered":
+      return "✅ تحویل داده شد";
     case "canceled":
       return "❌ لغو شده";
     default:
@@ -89,10 +91,17 @@ export default function OrdersPage() {
                 <span>{getPaymentLabel(order.payment_method)}</span>
               </div>
 
+              <div className="flex justify-between text-sm text-gray-800">
+                <span>آدرس:</span>
+                <span>{order.address}</span>
+              </div>
+
               <div className="text-xs text-gray-500">
                 🗓️ تاریخ ثبت:{" "}
                 {new Date(order.created_at).toLocaleString("fa-IR")}
               </div>
+
+
 
               <div className="mt-2">
                 <h3 className="text-sm font-semibold mb-2">📦 آیتم‌ها:</h3>

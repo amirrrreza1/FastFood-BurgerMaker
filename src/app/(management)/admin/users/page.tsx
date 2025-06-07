@@ -21,22 +21,26 @@ export default function AdminUsersPage() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
 
-  const handleMakeAdmin = async (userId: string) => {
+  const handleChangeRole = async (userId: string, newRole: string) => {
     const res = await fetch(`/api/admin/users/${userId}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ role: "admin" }),
+      body: JSON.stringify({ role: newRole }),
     });
 
     if (!res.ok) {
-      toast.error("خطا در ارتقای کاربر به ادمین");
+      toast.error("خطا در تغییر نقش کاربر");
       return;
     }
 
     setUsers((prev) =>
-      prev.map((u) => (u.id === userId ? { ...u, role: "admin" } : u))
+      prev.map((u) => (u.id === userId ? { ...u, role: newRole } : u))
     );
-    toast.success("کاربر با موفقیت ادمین شد");
+    toast.success(
+      `کاربر با موفقیت به ${
+        newRole === "admin" ? "ادمین" : "کاربر عادی"
+      } تغییر یافت`
+    );
   };
 
   useEffect(() => {
@@ -158,10 +162,17 @@ export default function AdminUsersPage() {
                     >
                       {user.is_active ? "غیرفعال کردن" : "فعال‌سازی"}
                     </button>
-                    {user.role !== "admin" && (
+                    {user.role === "admin" ? (
+                      <button
+                        className="DeleteBTN flex justify-center mt-2"
+                        onClick={() => handleChangeRole(user.id, "user")}
+                      >
+                        تغییر به کاربر عادی
+                      </button>
+                    ) : (
                       <button
                         className="EditBTN flex justify-center mt-2"
-                        onClick={() => handleMakeAdmin(user.id)}
+                        onClick={() => handleChangeRole(user.id, "admin")}
                       >
                         ارتقا به ادمین
                       </button>
@@ -224,10 +235,17 @@ export default function AdminUsersPage() {
                   >
                     {user.is_active ? "غیرفعال کردن" : "فعال‌سازی"}
                   </button>
-                  {user.role !== "admin" && (
+                  {user.role === "admin" ? (
+                    <button
+                      className="DeleteBTN w-full flex justify-center mt-2"
+                      onClick={() => handleChangeRole(user.id, "user")}
+                    >
+                      تغییر به کاربر عادی
+                    </button>
+                  ) : (
                     <button
                       className="EditBTN w-full flex justify-center mt-2"
-                      onClick={() => handleMakeAdmin(user.id)}
+                      onClick={() => handleChangeRole(user.id, "admin")}
                     >
                       ارتقا به ادمین
                     </button>

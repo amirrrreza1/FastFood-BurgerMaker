@@ -18,6 +18,7 @@ interface Order {
   status: string;
   rejection_reason?: string;
   items: OrderItem[];
+  order_type: string;
 }
 
 const STATUS_LABELS: Record<string, string> = {
@@ -197,44 +198,60 @@ export default function AdminOrdersPage() {
               {/* دکمه‌های وضعیت */}
               {order.status !== "cancelled" && order.status !== "delivered" && (
                 <div className="flex flex-col sm:flex-row flex-wrap gap-2 items-center mt-2">
-                  {order.status === "pending" && (
-                    <>
-                      <button
-                        className="ConfirmBTN"
-                        onClick={() => updateStatus(order.id, "preparing")}
-                        disabled={loading}
-                      >
-                        ✅ تایید سفارش
-                      </button>
-                      <input
-                        type="text"
-                        placeholder="دلیل لغو"
-                        value={comment}
-                        onChange={(e) =>
-                          handleCancelChange(order.id, e.target.value)
-                        }
-                        className="p-1 border rounded w-full sm:w-auto"
-                      />
-                      <button
-                        className="DeleteBTN"
-                        onClick={() =>
-                          updateStatus(order.id, "cancelled", comment)
-                        }
-                        disabled={loading || comment.trim() === ""}
-                      >
-                        لغو سفارش
-                      </button>
-                    </>
-                  )}
+                  {/* سفارش‌های آنلاین با pending شروع می‌شن */}
+                  {order.status === "pending" &&
+                    order.order_type === "online" && (
+                      <>
+                        <button
+                          className="ConfirmBTN"
+                          onClick={() => updateStatus(order.id, "preparing")}
+                          disabled={loading}
+                        >
+                          ✅ تایید سفارش
+                        </button>
+                        <input
+                          type="text"
+                          placeholder="دلیل لغو"
+                          value={comment}
+                          onChange={(e) =>
+                            handleCancelChange(order.id, e.target.value)
+                          }
+                          className="p-1 border rounded w-full sm:w-auto"
+                        />
+                        <button
+                          className="DeleteBTN"
+                          onClick={() =>
+                            updateStatus(order.id, "cancelled", comment)
+                          }
+                          disabled={loading || comment.trim() === ""}
+                        >
+                          لغو سفارش
+                        </button>
+                      </>
+                    )}
 
+                  {/* شروع مستقیم از preparing برای phone و in_person */}
                   {order.status === "preparing" && (
-                    <button
-                      className="EditBTN"
-                      onClick={() => updateStatus(order.id, "delivering")}
-                      disabled={loading}
-                    >
-                      🚚 ارسال سفارش
-                    </button>
+                    <>
+                      {order.order_type !== "in_person" && (
+                        <button
+                          className="EditBTN"
+                          onClick={() => updateStatus(order.id, "delivering")}
+                          disabled={loading}
+                        >
+                          🚚 ارسال سفارش
+                        </button>
+                      )}
+                      {order.order_type === "in_person" && (
+                        <button
+                          className="ConfirmBTN"
+                          onClick={() => updateStatus(order.id, "delivered")}
+                          disabled={loading}
+                        >
+                          ✅ تحویل داده شد
+                        </button>
+                      )}
+                    </>
                   )}
 
                   {order.status === "delivering" && (

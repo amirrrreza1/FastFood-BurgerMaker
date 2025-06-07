@@ -47,24 +47,24 @@ export default function AdminMenu({ menuItems }: Props) {
   };
 
   return (
-    <div>
+    <div className="space-y-6 mt-10 md:mt-0">
       <input
         type="text"
         placeholder="جستجو بر اساس نام"
-        className="mb-4 p-2 border rounded w-full"
+        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
         value={search}
         onChange={(e) => setSearch(e.target.value)}
       />
 
-      <div className="flex gap-2 flex-wrap mb-6">
+      <div className="flex flex-wrap gap-2">
         {categories.map((cat) => (
           <button
             key={cat}
             onClick={() => setSelectedCategory(cat)}
-            className={`px-3 py-1 rounded border ${
+            className={`px-4 py-1.5 rounded-full border text-sm transition ${
               selectedCategory === cat
                 ? "bg-blue-600 text-white"
-                : "bg-gray-100 text-gray-800"
+                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
             }`}
           >
             {cat}
@@ -72,17 +72,17 @@ export default function AdminMenu({ menuItems }: Props) {
         ))}
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {filteredItems.map((item) => {
           const quantity = getQuantity(item.id);
 
           return (
             <div
               key={item.id}
-              className="border rounded-xl p-4 shadow-md bg-white flex flex-col items-center"
+              className="rounded-xl p-4 shadow bg-white flex flex-col items-center space-y-2"
             >
-              <h3 className="text-lg font-semibold mb-1">{item.name}</h3>
-              <p className="text-gray-600 mb-2">
+              <h3 className="text-lg font-bold">{item.name}</h3>
+              <p className="text-gray-600">
                 {item.price.toLocaleString()} تومان
               </p>
 
@@ -90,20 +90,20 @@ export default function AdminMenu({ menuItems }: Props) {
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => decrementQuantity(item.id)}
-                    className="bg-yellow-300 px-2 rounded"
+                    className="bg-gray-200 px-3 py-1 rounded hover:bg-gray-300 cursor-pointer"
                   >
                     -
                   </button>
-                  <span>{quantity}</span>
+                  <span className="font-semibold">{quantity}</span>
                   <button
                     onClick={() => incrementQuantity(item.id)}
-                    className="bg-green-300 px-2 rounded"
+                    className="bg-gray-200 px-3 py-1 rounded hover:bg-gray-300 cursor-pointer"
                   >
                     +
                   </button>
                   <button
                     onClick={() => removeFromCart(item.id)}
-                    className="ml-2 bg-red-500 text-white px-2 py-1 rounded text-sm"
+                    className="DeleteBTN py-1 hover:scale-100"
                   >
                     حذف
                   </button>
@@ -118,14 +118,14 @@ export default function AdminMenu({ menuItems }: Props) {
                       image: item.image_url,
                     })
                   }
-                  className="mt-2 bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-700"
+                  className="EditBTN"
                 >
                   افزودن
                 </button>
               ) : (
                 <button
                   disabled
-                  className="mt-2 bg-gray-400 text-white px-4 py-1 rounded cursor-not-allowed"
+                  className="bg-gray-400 text-white px-4 py-2 rounded cursor-not-allowed"
                 >
                   در دسترس نیست
                 </button>

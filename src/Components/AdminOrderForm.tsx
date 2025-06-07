@@ -16,6 +16,8 @@ export default function AdminManualOrder({ adminId }: { adminId: string }) {
   const [results, setResults] = useState<User[]>([]);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState<"cash" | "pos">("cash");
+
   const [addresses, setAddresses] = useState<{ id: string; address: string }[]>(
     []
   );
@@ -23,8 +25,10 @@ export default function AdminManualOrder({ adminId }: { adminId: string }) {
     null
   );
   const [manualAddress, setManualAddress] = useState("");
-  const [isPickup, setIsPickup] = useState(false);
   const [note, setNote] = useState("");
+  const [orderType, setOrderType] = useState<"in_person" | "phone">(
+    "in_person"
+  );
 
   const total = items.reduce(
     (acc, item) => acc + item.price * item.quantity,
@@ -80,26 +84,27 @@ export default function AdminManualOrder({ adminId }: { adminId: string }) {
     setLoading(true);
 
     const selectedAddress =
-      manualAddress.trim() ||
-      addresses.find((a) => a.id === selectedAddressId)?.address ||
-      "سفارش ثبت شده توسط ادمین";
+      orderType === "in_person"
+        ? "سفارش حضوری"
+        : manualAddress.trim() ||
+          addresses.find((a) => a.id === selectedAddressId)?.address ||
+          "آدرس وارد نشده";
 
     const response = await fetch("/api/orders", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
       body: JSON.stringify({
         items,
         total,
         user_id: selectedUser?.id || adminId,
         address: selectedAddress,
         note: note.trim(),
-        payment_method: "cash",
+        payment_method: paymentMethod, // ← این خط تغییر داده شده
+        order_type: orderType,
       }),
     });
 
     setLoading(false);
+    const data = await response.json();
 
     if (response.ok) {
       toast.success("سفارش با موفقیت ثبت شد");
@@ -109,13 +114,13 @@ export default function AdminManualOrder({ adminId }: { adminId: string }) {
       setManualAddress("");
       setSelectedAddressId(null);
     } else {
-      toast.error("خطا در ثبت سفارش");
+      toast.error(data.error || "خطا در ثبت سفارش");
     }
   };
 
   return (
-    <div className="max-w-xl mx-auto space-y-4 bg-white p-4 rounded-xl shadow-md">
-      <h2 className="text-xl font-bold">ثبت سفارش دستی</h2>
+    <div className="max-w-2xl w-full mx-auto space-y-6 bg-white p-6 rounded-2xl shadow-xl">
+      <h2 className="text-2xl font-bold text-center">ثبت سفارش دستی</h2>
 
       <input
         placeholder="جستجوی شماره اشتراک (شماره تلفن)"
@@ -124,114 +129,129 @@ export default function AdminManualOrder({ adminId }: { adminId: string }) {
           setQuery(e.target.value);
           setSelectedUser(null);
         }}
-        className="w-full border p-2 rounded"
+        disabled={loading}
+        className="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
       />
 
       {results.length > 0 && !selectedUser && (
-        <div className="border rounded p-2 bg-gray-50 max-h-40 overflow-y-auto">
+        <div className="border rounded-lg p-2 bg-gray-100 max-h-40 overflow-y-auto space-y-1">
           {results.map((user) => (
             <div
               key={user.id}
-              className="p-2 cursor-pointer hover:bg-gray-200"
+              className="p-2 cursor-pointer hover:bg-blue-100 rounded"
               onClick={() => {
                 setSelectedUser(user);
                 setResults([]);
                 setQuery(user.phoneNum);
               }}
             >
-              {user.name} - {user.phoneNum}
+              <span className="font-medium">{user.name}</span> - {user.phoneNum}
             </div>
           ))}
         </div>
       )}
-      <div className="flex items-center space-x-2 mb-2">
-        <input
-          type="checkbox"
-          id="pickup"
-          checked={isPickup}
-          onChange={(e) => {
-            setIsPickup(e.target.checked);
-            // اگر حضوری فعال شد، آدرس‌های قبلی رو پاک کن
-            if (e.target.checked) {
-              setSelectedAddressId(null);
-              setManualAddress("");
-            }
-          }}
-        />
-        <label htmlFor="pickup" className="font-medium">
-          سفارش حضوری (بدون نیاز به آدرس)
-        </label>
+
+      <div className="grid md:grid-cols-2 gap-4">
+        <div className="space-y-2">
+          <label className="font-semibold block">نوع سفارش:</label>
+          <select
+            value={orderType}
+            onChange={(e) => {
+              const value = e.target.value as "in_person" | "phone";
+              setOrderType(value);
+              if (value === "in_person") {
+                setSelectedAddressId(null);
+                setManualAddress("");
+              }
+            }}
+            className="w-full border border-gray-300 rounded-lg p-2"
+          >
+            <option value="in_person">حضوری</option>
+            <option value="phone">تلفنی</option>
+          </select>
+        </div>
+
+        <div className="space-y-2">
+          <label className="font-semibold block">روش پرداخت:</label>
+          <select
+            value={paymentMethod}
+            onChange={(e) => setPaymentMethod(e.target.value as "cash" | "pos")}
+            className="w-full border border-gray-300 rounded-lg p-2"
+          >
+            <option value="cash">نقدی</option>
+            <option value="pos">کارت‌خوان</option>
+          </select>
+        </div>
       </div>
 
-      {/* آدرس */}
-      <div className="mt-4 space-y-2">
-        {selectedUser && addresses.length > 0 && (
-          <>
-            <label className="block font-semibold">
-              انتخاب از آدرس‌های کاربر:
-            </label>
-            <select
-              value={selectedAddressId || ""}
-              onChange={(e) => {
-                setSelectedAddressId(e.target.value);
-                setManualAddress(""); // آدرس دستی رو خالی کن
-              }}
-              disabled={isPickup}
-              className="w-full border rounded p-2"
-            >
-              {addresses.map((addr) => (
-                <option key={addr.id} value={addr.id}>
-                  {addr.address}
-                </option>
-              ))}
-            </select>
-          </>
-        )}
+      {orderType === "phone" && (
+        <div className="space-y-3">
+          {selectedUser && addresses.length > 0 && (
+            <div>
+              <label className="font-semibold block">آدرس‌های ذخیره شده:</label>
+              <select
+                value={selectedAddressId || ""}
+                onChange={(e) => {
+                  setSelectedAddressId(e.target.value);
+                  setManualAddress("");
+                }}
+                className="w-full border border-gray-300 rounded-lg p-2"
+              >
+                {addresses.map((addr) => (
+                  <option key={addr.id} value={addr.id}>
+                    {addr.address}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
 
-        <label className="block font-semibold">
-          یا وارد کردن آدرس دستی (فقط برای این سفارش):
-        </label>
-        <textarea
-          rows={3}
-          className="w-full border rounded p-2"
-          value={manualAddress}
-          onChange={(e) => setManualAddress(e.target.value)}
-          placeholder="آدرس را وارد کنید"
-          disabled={isPickup}
-        />
-      </div>
+          <div>
+            <label className="font-semibold block">آدرس دستی:</label>
+            <textarea
+              rows={3}
+              className="w-full border border-gray-300 rounded-lg p-2"
+              value={manualAddress}
+              onChange={(e) => setManualAddress(e.target.value)}
+              placeholder="آدرس را وارد کنید"
+            />
+          </div>
+        </div>
+      )}
+
       <div>
-        <label htmlFor="note" className="block font-semibold mb-1">
+        <label className="font-semibold block mb-1">
           یادداشت سفارش (اختیاری):
         </label>
         <textarea
-          id="note"
-          className="w-full border rounded p-2"
+          className="w-full border border-gray-300 rounded-lg p-2"
           rows={3}
-          placeholder="اگر توضیحی دارید اینجا بنویسید..."
           value={note}
           onChange={(e) => setNote(e.target.value)}
+          placeholder="اگر توضیحی دارید اینجا بنویسید..."
         />
       </div>
 
       {/* پیش‌نمایش سفارش */}
-      <div className="border-t pt-4 space-y-2">
-        <h3 className="font-semibold">پیش‌نمایش سفارش:</h3>
+      <div className="border-t pt-4">
+        <h3 className="font-semibold text-lg mb-2">پیش‌نمایش سفارش:</h3>
         {items.length === 0 ? (
-          <p className="text-sm text-gray-500">سبد خرید خالی است</p>
+          <p className="text-gray-500 text-sm">سبد خرید خالی است</p>
         ) : (
           <ul className="space-y-1 text-sm">
-            {items.map((item: any) => (
+            {items.map((item) => (
               <li key={item.id} className="flex justify-between">
                 <span>
                   {item.name} × {item.quantity}
                 </span>
-                <span>{item.price * item.quantity} تومان</span>
+                <span>
+                  {(item.price * item.quantity).toLocaleString()} تومان
+                </span>
               </li>
             ))}
             <li className="font-bold flex justify-between border-t pt-2">
               <span>جمع کل:</span>
-              <span>{total} تومان</span>
+              <span>{total.toLocaleString()} تومان</span>
             </li>
           </ul>
         )}
@@ -240,7 +260,7 @@ export default function AdminManualOrder({ adminId }: { adminId: string }) {
       <button
         onClick={handleSubmit}
         disabled={loading || items.length === 0}
-        className="w-full bg-green-600 text-white py-2 rounded disabled:opacity-50"
+        className="ConfirmBTN w-full disabled:opacity-50 hover:scale-100 flex items-center justify-center gap-2"
       >
         {loading ? "در حال ارسال..." : "ثبت سفارش"}
       </button>

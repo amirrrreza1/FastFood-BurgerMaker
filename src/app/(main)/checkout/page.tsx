@@ -79,6 +79,7 @@ export default function CheckoutPage() {
           address: selectedAddress,
           note: orderNote,
           payment_method: paymentMethod, // اگر خواستید ارسال کنید
+          order_type: "online",
         }),
       });
 
@@ -103,23 +104,34 @@ export default function CheckoutPage() {
       try {
         const res = await fetch("/api/user/addresses");
         if (!res.ok) throw new Error("Failed to load addresses");
-        const data: Address[] = await res.json();
 
-        setAddresses(data);
+        const response = await res.json();
 
-        if (data.length > 0) {
-          const defaultAddress = data.find((addr) => addr.is_default);
+        // انتظار داریم response به شکل { addresses: [...] } باشه
+        if (!Array.isArray(response.addresses)) {
+          throw new Error("Invalid address data");
+        }
+
+        const addressesArray = response.addresses;
+
+        setAddresses(addressesArray);
+
+        if (addressesArray.length > 0) {
+          const defaultAddress = addressesArray.find(
+            (addr: any) => addr.is_default
+          );
           if (defaultAddress) {
             setSelectedAddressId(defaultAddress.id);
             setSelectedAddress(defaultAddress.address);
           } else {
-            setSelectedAddressId(data[0].id);
-            setSelectedAddress(data[0].address);
+            setSelectedAddressId(addressesArray[0].id);
+            setSelectedAddress(addressesArray[0].address);
           }
         } else {
           setIsAddressModalOpen(true);
         }
-      } catch {
+      } catch (error) {
+        console.error("Error loading addresses:", error);
         toast.error("خطا در دریافت آدرس‌ها");
       }
     };
@@ -164,7 +176,7 @@ export default function CheckoutPage() {
                     value={selectedAddressId}
                     onChange={(e) => {
                       const id = e.target.value;
-                      const selected = addresses.find((a) => a.is_default);
+                      const selected = addresses.find((a) => a.id === id); // ✅ درست شد
                       setSelectedAddressId(id);
                       setSelectedAddress(selected ? selected.address : "");
                     }}
