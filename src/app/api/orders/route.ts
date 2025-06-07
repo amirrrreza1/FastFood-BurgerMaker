@@ -1,3 +1,4 @@
+
 import { NextRequest, NextResponse } from "next/server";
 import { verifyToken } from "@/Lib/jwt";
 import { supabase } from "@/Lib/supabase";
@@ -11,17 +12,20 @@ export async function POST(req: NextRequest) {
 
   try {
     const user = await verifyToken(token);
-    const { items, total , address , note , payment_method } = await req.json();
+    const { items, total, address, note, payment_method, user_id } =
+      await req.json();
+
+    const targetUserId = user_id || user.uid;
 
     const { error } = await supabase.from("orders").insert([
       {
-        user_id: user.uid,
+        user_id: targetUserId,
         status: "pending",
         total_price: total,
         items,
-        address: address,
-        note: note,
-        payment_method: payment_method,
+        address,
+        note,
+        payment_method,
       },
     ]);
 

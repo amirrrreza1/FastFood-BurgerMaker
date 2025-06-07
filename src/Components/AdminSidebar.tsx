@@ -3,11 +3,13 @@
 import Link from "next/link";
 import { redirect, usePathname } from "next/navigation";
 import { useState } from "react";
+import { label } from "three/tsl";
 
 const menuItems = [
   { label: "مدیریت منو", href: "/admin/menu" },
   { label: "مدیریت سفارش", href: "/admin/orders" },
   { label: "مدیریت کاربران", href: "/admin/users" },
+  {label: "سفارش دستیار", href: "/admin/orders/new"},
 ];
 
 export default function AdminSidebar() {

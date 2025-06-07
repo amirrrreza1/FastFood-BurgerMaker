@@ -5,13 +5,38 @@ import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
-  const token = req.cookies.get("token")?.value;
-  const user = await verifyToken(token as string);
-  const user_id = user.uid;
+  // اول از query پارامتر user_id رو بگیر
+  const userIdFromQuery = req.nextUrl.searchParams.get("user_id");
 
+  // اگر user_id از query نیومد، می‌تونید از توکن بگیرید یا خطا بدید
+  let user_id =
+    (userIdFromQuery as string) || req.cookies.get("user_id")?.value;
+
+  if (!user_id) {
+    // تلاش کنید توکن رو بگیرید (مثلا برای امنیت بیشتر)
+    const token = req.cookies.get("token")?.value;
+    if (!token) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    try {
+      const user = await verifyToken(token);
+      if (!user || typeof (user as any).uid !== "string") {
+        return NextResponse.json(
+          { error: "توکن نامعتبر است" },
+          { status: 401 }
+        );
+      }
+
+      user_id = (user as any).uid;
+    } catch {
+      return NextResponse.json({ error: "توکن نامعتبر است" }, { status: 401 });
+    }
+  }
+
+  // حالا کوئری supabase
   const { data, error } = await supabase
     .from("addresses")
-    .select("id, address , is_default")
+    .select("id, address, is_default")
     .eq("user_id", user_id)
     .order("created_at", { ascending: false });
 
@@ -22,7 +47,7 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  return NextResponse.json(data);
+  return NextResponse.json({ addresses: data });
 }
 
 export async function POST(req: NextRequest) {
