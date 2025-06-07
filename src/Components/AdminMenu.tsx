@@ -9,6 +9,7 @@ type MenuItem = {
   price: number;
   image_url: string;
   category: string;
+  available: boolean;
 };
 
 type Props = {
@@ -107,7 +108,7 @@ export default function AdminMenu({ menuItems }: Props) {
                     حذف
                   </button>
                 </div>
-              ) : (
+              ) : item.available ? (
                 <button
                   onClick={() =>
                     addToCart({
@@ -120,6 +121,13 @@ export default function AdminMenu({ menuItems }: Props) {
                   className="mt-2 bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-700"
                 >
                   افزودن
+                </button>
+              ) : (
+                <button
+                  disabled
+                  className="mt-2 bg-gray-400 text-white px-4 py-1 rounded cursor-not-allowed"
+                >
+                  در دسترس نیست
                 </button>
               )}
             </div>
