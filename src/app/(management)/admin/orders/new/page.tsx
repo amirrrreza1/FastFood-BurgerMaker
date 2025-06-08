@@ -7,7 +7,7 @@ export default async function ManualOrderPage() {
   const token = cookie.get("token");
   const adminId = token.uid
 
-  const res = await fetch("http://localhost:3000/api/menu");
+  const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/menu`);
   const menuItems = await res.json();
 
 
