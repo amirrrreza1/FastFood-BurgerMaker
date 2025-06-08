@@ -16,15 +16,12 @@ export async function POST(req: NextRequest) {
 
   const { data, error } = await supabase
     .from("faqs")
-    .insert([{ question, answer }])
-    .select(); // این خط باعث می‌شود داده جدید پس از درج برگردانده شود
+    .insert([{ question, answer, saved: false }]) // مقدار saved به true
+    .select();
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
-
-  // 🔁 Revalidate
-  await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/revalidate?path=/faq`);
 
   return NextResponse.json(data);
 }

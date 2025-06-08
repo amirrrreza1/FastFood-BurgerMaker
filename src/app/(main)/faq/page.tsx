@@ -2,7 +2,7 @@ import { FAQ } from "@/types";
 import { cookies } from "next/headers";
 
 export default async function FAQPage() {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL;
 
   const res = await fetch(`${baseUrl}/api/faq`, {
     next: { revalidate: false },

@@ -1,32 +1,31 @@
 import { supabase } from "@/Lib/supabase";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function DELETE(
-  _: NextRequest,
-  { params }: { params: { id: string } }
-) {
-  const { error } = await supabase.from("faqs").delete().eq("id", params.id);
+interface RouteContext {
+  params: {
+    id: string;
+  };
+}
+
+export async function DELETE(req: NextRequest, context: RouteContext) {
+  const id = context.params.id;
+  const { error } = await supabase.from("faqs").delete().eq("id", id);
 
   if (error)
     return NextResponse.json({ error: error.message }, { status: 500 });
-
-  await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/revalidate?path=/faq`);
   return NextResponse.json({ success: true });
 }
 
-export async function PATCH(
-  req: NextRequest,
-  { params }: { params: { id: string } }
-) {
-  const { question, answer } = await req.json();
+export async function PATCH(req: NextRequest, context: RouteContext) {
+  const id = context.params.id;
+  const { question, answer, saved } = await req.json();
+
   const { error } = await supabase
     .from("faqs")
-    .update({ question, answer })
-    .eq("id", params.id);
+    .update({ question, answer, saved })
+    .eq("id", id);
 
   if (error)
     return NextResponse.json({ error: error.message }, { status: 500 });
-
-  await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/revalidate?path=/faq`);
   return NextResponse.json({ success: true });
 }

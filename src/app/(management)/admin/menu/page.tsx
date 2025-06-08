@@ -237,15 +237,35 @@ export default function MenuManager() {
         </div>
 
         {/* فعال بودن آیتم */}
-        <div className="flex items-center gap-2 col-span-full">
-          <input
-            type="checkbox"
-            checked={form.available}
-            onChange={(e) => setForm({ ...form, available: e.target.checked })}
-            id="available"
-          />
-          <label htmlFor="available" className="text-sm">
-            این آیتم فعال باشد
+        <div className="flex items-center gap-4 col-span-full">
+          <label
+            htmlFor="available"
+            className="flex items-center gap-2 cursor-pointer"
+          >
+            <div className="relative">
+              <input
+                type="checkbox"
+                id="available"
+                checked={form.available}
+                onChange={(e) =>
+                  setForm({ ...form, available: e.target.checked })
+                }
+                className="sr-only"
+              />
+              <div
+                className={`w-10 h-5 rounded-full transition-colors duration-300 ${
+                  form.available ? "bg-green-500" : "bg-gray-300"
+                }`}
+              ></div>
+              <div
+                className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-all duration-300 ${
+                  form.available ? "translate-x-5" : ""
+                }`}
+              ></div>
+            </div>
+            <span className="text-sm select-none">
+              {form.available ? "فعال است" : "غیرفعال است"}
+            </span>
           </label>
         </div>
 
@@ -275,15 +295,28 @@ export default function MenuManager() {
           {menuItems.map((item) => (
             <div
               key={item.id}
-              className="bg-white border rounded-lg p-4 shadow-sm flex flex-col gap-2"
+              className={`border rounded-lg p-4 shadow-sm flex flex-col gap-2 relative transition-all
+        ${
+          item.available ? "bg-white" : "bg-gray-100 opacity-60 border-red-300"
+        }`}
             >
+              {/* نوار برچسب غیرفعال */}
+              {!item.available && (
+                <div className="absolute top-0 left-0 z-50 bg-red-500 text-white text-xs px-2 py-1 rounded-br-md">
+                  غیرفعال
+                </div>
+              )}
+
               {item.image_url && (
                 <img
                   src={item.image_url}
                   alt={item.name}
-                  className="rounded w-full h-40 object-cover"
+                  className={`rounded w-full h-40 object-cover ${
+                    item.available ? "" : "opacity-50 grayscale"
+                  }`}
                 />
               )}
+
               <div className="font-bold text-lg">{item.name}</div>
               <div className="text-sm text-gray-600">{item.description}</div>
               <div className="text-sm">
@@ -291,6 +324,14 @@ export default function MenuManager() {
                 کالری
               </div>
               <div className="text-sm text-gray-500">📂 {item.category}</div>
+              <span
+                className={item.available ? "text-green-600" : "text-red-500"}
+              >
+                {item.available
+                  ? "🟢 فعال برای سفارش"
+                  : "🔴 غیرفعال برای سفارش"}
+              </span>
+
               <div className="flex gap-2 mt-2">
                 <button
                   onClick={() => handleEdit(item)}

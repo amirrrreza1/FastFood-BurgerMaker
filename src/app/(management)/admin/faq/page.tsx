@@ -9,6 +9,7 @@ type FAQ = {
   id: number;
   question: string;
   answer: string;
+  saved?: boolean;
 };
 
 type ModalState = {
@@ -26,7 +27,7 @@ export default function AdminFAQPage() {
     mode: "add",
     faqToEdit: null,
   });
-  const [form, setForm] = useState({ question: "", answer: "" });
+  const [form, setForm] = useState({ question: "", answer: "", saved: false });
   const [loadingSave, setLoadingSave] = useState(false);
   const [loadingDeleteId, setLoadingDeleteId] = useState<number | null>(null);
 
@@ -43,18 +44,18 @@ export default function AdminFAQPage() {
   }, []);
 
   const openAddModal = () => {
-    setForm({ question: "", answer: "" });
+    setForm({ question: "", answer: "", saved: false });
     setModal({ isOpen: true, mode: "add" });
   };
 
   const openEditModal = (faq: FAQ) => {
-    setForm({ question: faq.question, answer: faq.answer });
+    setForm({ question: faq.question, answer: faq.answer, saved: false });
     setModal({ isOpen: true, mode: "edit", faqToEdit: faq });
   };
 
   const closeModal = () => {
     setModal({ isOpen: false, mode: "add", faqToEdit: null });
-    setForm({ question: "", answer: "" });
+    setForm({ question: "", answer: "", saved: false });
   };
 
   const handleSave = async () => {
@@ -75,7 +76,8 @@ export default function AdminFAQPage() {
         const data = await res.json();
 
         if (res.ok && data && Array.isArray(data) && data.length > 0) {
-          setFaqs((prev) => [...prev, data[0]]);
+          const newFaq = { ...data[0], saved: false }; // new FAQ with saved false
+          setFaqs((prev) => [...prev, newFaq]);
           toast.success("سوال جدید افزوده شد");
           closeModal();
         } else {
@@ -95,7 +97,12 @@ export default function AdminFAQPage() {
           setFaqs((prev) =>
             prev.map((f) =>
               f.id === modal.faqToEdit!.id
-                ? { ...f, question: form.question, answer: form.answer }
+                ? {
+                    ...f,
+                    question: form.question,
+                    answer: form.answer,
+                    saved: false,
+                  }
                 : f
             )
           );
@@ -141,16 +148,49 @@ export default function AdminFAQPage() {
   };
 
   const handleRevalidate = async () => {
+    const unsavedFaqs = faqs.filter((faq) => faq.saved === false);
+
     try {
-      const res = await fetch("/api/revalidate", { method: "POST" });
-      const data = await res.json();
-      if (res.ok) {
-        toast.success("کش با موفقیت بازسازی شد");
-      } else {
-        toast.error(data.message || "خطا در بازسازی کش");
+      const res = await fetch("/api/revalidate", {
+        method: "POST",
+      });
+
+      if (!res.ok) {
+        toast.error("خطا در revalidate");
+        return;
+      }
+      if (unsavedFaqs.length === 0) {
+        toast.info("تغییری برای ذخیره وجود ندارد");
+        return;
+      }
+      let success = true;
+      for (const faq of unsavedFaqs) {
+        const res = await fetch(`/api/faq/${faq.id}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            question: faq.question,
+            answer: faq.answer,
+            saved: true,
+          }),
+        });
+
+        if (!res.ok) {
+          success = false;
+          toast.error(`خطا در ذخیره سوال با آیدی ${faq.id}`);
+        }
+      }
+
+      if (success) {
+        setFaqs((prev) =>
+          prev.map((faq) =>
+            faq.saved === false ? { ...faq, saved: true } : faq
+          )
+        );
+        toast.success("همه تغییرات ذخیره شدند");
       }
     } catch (error) {
-      toast.error("خطای شبکه در بازسازی کش");
+      toast.error("خطای شبکه در ذخیره تغییرات");
     }
   };
 
@@ -175,7 +215,7 @@ export default function AdminFAQPage() {
         {faqs.map((faq) => (
           <div
             key={faq.id}
-            className="bg-white shadow-md rounded-lg p-5 sm:p-6 border border-gray-200 hover:shadow-lg transition-shadow"
+            className="bg-white shadow-md rounded-lg p-5 sm:p-6 border border-gray-200 hover:shadow-lg transition-shadow relative"
           >
             <div className="text-lg sm:text-xl font-semibold text-gray-900 mb-2">
               {faq.question}
@@ -197,6 +237,12 @@ export default function AdminFAQPage() {
               >
                 {loadingDeleteId === faq.id ? "در حال حذف..." : "حذف"}
               </button>
+            </div>
+            <div className="flex  items-center gap-2 text-lg sm:text-xl font-semibold text-gray-900 mb-2">
+              {" "}
+              {faq.saved === false && (
+                <span className="w-3 h-3 block bg-orange-500 border border-orange-400 rounded-full absolute top-2 left-2"></span>
+              )}
             </div>
           </div>
         ))}
