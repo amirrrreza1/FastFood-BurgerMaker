@@ -28,6 +28,7 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import { supabase } from "@/Lib/supabase";
 import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
 
 type Ingredient =
   | "meat"
@@ -132,6 +133,7 @@ const ingredientInfo = [
 
 // --- MAIN COMPONENT ---
 export default function BurgerBuilderComponent() {
+  const Router = useRouter();
   const [layers, setLayers] = useState<LayerItem[]>([]);
   const [totalPrice, setTotalPrice] = useState(0);
   const [totalCalories, setTotalCalories] = useState(0);
@@ -225,6 +227,7 @@ export default function BurgerBuilderComponent() {
     setIsSaving(false);
     toast.success("همبرگر شما با موفقیت ذخیره شد!");
     setBurgerName("");
+    Router.push("/profile/myburgers");
   };
 
   const addLayer = (type: Ingredient) => {
@@ -303,7 +306,7 @@ export default function BurgerBuilderComponent() {
             <div className="text-sm text-black">کالری کل</div>
             <div className="text-xl font-bold text-orange-400 flex justify-center items-center">
               <span className="text-xs">Kcal</span>
-              <div className=""> {totalCalories.toLocaleString()}</div>
+              <span className=""> {totalCalories.toLocaleString()}</span>
             </div>
           </div>
         </div>

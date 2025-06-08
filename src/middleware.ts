@@ -21,7 +21,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  const protectedPaths = ["/profile", "/admin", "/checkout"];
+  const protectedPaths = ["/profile", "/admin", "/checkout" , "/new-burger"];
 
   if (protectedPaths.some((protectedPath) => path.startsWith(protectedPath))) {
     if (!token) {
@@ -59,5 +59,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/login", "/profile/:path*", "/admin/:path*", "/checkout"],
+  matcher: ["/login", "/profile/:path*", "/admin/:path*", "/checkout" , "/new-burger"],
 };
