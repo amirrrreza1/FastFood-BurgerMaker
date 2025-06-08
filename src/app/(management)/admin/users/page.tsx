@@ -128,6 +128,7 @@ export default function AdminUsersPage() {
                 <th className="p-2 border">شماره اشتراک</th>
                 <th className="p-2 border">تاریخ ساخت</th>
                 <th className="p-2 border">فعال؟</th>
+                <th className="p-2 border">نقش</th>
                 <th className="p-2 border">عملیات</th>
               </tr>
             </thead>
@@ -153,6 +154,9 @@ export default function AdminUsersPage() {
                   <td className="p-2 border text-center">
                     {user.is_active ? "✅" : "❌"}
                   </td>
+                  <td className="p-2 border text-center">
+                    {user.role === "admin" ? "ادمین" : "کاربر عادی"}
+                  </td>
                   <td className="p-2 border text-center flex flex-col gap-2 ">
                     <button
                       className={` ${user.is_active ? "DeleteBTN" : "EditBTN"}`}
@@ -164,14 +168,14 @@ export default function AdminUsersPage() {
                     </button>
                     {user.role === "admin" ? (
                       <button
-                        className="DeleteBTN flex justify-center mt-2"
+                        className="CancelBTN flex justify-center mt-2 w-full"
                         onClick={() => handleChangeRole(user.id, "user")}
                       >
                         تغییر به کاربر عادی
                       </button>
                     ) : (
                       <button
-                        className="EditBTN flex justify-center mt-2"
+                        className="EditBTN flex justify-center mt-2 w-full"
                         onClick={() => handleChangeRole(user.id, "admin")}
                       >
                         ارتقا به ادمین
@@ -237,7 +241,7 @@ export default function AdminUsersPage() {
                   </button>
                   {user.role === "admin" ? (
                     <button
-                      className="DeleteBTN w-full flex justify-center mt-2"
+                      className="CancelBTN w-full flex justify-center mt-2"
                       onClick={() => handleChangeRole(user.id, "user")}
                     >
                       تغییر به کاربر عادی

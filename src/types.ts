@@ -50,4 +50,10 @@ export type RouteContext = {
   params: {
     id: string;
   };
-}
+};
+
+export type FAQ = {
+  id: number;
+  question: string;
+  answer: string;
+};

@@ -32,7 +32,7 @@ const MainLayout = async ({ children }: Props) => {
         </div>
       </header>
       <main>{children}</main>
-      <footer className="w-full bg-[#A58A01] text-white p-5 mt-10">
+      <footer className="w-full bg-[#A58A01] text-white p-5 mt-10 h-[140px]">
         <div className="w-full max-w-[1200px] mx-auto mb-5 flex flex-col-reverse md:flex-row justify-between items-center gap-3">
           <div>
             طراحی و توسعه توسط <strong>امیررضا آذریون</strong>
