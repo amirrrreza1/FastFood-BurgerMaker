@@ -29,6 +29,7 @@ import { CSS } from "@dnd-kit/utilities";
 import { supabase } from "@/Lib/supabase";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
+import IntroModal from "./BurgerIntroModal";
 
 type Ingredient =
   | "meat"
@@ -282,108 +283,111 @@ export default function BurgerBuilderComponent() {
   let accumulatedHeight = bottomBunTopY;
 
   return (
-    <div className="flex flex-col md:flex-row h-screen w-full text-white relative">
-      <NameModal
-        open={showNameModal}
-        onClose={() => setShowNameModal(false)}
-        burgerName={burgerName}
-        setBurgerName={setBurgerName}
-        onSave={handleFinalSave}
-      />
-      <div className="w-full md:w-96 p-4 flex flex-col shadow-lg overflow-y-auto">
-        <p className="text-center text-gray-400 mb-4">
-          همبرگر خود را بسازید 🍔
-        </p>
-        <div className="flex flex-col gap-4 mb-4 text-center">
-          <div className="bg-gray-200 p-1 rounded-lg">
-            <div className="text-sm text-black">قیمت نهایی</div>
-            <div className="text-xl font-bold text-green-600">
-              {totalPrice.toLocaleString()}
-              <span className="text-xs">تومان</span>
-            </div>
-          </div>
-          <div className="bg-gray-200 p-1 rounded-lg">
-            <div className="text-sm text-black">کالری کل</div>
-            <div className="text-xl font-bold text-orange-400 flex justify-center items-center">
-              <span className="text-xs">Kcal</span>
-              <span className=""> {totalCalories.toLocaleString()}</span>
-            </div>
-          </div>
-        </div>
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-2 mb-4">
-          {ingredientInfo.map((ing) => (
-            <button
-              key={ing.type}
-              onClick={() => addLayer(ing.type as Ingredient)}
-              className={`text-white py-2 rounded-lg w-full text-sm transition-transform transform hover:scale-105 active:scale-95 shadow-md cursor-pointer ${ing.color}`}
-            >
-              {ing.label}
-            </button>
-          ))}
-        </div>
-        <button
-          onClick={handleSaveAttempt}
-          disabled={isSaving}
-          className="ConfirmBTN w-full mb-4 disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {isSaving ? "در حال ذخیره..." : " ذخیره همبرگر"}
-        </button>
-        <div className="flex-grow min-h-[150px]">
-          <h3 className="font-bold text-lg mb-2 text-gray-300">لایه‌ها:</h3>
-          <DndContext
-            sensors={sensors}
-            collisionDetection={closestCenter}
-            onDragEnd={handleDragEnd}
-          >
-            <SortableContext
-              items={layers.map((l) => l.id)}
-              strategy={verticalListSortingStrategy}
-            >
-              <div className="space-y-2">
-                {layers.length > 0 ? (
-                  layers.map((layer, index) => (
-                    <SortableItem
-                      key={layer.id}
-                      layer={layer}
-                      index={index}
-                      removeLayer={removeLayer}
-                    />
-                  ))
-                ) : (
-                  <p className="text-gray-500 text-center py-4">
-                    هنوز لایه‌ای اضافه نشده است.
-                  </p>
-                )}
+    <>
+      <IntroModal />
+      <div className="flex flex-col md:flex-row h-screen w-full text-white relative">
+        <NameModal
+          open={showNameModal}
+          onClose={() => setShowNameModal(false)}
+          burgerName={burgerName}
+          setBurgerName={setBurgerName}
+          onSave={handleFinalSave}
+        />
+        <div className="w-full md:w-96 p-4 flex flex-col shadow-lg overflow-y-auto">
+          <p className="text-center text-gray-400 mb-4">
+            همبرگر خود را بسازید 🍔
+          </p>
+          <div className="flex flex-col gap-4 mb-4 text-center">
+            <div className="bg-gray-200 p-1 rounded-lg">
+              <div className="text-sm text-black">قیمت نهایی</div>
+              <div className="text-xl font-bold text-green-600">
+                {totalPrice.toLocaleString()}
+                <span className="text-xs">تومان</span>
               </div>
-            </SortableContext>
-          </DndContext>
+            </div>
+            <div className="bg-gray-200 p-1 rounded-lg">
+              <div className="text-sm text-black">کالری کل</div>
+              <div className="text-xl font-bold text-orange-400 flex justify-center items-center">
+                <span className="text-xs">Kcal</span>
+                <span className=""> {totalCalories.toLocaleString()}</span>
+              </div>
+            </div>
+          </div>
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-2 mb-4">
+            {ingredientInfo.map((ing) => (
+              <button
+                key={ing.type}
+                onClick={() => addLayer(ing.type as Ingredient)}
+                className={`text-white py-2 rounded-lg w-full text-sm transition-transform transform hover:scale-105 active:scale-95 shadow-md cursor-pointer ${ing.color}`}
+              >
+                {ing.label}
+              </button>
+            ))}
+          </div>
+          <button
+            onClick={handleSaveAttempt}
+            disabled={isSaving}
+            className="ConfirmBTN w-full mb-4 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {isSaving ? "در حال ذخیره..." : " ذخیره همبرگر"}
+          </button>
+          <div className="flex-grow min-h-[150px]">
+            <h3 className="font-bold text-lg mb-2 text-gray-300">لایه‌ها:</h3>
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragEnd={handleDragEnd}
+            >
+              <SortableContext
+                items={layers.map((l) => l.id)}
+                strategy={verticalListSortingStrategy}
+              >
+                <div className="space-y-2">
+                  {layers.length > 0 ? (
+                    layers.map((layer, index) => (
+                      <SortableItem
+                        key={layer.id}
+                        layer={layer}
+                        index={index}
+                        removeLayer={removeLayer}
+                      />
+                    ))
+                  ) : (
+                    <p className="text-gray-500 text-center py-4">
+                      هنوز لایه‌ای اضافه نشده است.
+                    </p>
+                  )}
+                </div>
+              </SortableContext>
+            </DndContext>
+          </div>
+        </div>
+        <div className="w-full bg-gray-400 h-full min-h-[300px] md:min-h-0 flex justify-center items-center">
+          <Canvas
+            camera={{ position: [0, 5, 12], fov: 50 }}
+            gl={{ preserveDrawingBuffer: true }}
+            className="!w-[95%] !h-[95%] lg:!w-[60%] lg:!h-[60%] bg-white rounded-2xl"
+          >
+            <ambientLight intensity={0.5} />
+            <directionalLight position={[10, 10, 5]} intensity={1.5} />
+            <Suspense fallback={null}>
+              <BurgerBreadBottom />
+              {layers.map((layer, index) => (
+                <BurgerLayer key={layer.id} type={layer.type} index={index} />
+              ))}
+              <BurgerBreadTop y={layers.length * 0.3} />
+              <ScreenshotHelper ref={screenshotRef} />
+            </Suspense>
+            <OrbitControls
+              enablePan={true}
+              enableZoom={true}
+              enableRotate={true}
+            />
+            <Environment preset="sunset" background={false} />
+          </Canvas>
         </div>
       </div>
-      <div className="w-full bg-gray-400 h-full min-h-[300px] md:min-h-0 flex justify-center items-center">
-        <Canvas
-          camera={{ position: [0, 5, 12], fov: 50 }}
-          gl={{ preserveDrawingBuffer: true }}
-          className="!w-[95%] !h-[95%] lg:!w-[60%] lg:!h-[60%] bg-white rounded-2xl"
-        >
-          <ambientLight intensity={0.5} />
-          <directionalLight position={[10, 10, 5]} intensity={1.5} />
-          <Suspense fallback={null}>
-            <BurgerBreadBottom />
-            {layers.map((layer, index) => (
-              <BurgerLayer key={layer.id} type={layer.type} index={index} />
-            ))}
-            <BurgerBreadTop y={layers.length * 0.3} />
-            <ScreenshotHelper ref={screenshotRef} />
-          </Suspense>
-          <OrbitControls
-            enablePan={true}
-            enableZoom={true}
-            enableRotate={true}
-          />
-          <Environment preset="sunset" background={false} />
-        </Canvas>
-      </div>
-    </div>
+    </>
   );
 }
 
