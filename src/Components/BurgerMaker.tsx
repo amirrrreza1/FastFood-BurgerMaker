@@ -27,9 +27,8 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { supabase } from "@/Lib/supabase";
-// import { supabase } from "@/Lib/supabase"; // This line is removed to fix the erro
+import { toast } from "react-toastify";
 
-// --- DATA & TYPES ---
 type Ingredient =
   | "meat"
   | "cheese"
@@ -117,7 +116,7 @@ const ingredientInfo = [
   {
     type: "mayo",
     label: "افزودن سس سفید",
-    color: "bg-gray-200 text-black hover:bg-gray-300",
+    color: "bg-gray-400 text-black hover:bg-gray-500",
   },
   {
     type: "hot",
@@ -136,7 +135,6 @@ export default function BurgerBuilderComponent() {
   const [layers, setLayers] = useState<LayerItem[]>([]);
   const [totalPrice, setTotalPrice] = useState(0);
   const [totalCalories, setTotalCalories] = useState(0);
-  const [notification, setNotification] = useState<NotificationState>(null);
   const [showNameModal, setShowNameModal] = useState(false);
   const [burgerName, setBurgerName] = useState("");
   const [isSaving, setIsSaving] = useState(false);
@@ -148,43 +146,49 @@ export default function BurgerBuilderComponent() {
       const data = await res.json();
       if (!res.ok) throw new Error("Failed to load user ID");
       setUserID(data.user_id);
-      console.log(data.user_id);
     };
 
     fetchUserID();
-  });
+  }, []); // FIX: Added empty dependency array to run useEffect only once.
 
-  const screenshotRef = useRef<{ takeScreenshot: () => string }>(null);
+  const screenshotRef = useRef<{ takeScreenshot: () => string }>(null); // NEW: Define limits for specific ingredients
+
+  const ingredientLimits: Partial<Record<Ingredient, number>> = {
+    meat: 3,
+    cheese: 2,
+    lettuce: 1,
+    tomato: 1,
+    pickle: 1,
+    bread: 1,
+    hot: 1,
+    ketchup: 1,
+    mustard: 1,
+    mayo: 1,
+    onion: 1,
+  };
+  const sauceTypes: Ingredient[] = ["ketchup", "mustard", "mayo", "hot"];
+  const MAX_SAUCES = 3;
 
   const handleSaveAttempt = () => {
-    if (isSaving) return;
+    if (isSaving) return; // FIX: The modal will no longer open if this condition is met.
+
     if (!layers.some((l) => l.type === "meat")) {
-      return setNotification({
-        title: "خطا",
-        message: "برای ذخیره، باید حداقل یک لایه گوشت اضافه کنید.",
-        type: "error",
-      });
+      toast.error("برای ذخیره، باید حداقل یک لایه گوشت اضافه کنید.");
+      return; // This prevents the code below from running.
     }
+
     setShowNameModal(true);
   };
 
   const handleFinalSave = async () => {
     if (!screenshotRef.current || !burgerName.trim()) {
-      setNotification({
-        title: "خطا",
-        message: "لطفا یک نام برای همبرگر خود انتخاب کنید.",
-        type: "error",
-      });
+      toast.error("لطفا یک نام برای همبرگر خود انتخاب کنید.");
       return;
     }
 
     setIsSaving(true);
     setShowNameModal(false);
-    setNotification({
-      title: "در حال ذخیره...",
-      message: "لطفا چند لحظه صبر کنید...",
-      type: "info",
-    });
+    toast.info("در حال ذخیره...");
 
     const dataUrl = screenshotRef.current.takeScreenshot();
     const file = dataURLtoFile(dataUrl, `burger-${Date.now()}.png`);
@@ -196,11 +200,8 @@ export default function BurgerBuilderComponent() {
 
     if (uploadError) {
       setIsSaving(false);
-      return setNotification({
-        title: "خطا در آپلود",
-        message: "مشکلی در ذخیره عکس پیش آمد.",
-        type: "error",
-      });
+      toast.error("مشکلی در ذخیره عکس پیش آمد.");
+      return; // Stop execution on error
     }
 
     const { data } = supabase.storage.from("burgers").getPublicUrl(filePath);
@@ -208,7 +209,7 @@ export default function BurgerBuilderComponent() {
 
     const { error: dbError } = await supabase.from("custom_burgers").insert({
       name: burgerName,
-      user_id: userID, // Replace with actual user ID from auth
+      user_id: userID,
       layers: layers.map((l) => l.type),
       image_url: imageUrl,
       total_price: totalPrice,
@@ -217,32 +218,34 @@ export default function BurgerBuilderComponent() {
 
     if (dbError) {
       setIsSaving(false);
-      return setNotification({
-        title: "خطای دیتابیس",
-        message: "ثبت اطلاعات همبرگر با مشکل مواجه شد.",
-        type: "error",
-      });
+      toast.error("ثبت اطلاعات همبرگر با مشکل مواجه شد.");
+      return; // Stop execution on error
     }
 
     setIsSaving(false);
-    setNotification({
-      title: "موفق!",
-      message: "همبرگر شما با موفقیت ذخیره شد!",
-      type: "success",
-    });
+    toast.success("همبرگر شما با موفقیت ذخیره شد!");
     setBurgerName("");
   };
 
   const addLayer = (type: Ingredient) => {
-    const sauceTypes: Ingredient[] = ["ketchup", "mustard", "mayo", "hot"];
+    // FIX: Updated ingredient limiting logic
+    // 1. Check for total sauce limit
     const sauceCount = layers.filter((l) => sauceTypes.includes(l.type)).length;
-    if (sauceTypes.includes(type) && sauceCount >= 2) {
-      return setNotification({
-        title: "محدودیت!",
-        message: "فقط ۲ نوع سس می‌توانید انتخاب کنید.",
-        type: "warning",
-      });
-    }
+    if (sauceTypes.includes(type) && sauceCount >= MAX_SAUCES) {
+      toast.warn(`حداکثر می‌توانید ${MAX_SAUCES} سس اضافه کنید.`);
+      return; // Stop the function
+    } // 2. Check for individual ingredient limits
+
+    const limit = ingredientLimits[type];
+    if (limit) {
+      const currentCount = layers.filter((l) => l.type === type).length;
+      if (currentCount >= limit) {
+        const label = getLabel(type); // Get the Persian label
+        toast.warn(`بیشتر از ${limit} عدد ${label} نمی‌توانید اضافه کنید.`);
+        return; // Stop the function
+      }
+    } // If no limits were hit, add the layer
+
     const newLayer = { id: `layer-${Date.now()}-${Math.random()}`, type };
     setLayers((prev) => [...prev, newLayer]);
     setTotalPrice((prev) => prev + prices[type]);
@@ -257,7 +260,6 @@ export default function BurgerBuilderComponent() {
       setTotalCalories((prev) => prev - calories[layerToRemove.type]);
     }
   };
-
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 10 } })
   );
@@ -273,12 +275,11 @@ export default function BurgerBuilderComponent() {
     }
   };
 
+  const bottomBunTopY = 0.25;
+  let accumulatedHeight = bottomBunTopY;
+
   return (
-    <div className="flex flex-col md:flex-row h-screen w-full bg-gray-800 text-white font-sans relative">
-      <Notification
-        notification={notification}
-        onClear={() => setNotification(null)}
-      />
+    <div className="flex flex-col md:flex-row h-screen w-full text-white relative">
       <NameModal
         open={showNameModal}
         onClose={() => setShowNameModal(false)}
@@ -286,35 +287,32 @@ export default function BurgerBuilderComponent() {
         setBurgerName={setBurgerName}
         onSave={handleFinalSave}
       />
-      <div className="w-full md:w-96 bg-gray-900 p-4 flex flex-col shadow-lg overflow-y-auto">
-        <h1 className="text-3xl font-bold mb-1 text-center text-yellow-400">
-          Burger Builder
-        </h1>
+      <div className="w-full md:w-96 p-4 flex flex-col shadow-lg overflow-y-auto">
         <p className="text-center text-gray-400 mb-4">
           همبرگر خود را بسازید 🍔
         </p>
-        <div className="grid grid-cols-2 gap-4 mb-4 text-center">
-          <div className="bg-gray-800 p-3 rounded-lg">
-            <div className="text-sm text-gray-400">قیمت نهایی</div>
-            <div className="text-xl font-bold text-green-400">
-              {totalPrice.toLocaleString()}{" "}
+        <div className="flex flex-col gap-4 mb-4 text-center">
+          <div className="bg-gray-200 p-1 rounded-lg">
+            <div className="text-sm text-black">قیمت نهایی</div>
+            <div className="text-xl font-bold text-green-600">
+              {totalPrice.toLocaleString()}
               <span className="text-xs">تومان</span>
             </div>
           </div>
-          <div className="bg-gray-800 p-3 rounded-lg">
-            <div className="text-sm text-gray-400">کالری کل</div>
-            <div className="text-xl font-bold text-orange-400">
-              {totalCalories.toLocaleString()}{" "}
+          <div className="bg-gray-200 p-1 rounded-lg">
+            <div className="text-sm text-black">کالری کل</div>
+            <div className="text-xl font-bold text-orange-400 flex justify-center items-center">
               <span className="text-xs">Kcal</span>
+              <div className=""> {totalCalories.toLocaleString()}</div>
             </div>
           </div>
         </div>
-        <div className="grid grid-cols-2 gap-2 mb-4">
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-2 mb-4">
           {ingredientInfo.map((ing) => (
             <button
               key={ing.type}
               onClick={() => addLayer(ing.type as Ingredient)}
-              className={`text-white py-2 px-3 rounded-lg w-full text-sm font-semibold transition-transform transform hover:scale-105 active:scale-95 shadow-md ${ing.color}`}
+              className={`text-white py-2 rounded-lg w-full text-sm transition-transform transform hover:scale-105 active:scale-95 shadow-md cursor-pointer ${ing.color}`}
             >
               {ing.label}
             </button>
@@ -323,9 +321,9 @@ export default function BurgerBuilderComponent() {
         <button
           onClick={handleSaveAttempt}
           disabled={isSaving}
-          className="w-full bg-blue-500 hover:bg-blue-600 text-white px-4 py-3 rounded-lg font-bold text-lg transition-transform transform hover:scale-105 active:scale-95 shadow-lg mb-4 disabled:bg-gray-500 disabled:cursor-not-allowed"
+          className="ConfirmBTN w-full mb-4 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {isSaving ? "در حال ذخیره..." : "📸 ذخیره همبرگر"}
+          {isSaving ? "در حال ذخیره..." : " ذخیره همبرگر"}
         </button>
         <div className="flex-grow min-h-[150px]">
           <h3 className="font-bold text-lg mb-2 text-gray-300">لایه‌ها:</h3>
@@ -358,10 +356,11 @@ export default function BurgerBuilderComponent() {
           </DndContext>
         </div>
       </div>
-      <div className="flex-1 w-full h-full min-h-[300px] md:min-h-0 bg-gray-700">
+      <div className="w-full bg-gray-400 h-full min-h-[300px] md:min-h-0 flex justify-center items-center">
         <Canvas
           camera={{ position: [0, 5, 12], fov: 50 }}
           gl={{ preserveDrawingBuffer: true }}
+          className="!w-[95%] !h-[95%] lg:!w-[60%] lg:!h-[60%] bg-white rounded-2xl"
         >
           <ambientLight intensity={0.5} />
           <directionalLight position={[10, 10, 5]} intensity={1.5} />
@@ -370,7 +369,7 @@ export default function BurgerBuilderComponent() {
             {layers.map((layer, index) => (
               <BurgerLayer key={layer.id} type={layer.type} index={index} />
             ))}
-            <BurgerBreadTop y={0.5 + layers.length * 0.3} />
+            <BurgerBreadTop y={layers.length * 0.3} />
             <ScreenshotHelper ref={screenshotRef} />
           </Suspense>
           <OrbitControls
@@ -385,49 +384,6 @@ export default function BurgerBuilderComponent() {
   );
 }
 
-// --- HELPER & UI COMPONENTS ---
-function Notification({
-  notification,
-  onClear,
-}: {
-  notification: NotificationState;
-  onClear: () => void;
-}) {
-  useEffect(() => {
-    if (notification) {
-      const timer = setTimeout(() => onClear(), 5000);
-      return () => clearTimeout(timer);
-    }
-  }, [notification, onClear]);
-  if (!notification) return null;
-  const colors = {
-    error: "bg-red-500",
-    warning: "bg-yellow-500",
-    info: "bg-blue-500",
-    success: "bg-green-500",
-  };
-  return (
-    <div className="absolute top-0 left-0 right-0 z-50 flex justify-center p-4">
-      <div
-        className={`flex items-center justify-between w-full max-w-md p-4 text-white rounded-lg shadow-2xl ${
-          colors[notification.type]
-        }`}
-      >
-        <div>
-          <p className="font-bold">{notification.title}</p>
-          <p className="text-sm">{notification.message}</p>
-        </div>
-        <button
-          onClick={onClear}
-          className="ml-4 text-2xl font-semibold leading-none"
-        >
-          &times;
-        </button>
-      </div>
-    </div>
-  );
-}
-
 const NameModal = ({
   open,
   onClose,
@@ -437,8 +393,14 @@ const NameModal = ({
 }: any) => {
   if (!open) return null;
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
-      <div className="bg-gray-800 p-6 rounded-lg shadow-xl w-full max-w-sm">
+    <div
+      className="fixed inset-0 bg-black/70 flex items-center justify-center z-50"
+      onClick={onClose}
+    >
+      <div
+        className="bg-white text-black p-6 rounded-lg shadow-xl w-full max-w-sm"
+        onClick={(e) => e.stopPropagation()}
+      >
         <h2 className="text-xl font-bold mb-4">
           یک نام برای همبرگر خود انتخاب کنید
         </h2>
@@ -447,19 +409,13 @@ const NameModal = ({
           value={burgerName}
           onChange={(e) => setBurgerName(e.target.value)}
           placeholder="مثلا: قهرمان دوبل"
-          className="w-full p-2 rounded bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-400"
+          className="w-full p-2 rounded border border-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-400"
         />
         <div className="flex justify-end gap-4 mt-6">
-          <button
-            onClick={onClose}
-            className="px-4 py-2 rounded bg-gray-600 hover:bg-gray-500"
-          >
+          <button onClick={onClose} className="CancelBTN">
             انصراف
           </button>
-          <button
-            onClick={onSave}
-            className="px-4 py-2 rounded bg-blue-500 hover:bg-blue-600"
-          >
+          <button onClick={onSave} className="ConfirmBTN">
             ذخیره
           </button>
         </div>
@@ -515,7 +471,7 @@ function BurgerLayer({ type, index }: { type: Ingredient; index: number }) {
     hot: "#FF4500",
     bread: "#E0A865",
   };
-  const layerHeight = type === "meat" ? 0.25 : 0.1;
+  const layerHeight = type === "meat" ? 0.2 : 0.15;
   const radius = type === "lettuce" ? 1.5 : 1.4;
   return (
     <mesh position={[0, yPos, 0]}>
@@ -527,13 +483,23 @@ function BurgerLayer({ type, index }: { type: Ingredient; index: number }) {
     </mesh>
   );
 }
-function BurgerBreadTop({ y }: { y: number }) {
-  const topY = y + 0.1;
+export function BurgerBreadTop({ y }: { y: number }) {
+  const topY = y + 0.15;
+
   return (
-    <mesh position={[0, topY, 0]}>
-      <sphereGeometry args={[1.5, 64, 32, 0, Math.PI * 2, 0, Math.PI / 2]} />
-      <meshStandardMaterial color="#d5a85e" roughness={0.5} />
-    </mesh>
+    <group position={[0, topY, 0]}>
+      {/* نیم‌کره بالا */}
+      <mesh>
+        <sphereGeometry args={[1.5, 64, 32, 0, Math.PI * 2, 0, Math.PI / 2]} />
+        <meshStandardMaterial color="#d5a85e" roughness={0.5} />
+      </mesh>
+
+      {/* کف صاف برای بستن کره از پایین */}
+      <mesh position={[0, -0.001, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+        <circleGeometry args={[1.5, 64]} />
+        <meshStandardMaterial color="#d5a85e" roughness={0.5} />
+      </mesh>
+    </group>
   );
 }
 
@@ -577,13 +543,13 @@ function SortableItem({
     <div
       ref={setNodeRef}
       style={style}
-      className="flex items-center justify-between bg-gray-700 p-2 rounded-lg shadow-inner cursor-grab active:cursor-grabbing"
+      className="flex items-center justify-between bg-gray-200 p-2 rounded-lg shadow-inner"
     >
       <div className="flex items-center">
         <button
           {...attributes}
           {...listeners}
-          className="mr-2 text-gray-400 hover:text-white touch-none"
+          className="mr-2 text-gray-500 hover:text-gray-800 touch-none cursor-grab"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -595,13 +561,13 @@ function SortableItem({
             <path d="M7 2a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zM7 5a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zM7 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm-3 3a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0z" />
           </svg>
         </button>
-        <span className="font-medium text-gray-200">
+        <span className="font-medium text-black">
           {index + 1}. {getLabel(layer.type)}
         </span>
       </div>
       <button
         onClick={() => removeLayer(layer.id)}
-        className="text-red-400 hover:text-red-300 font-bold text-lg"
+        className="text-red-400 hover:text-red-300 font-bold text-lg cursor-pointer"
       >
         &times;
       </button>
