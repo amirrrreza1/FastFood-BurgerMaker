@@ -7,7 +7,6 @@ const links = [
   { href: "/profile/account", label: "حساب کاربری" },
   { href: "/profile/orders", label: "سفارش‌ها" },
   { href: "/profile/myburgers", label: "همبرگرهای من" },
-  { href: "/", label: "صفحه اصلی" },
 ];
 
 export default function ProfileSideBar() {
@@ -65,6 +64,9 @@ export default function ProfileSideBar() {
           </div>
 
           <div className="mt-4">
+            <Link className="EditBTN  justify-center mb-2" href={"/"}>
+              صفحه اصلی
+            </Link>
             <button
               className="DeleteBTN block w-full"
               onClick={() => {
@@ -100,6 +102,9 @@ export default function ProfileSideBar() {
         </div>
 
         <div className="mt-4">
+          <Link className="EditBTN  justify-center mb-2" href={"/"}>
+            صفحه اصلی
+          </Link>
           <button className="DeleteBTN w-full" onClick={handleLogout}>
             خروج
           </button>

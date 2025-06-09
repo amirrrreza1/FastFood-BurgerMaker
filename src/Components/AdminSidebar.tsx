@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { redirect, usePathname } from "next/navigation";
 import { useState } from "react";
-import { label } from "three/tsl";
 
 const menuItems = [
   { label: "مدیریت منو", href: "/admin/menu" },
@@ -67,6 +66,9 @@ export default function AdminSidebar() {
             ))}
           </ul>
           <div className="mt-4">
+            <Link className="EditBTN  justify-center mb-2" href={"/"}>
+              صفحه اصلی
+            </Link>
             <button className="DeleteBTN w-full" onClick={handleLogout}>
               خروج
             </button>
@@ -92,6 +94,9 @@ export default function AdminSidebar() {
           ))}
         </ul>
         <div className="mt-4">
+          <Link className="EditBTN  justify-center mb-2" href={"/"}>
+            صفحه اصلی
+          </Link>
           <button className="DeleteBTN w-full" onClick={handleLogout}>
             خروج
           </button>
