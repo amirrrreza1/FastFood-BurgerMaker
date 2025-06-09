@@ -28,6 +28,7 @@ export default function CustomBurgersPage() {
     const { data, error } = await supabase
       .from("custom_burgers")
       .select("*")
+      .eq("is_active", true) // فقط موارد فعال
       .order("created_at", { ascending: false });
 
     if (!error) setBurgers(data as CustomBurger[]);
@@ -37,10 +38,10 @@ export default function CustomBurgersPage() {
   const handleDelete = async (id: string) => {
     const result = await Swal.fire({
       title: "آیا مطمئن هستید؟",
-      text: "این همبرگر برای همیشه حذف خواهد شد!",
+      text: "این همبرگر غیرفعال خواهد شد و دیگر نمایش داده نمی‌شود!",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonText: "بله، حذف کن!",
+      confirmButtonText: "بله، غیرفعال کن!",
       cancelButtonText: "لغو",
       confirmButtonColor: "#e3342f",
       cancelButtonColor: "#6c757d",
@@ -49,14 +50,14 @@ export default function CustomBurgersPage() {
     if (result.isConfirmed) {
       const { error } = await supabase
         .from("custom_burgers")
-        .delete()
+        .update({ is_active: false }) // به جای حذف، غیرفعال شود
         .eq("id", id);
 
       if (!error) {
         setBurgers((prev) => prev.filter((b) => b.id !== id));
-        toast.success("همبرگر با موفقیت حذف شد.");
+        toast.success("همبرگر با موفقیت غیرفعال شد.");
       } else {
-        toast.error("حذف با خطا مواجه شد.");
+        toast.error("عملیات غیرفعال کردن با خطا مواجه شد.");
       }
     }
   };
