@@ -75,7 +75,7 @@ export default function AdminSidebar() {
       </div>
 
       {/* Desktop Sidebar */}
-      <aside className="hidden md:flex w-60 bg-gray-100 p-4 border-l flex-col">
+      <aside className="hidden md:flex h-screen sticky top-0 w-60 bg-gray-100 p-4 border-l flex-col">
         <h2 className="text-xl font-bold mb-4">پنل ادمین</h2>
         <ul className="flex-1 space-y-2 overflow-y-auto">
           {menuItems.map((item) => (

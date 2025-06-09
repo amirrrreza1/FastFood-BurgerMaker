@@ -8,6 +8,8 @@ type User = {
   id: string;
   name: string;
   phoneNum: string;
+  email: string;
+  display_name: string;
 };
 
 export default function AdminManualOrder({ adminId }: { adminId: string }) {
@@ -145,7 +147,7 @@ export default function AdminManualOrder({ adminId }: { adminId: string }) {
                 setQuery(user.phoneNum);
               }}
             >
-              <span className="font-medium">{user.name}</span> - {user.phoneNum}
+              <span className="font-medium">{user.name || user.email}</span> - {user.phoneNum || user.display_name}
             </div>
           ))}
         </div>

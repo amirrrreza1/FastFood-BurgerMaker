@@ -79,7 +79,7 @@ export default function ProfileSideBar() {
       </div>
 
       {/* Sidebar for Desktop */}
-      <aside className="hidden md:flex flex-col h-screen w-60 bg-gray-100 p-4 border-l">
+      <aside className="hidden md:flex flex-col h-screen w-60 bg-gray-100 p-4 border-l sticky top-0">
         <h2 className="text-xl font-bold mb-4">پروفایل</h2>
 
         <div className="flex-1 overflow-y-auto">

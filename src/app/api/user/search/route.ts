@@ -19,7 +19,7 @@ export async function GET(req: Request) {
 
   const { data, error } = await supabase
     .from("profiles")
-    .select("id, name, lastName, phoneNum, email, subscription_number")
+    .select("id, name, lastName, phoneNum, email, subscription_number , display_name")
     .or(orFilter)
     .limit(10);
 
