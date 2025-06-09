@@ -76,6 +76,15 @@ export default function AdminOrdersPage() {
       });
     }
 
+    // سفارش‌های "cancelled" و "delivered" را ببر انتهای لیست
+    result.sort((a, b) => {
+      const isFinalA =
+        a.status === "cancelled" || a.status === "delivered" ? 1 : 0;
+      const isFinalB =
+        b.status === "cancelled" || b.status === "delivered" ? 1 : 0;
+      return isFinalA - isFinalB;
+    });
+
     setFilteredOrders(result);
   }, [orders, filterStatus, searchTerm]);
 
@@ -152,7 +161,7 @@ export default function AdminOrdersPage() {
             >
               <div className="flex flex-col sm:flex-row justify-between text-sm text-gray-700 gap-2">
                 <div>
-                  سفارش {index + 1} (#{order.id})
+                  سفارش {index + 1}
                 </div>
                 <div>{new Date(order.created_at).toLocaleString("fa-IR")}</div>
               </div>

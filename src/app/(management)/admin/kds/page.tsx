@@ -9,6 +9,19 @@ interface OrderItem {
   name: string;
   quantity: number;
 }
+const ITEM_NAME_TRANSLATIONS: Record<string, string> = {
+  meat: "گوشت",
+  cheese: "پنیر",
+  lettuce: "کاهو",
+  tomato: "گوجه",
+  pickle: "خیارشور",
+  onion: "پیاز",
+  ketchup: "سس کچاپ",
+  mustard: "سس خردل",
+  mayo: "سس مایونز",
+  hot: "سس تند",
+  bread: "نان اضافی",
+};
 
 interface Order {
   id: number;
@@ -19,6 +32,13 @@ interface Order {
   note?: string;
 }
 
+interface CustomBurger {
+  id: number;
+  name: string;
+  layers: string[] | string;
+  image_url?: string;
+}
+
 const STATUS_LABELS: Record<string, string> = {
   pending: "⏳ در انتظار تأیید",
   preparing: "🧑‍🍳 در حال آماده‌سازی",
@@ -26,24 +46,26 @@ const STATUS_LABELS: Record<string, string> = {
   canceled: "❌ لغو شده",
 };
 
-const ORDER_TYPE_LABELS: Record<string, string> = {
-  online: "🌐 آنلاین",
-  in_person: "🏃 حضوری",
-  phone: "📞 تلفنی",
-};
-
 const KitchenDisplayPage = () => {
   const [orders, setOrders] = useState<Order[]>([]);
+  const [customBurgers, setCustomBurgers] = useState<CustomBurger[]>([]);
 
   const fetchOrders = async () => {
     try {
       const res = await axios.get("/api/admin/orders");
-      const filtered = res.data.filter(
-        (o: Order) => o.status === "preparing" // فقط سفارش‌های تاییدشده
-      );
+      const filtered = res.data.filter((o: Order) => o.status === "preparing");
       setOrders(filtered);
     } catch (err) {
       toast.error("خطا در دریافت سفارش‌ها");
+    }
+  };
+
+  const fetchCustomBurgers = async () => {
+    try {
+      const res = await axios.get("/api/admin/custom-burgers");
+      setCustomBurgers(res.data);
+    } catch (err) {
+      toast.error("خطا در دریافت همبرگرهای سفارشی");
     }
   };
 
@@ -61,9 +83,12 @@ const KitchenDisplayPage = () => {
 
   useEffect(() => {
     fetchOrders();
+    fetchCustomBurgers();
     const interval = setInterval(fetchOrders, 5000);
     return () => clearInterval(interval);
   }, []);
+
+  const customBurgerIds = customBurgers.map((b) => b.id);
 
   return (
     <div className="p-4 sm:p-6 bg-gray-50 min-h-screen">
@@ -72,34 +97,70 @@ const KitchenDisplayPage = () => {
       </h1>
 
       <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 xl:grid-cols-3">
-        {orders.map((order) => (
+        {orders.map((order, index) => (
           <div
             key={order.id}
             className="bg-white border border-gray-200 rounded-xl shadow-sm p-4 flex flex-col justify-between"
           >
             <div className="flex justify-between items-center mb-3">
               <span className="text-lg font-bold text-blue-800">
-                سفارش #{order.id}
+                سفارش {index + 1}
               </span>
               <span className="text-xs text-gray-500 whitespace-nowrap">
                 {new Date(order.created_at).toLocaleTimeString("fa-IR")}
               </span>
             </div>
 
-            <div className="text-sm text-gray-700 mb-2">
-              نوع سفارش:{" "}
-              <span className="font-semibold text-gray-900">
-                {ORDER_TYPE_LABELS[order.order_type]}
-              </span>
-            </div>
-
             <ul className="text-sm list-disc px-4 space-y-1 mb-2 text-gray-800">
-              {order.items.map((item) => (
-                <li key={item.id}>
+              {order.items.map((item) => {
+                const isCustom = customBurgerIds.includes(item.id);
+                return (
+                  <li key={item.id}>
+                    {isCustom ? "🍔 همبرگر سفارشی" : item.name} ×{" "}
+                    {item.quantity}
+                  </li>
+                );
+              })}
+            </ul>
+
+            {/* نمایش لایه‌های همبرگرهای سفارشی */}
+            {order.items.map((item) => {
+              const custom = customBurgers.find((b) => b.id === item.id);
+
+              if (custom) {
+                // همبرگر سفارشی است
+                const layers =
+                  typeof custom.layers === "string"
+                    ? JSON.parse(custom.layers)
+                    : custom.layers;
+
+                return (
+                  <div
+                    key={`custom-${item.id}`}
+                    className="text-sm bg-gray-100 rounded p-3 mb-3 border border-gray-300"
+                  >
+                    <div className="font-semibold text-gray-800 mb-1">
+                      🍔 همبرگر سفارشی × {item.quantity}
+                    </div>
+
+                    <ul className="list-disc list-inside text-gray-700 text-sm">
+                      {layers.map((layer: string, idx: number) => (
+                        <li key={idx}>
+                          {ITEM_NAME_TRANSLATIONS[layer] || layer}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                );
+              }
+
+              // آیتم معمولی است
+              return (
+                <li key={item.id} className="text-gray-800 text-sm">
                   {item.name} × {item.quantity}
                 </li>
-              ))}
-            </ul>
+              );
+            })}
 
             {order.note && (
               <div className="text-sm bg-yellow-50 border-l-4 border-yellow-400 p-2 rounded text-gray-700 mb-2">

@@ -42,7 +42,12 @@ export default function CartModalButton() {
               className="absolute top-4 left-4 cursor-pointer"
               onClick={() => setIsOpen(false)}
             >
-              <img src="/images/SVG/close.svg" alt="close" width={20} height={20} />
+              <img
+                src="/images/SVG/close.svg"
+                alt="close"
+                width={20}
+                height={20}
+              />
             </button>
 
             <h2 className="text-lg sm:text-xl font-bold border-b pb-2 text-center">
@@ -99,14 +104,14 @@ export default function CartModalButton() {
               <div className="pt-4 border-t space-y-3">
                 <p className="text-base font-semibold text-center">
                   مجموع:{" "}
-                  <span className="text-amber-600 font-bold">
+                  <span className="text-[var(--color-primary)] font-bold">
                     {totalPrice.toLocaleString()} تومان
                   </span>
                 </p>
                 <Link
                   href="/checkout"
                   onClick={() => setIsOpen(false)}
-                  className="block text-center bg-amber-500 hover:bg-amber-600 text-white py-2 rounded font-medium transition"
+                  className="block text-center bg-[var(--color-primary)] hover:scale-105 text-white text-sm font-semibold transition py-2 rounded"
                 >
                   ادامه خرید
                 </Link>

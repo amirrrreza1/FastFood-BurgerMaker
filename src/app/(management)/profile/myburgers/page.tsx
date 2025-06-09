@@ -15,6 +15,8 @@ type CustomBurger = {
   image_url: string;
   options: BurgerOptions;
   created_at: string;
+  total_calories: number;
+  total_price: number;
 };
 
 export default function CustomBurgersPage() {
@@ -96,13 +98,27 @@ export default function CustomBurgersPage() {
               />
               <div className="flex flex-wrap gap-3 items-center justify-between">
                 <h2 className="font-bold text-lg">{burger.name}</h2>
-                <button
-                  onClick={() => handleDelete(burger.id)}
-                  className="DeleteBTN"
-                >
-                  حذف
-                </button>
               </div>
+              <div className="mt-3 flex flex-wrap gap-2 mb-3 text-gray-700 text-sm font-medium">
+                <span className="flex items-center gap-1">
+                  ⚡ <span>کالری:</span>{" "}
+                  <span className="font-semibold">
+                    {burger.total_calories.toLocaleString()} کیلوکالری
+                  </span>
+                </span>
+                <span className="flex items-center gap-1">
+                  💰 <span>قیمت:</span>{" "}
+                  <span className="font-semibold">
+                    {burger.total_price.toLocaleString()} تومان
+                  </span>
+                </span>
+              </div>
+              <button
+                onClick={() => handleDelete(burger.id)}
+                className="DeleteBTN"
+              >
+                حذف
+              </button>
             </div>
           ))}
         </div>

@@ -11,6 +11,7 @@ const menuItems = [
   { label: "مدیریت کاربران", href: "/admin/users" },
   { label: "سفارش دستی", href: "/admin/orders/new" },
   { label: "مدیریت سوالات متداول", href: "/admin/faq" },
+  { label: "آشپزخانه", href: "/admin/kds" },
 ];
 
 export default function AdminSidebar() {
