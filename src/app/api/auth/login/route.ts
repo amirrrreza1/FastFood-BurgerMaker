@@ -10,18 +10,19 @@ export async function POST(req: NextRequest) {
     password,
   });
 
-  if (error || !data.user) {
+  if (error || !data.user || !data.session?.access_token) {
     return NextResponse.json(
       { error: error?.message || "ورود ناموفق" },
       { status: 401 }
     );
   }
 
+  const supabaseAccessToken = data.session.access_token;
   const user = data.user;
 
   const { data: profile, error: profileError } = await supabase
     .from("profiles")
-    .select("role , is_active")
+    .select("role, is_active")
     .eq("id", user.id)
     .single();
 
@@ -42,6 +43,12 @@ export async function POST(req: NextRequest) {
   const response = NextResponse.json({ message: "ورود موفق بود" });
 
   response.cookies.set("token", token, {
+    httpOnly: true,
+    path: "/",
+    maxAge: 60 * 60 * 2,
+  });
+
+  response.cookies.set("sb-access-token", supabaseAccessToken, {
     httpOnly: true,
     path: "/",
     maxAge: 60 * 60 * 2,

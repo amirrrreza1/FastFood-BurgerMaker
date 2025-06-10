@@ -124,7 +124,7 @@ export default function EditProfileModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur"
       onClick={onClose}
     >
       <div
@@ -138,7 +138,7 @@ export default function EditProfileModal({
         <input
           type="text"
           id="firstName"
-          className="w-full p-2 border rounded"
+          className="Input"
           value={firstName}
           onChange={(e) => setFirstName(e.target.value)}
           placeholder="نام"
@@ -150,7 +150,7 @@ export default function EditProfileModal({
         <input
           type="text"
           id="lastName"
-          className="w-full p-2 border rounded"
+          className="Input"
           value={lastName}
           onChange={(e) => setLastName(e.target.value)}
           placeholder="نام خانوادگی"
@@ -162,7 +162,7 @@ export default function EditProfileModal({
         <input
           type="tel"
           id="phone"
-          className="w-full p-2 border rounded text-right"
+          className="Input"
           value={phone}
           onChange={(e) => setPhone(e.target.value)}
           placeholder="شماره همراه"
@@ -191,11 +191,7 @@ export default function EditProfileModal({
         </div>
 
         <div className="flex justify-end gap-2">
-          <button
-            className="CancelBTN"
-            onClick={onClose}
-            disabled={loading}
-          >
+          <button className="CancelBTN" onClick={onClose} disabled={loading}>
             لغو
           </button>
           <button

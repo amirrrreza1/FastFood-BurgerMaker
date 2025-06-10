@@ -419,7 +419,7 @@ const NameModal = ({
           value={burgerName}
           onChange={(e) => setBurgerName(e.target.value)}
           placeholder="مثلا: قهرمان دوبل"
-          className="w-full p-2 rounded border border-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-400"
+          className="Input"
         />
         <div className="flex justify-end gap-4 mt-6">
           <button onClick={onClose} className="CancelBTN">

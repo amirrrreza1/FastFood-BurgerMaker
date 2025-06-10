@@ -7,6 +7,7 @@ import AddAddressModal from "@/Components/AddAddressModal";
 import EditProfileModal from "@/Components/ProfileModal";
 import Swal from "sweetalert2";
 import LoadingSpinner from "@/Components/Loading";
+import ChangePasswordModal from "@/Components/ChangePasswordModal";
 
 type AddressItem = {
   address: string;
@@ -23,6 +24,7 @@ export default function AccountPage() {
   const [addresses, setAddresses] = useState<AddressItem[]>([]);
   const [userId, setUserId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
 
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -94,7 +96,8 @@ export default function AccountPage() {
     ? new Date(birthDate).toLocaleDateString("fa-IR")
     : "-";
 
-  if (loading) return <LoadingSpinner text="در حال دریافت اطلاعات حساب کاربری..." />;
+  if (loading)
+    return <LoadingSpinner text="در حال دریافت اطلاعات حساب کاربری..." />;
 
   return (
     <>
@@ -129,13 +132,14 @@ export default function AccountPage() {
           </div>
         </div>
 
-        <div className="text-center sm:text-right">
+        <div className="mt-4 text-center sm:text-right flex justify-start items-center gap-2">
           <button
             onClick={() => setShowProfileModal(true)}
-            className="EditBTN mt-4 sm:mt-0"
+            className="EditBTN sm:mt-0"
           >
             ویرایش اطلاعات
           </button>
+          <ChangePasswordModal />
         </div>
 
         <hr className="my-6" />
