@@ -172,7 +172,7 @@ export default function EditProfileModal({
           </label>
           <div className="flex items-center gap-2 Input">
             <label htmlFor="birthDate" className="">
-              <img src="/images/svg/date.svg" alt="date" width={30} />
+              <img src="/images/SVG/date.svg" alt="date" width={30} />
             </label>
             <DatePicker
               calendar={persian}

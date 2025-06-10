@@ -127,7 +127,7 @@ export default function ChangePasswordModal() {
                 className="p-1 rounded-full text-gray-400 hover:bg-gray-100 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 aria-label="Close modal"
               >
-                <img src="/images/svg/close.svg" alt="close" width={20} />
+                <img src="/images/SVG/close.svg" alt="close" width={20} />
               </button>
             </div>
 
@@ -156,8 +156,8 @@ export default function ChangePasswordModal() {
                   <img
                     src={
                       newPasswordVisible
-                        ? "/images/svg/eye-hide.svg"
-                        : "/images/svg/eye-show.svg"
+                        ? "/images/SVG/eye-hide.svg"
+                        : "/images/SVG/eye-show.svg"
                     }
                     alt="eye"
                     width={20}
