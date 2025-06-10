@@ -1,5 +1,3 @@
-// app/api/me/route.ts
-import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 import { verifyToken } from "@/Lib/jwt";
 
@@ -11,7 +9,7 @@ export async function GET(req : NextRequest) {
   }
 
   try {
-    const user = await verifyToken(token); // مثلا user = { uid, phone, ... }
+    const user = await verifyToken(token);
 
     return NextResponse.json({ user_id: user.uid });
   } catch {

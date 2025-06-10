@@ -50,7 +50,6 @@ export default function EditProfileModal({
       setPhone(initialData.phone || "");
 
       if (initialData.birthDate) {
-        // اطمینان از اینکه birthDate در فرمت YYYY-MM-DD از دیتابیس اومده
         setBirthDate(
           new DateObject({
             date: initialData.birthDate,
@@ -80,7 +79,6 @@ export default function EditProfileModal({
 
     setLoading(true);
 
-    // ذخیره تاریخ به فرمت YYYY-MM-DD میلادی در دیتابیس
     const birthDateISO = birthDate
       ? birthDate.toDate().toISOString().split("T")[0]
       : null;

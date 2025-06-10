@@ -1,16 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
+import { RouteContext } from "@/types";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
-interface RouteContext {
-  params: {
-    id: string;
-  };
-}
 
 export async function GET(req: NextRequest, context: any) {
   const id = (context as RouteContext).params.id;

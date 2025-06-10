@@ -15,8 +15,6 @@ export async function POST(req: NextRequest) {
       await req.json();
 
     const targetUserId = user_id || user.uid;
-
-    // تنظیم وضعیت سفارش بر اساس نوع آن
     const status = order_type === "online" ? "pending" : "preparing";
 
     const { error } = await supabase.from("orders").insert([

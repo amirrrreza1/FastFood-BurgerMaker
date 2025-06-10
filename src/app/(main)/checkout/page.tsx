@@ -2,33 +2,20 @@
 
 import AddAddressModal from "@/Components/AddAddressModal";
 import { useCartStore } from "@/store/cartStore";
+import { Address } from "@/types";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-
-type Address = {
-  id: string;
-  address: string;
-  is_default: boolean; // برای مشخص کردن آدرس پیش‌فرض
-};
 
 export default function CheckoutPage() {
   const { items, clearCart } = useCartStore();
   const [isLoading, setIsLoading] = useState(false);
   const [orderNote, setOrderNote] = useState("");
-
   const [paymentMethod, setPaymentMethod] = useState("cash");
-
   const router = useRouter();
-
-  // آرایه آدرس‌ها با تایپ دقیق
   const [addresses, setAddresses] = useState<Address[]>([]);
-
-  // فقط رشته آدرس انتخاب شده
   const [selectedAddress, setSelectedAddress] = useState<string>("");
-
   const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
-
   const [selectedAddressId, setSelectedAddressId] = useState<string>("");
 
   const handleAddNewAddress = async (newAddress: string) => {
@@ -62,7 +49,7 @@ export default function CheckoutPage() {
     setIsLoading(true);
 
     const total =
-      items.reduce((sum, item) => sum + item.price * item.quantity, 0) + 20000; // هزینه ارسال هم اضافه شد
+      items.reduce((sum, item) => sum + item.price * item.quantity, 0) + 20000;
 
     try {
       const res = await fetch("/api/orders", {
@@ -78,7 +65,7 @@ export default function CheckoutPage() {
           total,
           address: selectedAddress,
           note: orderNote,
-          payment_method: paymentMethod, // اگر خواستید ارسال کنید
+          payment_method: paymentMethod,
           order_type: "online",
         }),
       });
@@ -104,16 +91,12 @@ export default function CheckoutPage() {
       try {
         const res = await fetch("/api/user/addresses");
         if (!res.ok) throw new Error("Failed to load addresses");
-
         const response = await res.json();
-
-        // انتظار داریم response به شکل { addresses: [...] } باشه
         if (!Array.isArray(response.addresses)) {
           throw new Error("Invalid address data");
         }
 
         const addressesArray = response.addresses;
-
         setAddresses(addressesArray);
 
         if (addressesArray.length > 0) {
@@ -155,7 +138,6 @@ export default function CheckoutPage() {
                 مشخصات ارسال
               </h2>
 
-              {/* انتخاب آدرس */}
               <div>
                 <label className="block text-sm font-medium mb-1">
                   انتخاب آدرس
@@ -200,7 +182,6 @@ export default function CheckoutPage() {
                 </button>
               </div>
 
-              {/* انتخاب روش پرداخت */}
               <div>
                 <label className="block text-sm font-medium mb-1">
                   روش پرداخت
@@ -215,7 +196,6 @@ export default function CheckoutPage() {
                 </select>
               </div>
 
-              {/* یادداشت سفارش */}
               <div>
                 <label
                   htmlFor="note"
@@ -233,7 +213,6 @@ export default function CheckoutPage() {
                 />
               </div>
 
-              {/* دکمه نهایی کردن */}
               <button
                 onClick={handlePlaceOrder}
                 className="w-full py-2 bg-[var(--color-primary)] text-white rounded-lg hover:-translate-y-1 transition-all duration-300 hover:shadow-lg"
@@ -242,7 +221,6 @@ export default function CheckoutPage() {
                 {isLoading ? "در حال ثبت سفارش..." : "ثبت سفارش"}
               </button>
             </div>
-            {/* 🧾 لیست سفارش */}
             <div className="bg-white border rounded-lg shadow-sm p-5 space-y-4">
               <h2 className="text-lg font-semibold border-b pb-2">
                 آیتم‌های سفارش
@@ -276,12 +254,9 @@ export default function CheckoutPage() {
                 تومان
               </div>
             </div>
-
-            {/* 📦 اطلاعات ارسال */}
           </div>
         )}
 
-        {/* 🪟 مودال افزودن آدرس */}
         <AddAddressModal
           isOpen={isAddressModalOpen}
           onClose={() => setIsAddressModalOpen(false)}

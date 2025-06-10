@@ -8,11 +8,7 @@ import EditProfileModal from "@/Components/ProfileModal";
 import Swal from "sweetalert2";
 import LoadingSpinner from "@/Components/Loading";
 import ChangePasswordModal from "@/Components/ChangePasswordModal";
-
-type AddressItem = {
-  address: string;
-  is_default: boolean;
-};
+import { Address } from "@/types";
 
 export default function AccountPage() {
   const [firstName, setFirstName] = useState("");
@@ -20,15 +16,12 @@ export default function AccountPage() {
   const [phone, setPhone] = useState("");
   const [birthDate, setBirthDate] = useState<string | null>(null);
   const [subscription_number, setSubscriptionNumber] = useState("");
-
-  const [addresses, setAddresses] = useState<AddressItem[]>([]);
+  const [addresses, setAddresses] = useState<Address[]>([]);
   const [userId, setUserId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-  const [showPasswordModal, setShowPasswordModal] = useState(false);
-
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const [editAddress, setEditAddress] = useState<AddressItem | undefined>(
+  const [editAddress, setEditAddress] = useState<Address | undefined>(
     undefined
   );
 
@@ -59,7 +52,7 @@ export default function AccountPage() {
 
       const { data: addressData } = await supabase
         .from("addresses")
-        .select("address, is_default")
+        .select("id, address, is_default")
         .eq("user_id", user_id);
 
       if (addressData) {
@@ -152,7 +145,6 @@ export default function AccountPage() {
               className="flex flex-col sm:flex-row sm:items-center justify-between border gap-3 p-4 rounded bg-white"
             >
               <div className="flex items-center gap-2 w-full sm:w-auto">
-                {/* Radio button برای انتخاب پیش‌فرض */}
                 <input
                   type="radio"
                   name="defaultAddress"
@@ -160,20 +152,15 @@ export default function AccountPage() {
                   onChange={async () => {
                     if (!userId) return;
                     try {
-                      // مرحله 1: حذف پیش‌فرض قبلی
                       await supabase
                         .from("addresses")
                         .update({ is_default: false })
                         .eq("user_id", userId);
-
-                      // مرحله 2: تعیین آدرس فعلی به عنوان پیش‌فرض
                       await supabase
                         .from("addresses")
                         .update({ is_default: true })
                         .eq("user_id", userId)
                         .eq("address", item.address);
-
-                      // مرحله 3: به‌روزرسانی state
                       setAddresses((prev) =>
                         prev.map((a) => ({
                           ...a,
@@ -244,8 +231,6 @@ export default function AccountPage() {
           </div>
         </div>
       </div>
-
-      {/* Modals */}
       <AddAddressModal
         isOpen={showModal}
         onClose={() => {

@@ -1,6 +1,5 @@
 import AdminSidebar from "@/Components/AdminSidebar";
 import { ReactNode } from "react";
-import { ToastContainer } from "react-toastify";
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
   return (

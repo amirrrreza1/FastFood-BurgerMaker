@@ -14,7 +14,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Invalid data" }, { status: 400 });
     }
 
-    // گرفتن اطلاعات کاربر با access_token
     const {
       data: { user },
       error: userError,
@@ -29,7 +28,6 @@ export async function POST(request: NextRequest) {
 
     const user_id = user.id;
 
-    // تغییر رمز عبور کاربر
     const { error } = await supabaseAdmin.auth.admin.updateUserById(user_id, {
       password: new_password,
     });

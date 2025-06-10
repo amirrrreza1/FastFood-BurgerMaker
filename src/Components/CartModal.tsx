@@ -16,7 +16,6 @@ export default function CartModalButton() {
 
   return (
     <>
-      {/* Trigger Button */}
       <button
         onClick={() => setIsOpen(true)}
         className="relative w-[30px] h-[30px] cursor-pointer"
@@ -31,7 +30,7 @@ export default function CartModalButton() {
 
       {isOpen && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-2"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-2 backdrop-blur-sm"
           onClick={() => setIsOpen(false)}
         >
           <div
@@ -99,7 +98,6 @@ export default function CartModalButton() {
               </div>
             )}
 
-            {/* Total & Checkout */}
             {items.length > 0 && (
               <div className="pt-4 border-t space-y-3">
                 <p className="text-base font-semibold text-center">

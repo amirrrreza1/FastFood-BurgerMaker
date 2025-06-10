@@ -1,11 +1,9 @@
 "use client";
 
+import { LoadingSpinnerProps } from "@/types";
 import { FC } from "react";
 
-interface LoadingSpinnerProps {
-  text?: string;
-  fullScreen?: boolean;
-}
+
 
 const LoadingSpinner: FC<LoadingSpinnerProps> = ({
   text = "در حال بارگذاری...",

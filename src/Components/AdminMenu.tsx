@@ -1,16 +1,8 @@
 "use client";
 
 import { useCartStore } from "@/store/cartStore";
+import { MenuItem } from "@/types";
 import { useState } from "react";
-
-type MenuItem = {
-  id: string;
-  name: string;
-  price: number;
-  image_url: string;
-  category: string;
-  available: boolean;
-};
 
 type Props = {
   menuItems: MenuItem[];

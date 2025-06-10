@@ -1,4 +1,3 @@
-// /app/api/admin/orders/[id]/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { supabase } from "@/Lib/supabase";
 import { RouteContext } from "@/types";

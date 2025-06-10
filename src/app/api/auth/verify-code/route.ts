@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { codeStore } from "@/Lib/codeStore"; // ❗ مسیر صحیح
+import { codeStore } from "@/Lib/codeStore";
 
 export async function POST(req: NextRequest) {
   const { email, code } = await req.json();

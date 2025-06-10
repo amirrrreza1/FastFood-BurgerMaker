@@ -26,7 +26,7 @@ export async function middleware(request: NextRequest) {
   if (protectedPaths.some((protectedPath) => path.startsWith(protectedPath))) {
     if (!token) {
       url.pathname = "/login";
-      url.searchParams.set("redirect", path); // ← ذخیره مسیر
+      url.searchParams.set("redirect", path);
       return NextResponse.redirect(url);
     }
 

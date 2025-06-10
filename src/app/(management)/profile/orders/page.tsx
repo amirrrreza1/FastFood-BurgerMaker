@@ -97,7 +97,7 @@ export default function OrdersPage() {
               </div>
 
               <div className="text-xs text-gray-500">
-                🗓️ تاریخ ثبت:{" "}
+                🗓️ تاریخ ثبت: 
                 {new Date(order.created_at).toLocaleString("fa-IR")}
               </div>
 

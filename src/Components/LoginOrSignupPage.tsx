@@ -15,7 +15,6 @@ const LoginPage = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-100 to-purple-200 px-4">
       <div className="w-full max-w-md bg-white/80 backdrop-blur-lg rounded-2xl shadow-2xl p-6">
-        {/* Header */}
         <div className="mb-6 text-center">
           <div className="text-3xl font-bold text-gray-800 mb-1">
             {isSignup ? "ثبت‌نام در سایت" : "ورود به حساب"}
@@ -27,7 +26,6 @@ const LoginPage = () => {
           </p>
         </div>
 
-        {/* فرم‌ها */}
         {isSignup ? <SignupForm /> : <LoginForm redirect={redirect} />}
         <div className="text-center mt-4">
           <button
@@ -37,7 +35,6 @@ const LoginPage = () => {
             {isSignup ? "حساب دارید؟ وارد شوید" : "حساب ندارید؟ ثبت‌نام کنید"}
           </button>
         </div>
-        {/* فراموشی رمز عبور */}
         {!isSignup && (
           <div className="text-center mt-1">
             <button
@@ -49,9 +46,7 @@ const LoginPage = () => {
           </div>
         )}
 
-        {/* دکمه تغییر حالت */}
 
-        {/* بازگشت به صفحه اصلی */}
         <div className="text-center mt-1">
           <Link
             href="/"

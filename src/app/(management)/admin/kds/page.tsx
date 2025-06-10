@@ -3,12 +3,9 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { CustomBurger, Order } from "@/types";
 
-interface OrderItem {
-  id: number;
-  name: string;
-  quantity: number;
-}
+
 const ITEM_NAME_TRANSLATIONS: Record<string, string> = {
   meat: "گوشت",
   cheese: "پنیر",
@@ -22,22 +19,6 @@ const ITEM_NAME_TRANSLATIONS: Record<string, string> = {
   hot: "سس تند",
   bread: "نان اضافی",
 };
-
-interface Order {
-  id: number;
-  status: string;
-  created_at: string;
-  order_type: "online" | "in_person" | "phone";
-  items: OrderItem[];
-  note?: string;
-}
-
-interface CustomBurger {
-  id: number;
-  name: string;
-  layers: string[] | string;
-  image_url?: string;
-}
 
 const STATUS_LABELS: Record<string, string> = {
   pending: "⏳ در انتظار تأیید",
@@ -123,12 +104,10 @@ const KitchenDisplayPage = () => {
               })}
             </ul>
 
-            {/* نمایش لایه‌های همبرگرهای سفارشی */}
             {order.items.map((item) => {
               const custom = customBurgers.find((b) => b.id === item.id);
 
               if (custom) {
-                // همبرگر سفارشی است
                 const layers =
                   typeof custom.layers === "string"
                     ? JSON.parse(custom.layers)
@@ -154,7 +133,6 @@ const KitchenDisplayPage = () => {
                 );
               }
 
-              // آیتم معمولی است
               return (
                 <li key={item.id} className="text-gray-800 text-sm">
                   {item.name} × {item.quantity}

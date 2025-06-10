@@ -1,19 +1,14 @@
 import { verifyToken } from "@/Lib/jwt";
 import { supabase } from "@/Lib/supabase";
-import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
-import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
-  // اول از query پارامتر user_id رو بگیر
   const userIdFromQuery = req.nextUrl.searchParams.get("user_id");
 
-  // اگر user_id از query نیومد، می‌تونید از توکن بگیرید یا خطا بدید
   let user_id =
     (userIdFromQuery as string) || req.cookies.get("user_id")?.value;
 
   if (!user_id) {
-    // تلاش کنید توکن رو بگیرید (مثلا برای امنیت بیشتر)
     const token = req.cookies.get("token")?.value;
     if (!token) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -33,7 +28,6 @@ export async function GET(req: NextRequest) {
     }
   }
 
-  // حالا کوئری supabase
   const { data, error } = await supabase
     .from("addresses")
     .select("id, address, is_default")

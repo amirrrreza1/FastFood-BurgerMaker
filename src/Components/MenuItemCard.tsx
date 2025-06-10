@@ -8,7 +8,7 @@ import MenuItemDetails from "./MenuItemModal";
 const fallbackImage = "/images/placeholder-food.jpg";
 
 interface Props {
-  item: MenuItem & { image?: string }; // برای public URL تصویر
+  item: MenuItem & { image?: string };
 }
 
 export default function MenuItemCard({ item }: Props) {
@@ -97,8 +97,6 @@ export default function MenuItemCard({ item }: Props) {
           </span>
         )}
       </div>
-
-      {/* ساده‌ترین مودال بدون کتابخانه */}
       {showModal && (
         <MenuItemDetails item={item} onClose={() => setShowModal(false)} />
       )}

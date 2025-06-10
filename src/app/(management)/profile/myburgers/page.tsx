@@ -2,22 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/Lib/supabase";
-import { BurgerOptions } from "@/types";
+import { BurgerOptions, CustomBurger } from "@/types";
 import Link from "next/link";
 import Swal from "sweetalert2";
 import { toast } from "react-toastify";
 import LoadingSpinner from "@/Components/Loading";
-
-type CustomBurger = {
-  id: string;
-  user_id: string;
-  name: string;
-  image_url: string;
-  options: BurgerOptions;
-  created_at: string;
-  total_calories: number;
-  total_price: number;
-};
 
 export default function CustomBurgersPage() {
   const [burgers, setBurgers] = useState<CustomBurger[]>([]);
@@ -28,7 +17,7 @@ export default function CustomBurgersPage() {
     const { data, error } = await supabase
       .from("custom_burgers")
       .select("*")
-      .eq("is_active", true) // فقط موارد فعال
+      .eq("is_active", true)
       .order("created_at", { ascending: false });
 
     if (!error) setBurgers(data as CustomBurger[]);
@@ -38,10 +27,10 @@ export default function CustomBurgersPage() {
   const handleDelete = async (id: string) => {
     const result = await Swal.fire({
       title: "آیا مطمئن هستید؟",
-      text: "این همبرگر غیرفعال خواهد شد و دیگر نمایش داده نمی‌شود!",
+      text: "این همبرگر حذف خواهد شد و دیگر نمایش داده نمی‌شود!",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonText: "بله، غیرفعال کن!",
+      confirmButtonText: "بله، حذف کن!",
       cancelButtonText: "لغو",
       confirmButtonColor: "#e3342f",
       cancelButtonColor: "#6c757d",
@@ -50,14 +39,14 @@ export default function CustomBurgersPage() {
     if (result.isConfirmed) {
       const { error } = await supabase
         .from("custom_burgers")
-        .update({ is_active: false }) // به جای حذف، غیرفعال شود
+        .update({ is_active: false })
         .eq("id", id);
 
       if (!error) {
         setBurgers((prev) => prev.filter((b) => b.id !== id));
-        toast.success("همبرگر با موفقیت غیرفعال شد.");
+        toast.success("همبرگر با موفقیت حذف شد.");
       } else {
-        toast.error("عملیات غیرفعال کردن با خطا مواجه شد.");
+        toast.error("عملیات حذف کردن با خطا مواجه شد.");
       }
     }
   };

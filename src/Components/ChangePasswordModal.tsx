@@ -139,7 +139,6 @@ export default function ChangePasswordModal() {
                 value={currentPassword}
                 onChange={(e) => setCurrentPassword(e.target.value)}
               />
-              {/* New Password with Icon */}
               <div className="relative">
                 <input
                   type={newPasswordVisible ? "text" : "password"}
@@ -165,7 +164,6 @@ export default function ChangePasswordModal() {
                   />
                 </button>
               </div>
-              {/* Repeat Password with Icon */}
               <div className="relative">
                 <input
                   type={repeatPasswordVisible ? "text" : "password"}

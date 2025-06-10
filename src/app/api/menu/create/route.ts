@@ -1,16 +1,7 @@
 import { z } from "zod";
 import { supabase } from "@/Lib/supabase";
 import { NextRequest, NextResponse } from "next/server";
-
-const MenuItemSchema = z.object({
-  name: z.string().min(1),
-  description: z.string().optional(),
-  price: z.number().int().nonnegative(),
-  image_url: z.string().url().optional(),
-  category: z.enum(["پیتزا", "ساندویچ", "سوخاری", "پیش‌غذا", "نوشیدنی"]),
-  calories: z.number().int().optional(),
-  available: z.boolean().default(true),
-});
+import { MenuItemSchema } from "@/Lib/schemas/menuSchema";
 
 export async function POST(req: NextRequest) {
   const body = await req.json();

@@ -1,15 +1,7 @@
 "use client";
 
 import { useCartStore } from "@/store/cartStore";
-
-type CustomBurger = {
-  id: string;
-  name: string;
-  image_url: string;
-  total_price: number;
-  calories: number;
-  description: string;
-};
+import { CustomBurger } from "@/types";
 
 export default function CustomBurgerCard({ burger }: { burger: CustomBurger }) {
   const addToCart = useCartStore((state) => state.addToCart);

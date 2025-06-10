@@ -1,25 +1,17 @@
 "use client";
 
 import { useCartStore } from "@/store/cartStore";
+import { UserProfile } from "@/types";
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 
-type User = {
-  id: string;
-  name: string;
-  phoneNum: string;
-  email: string;
-  display_name: string;
-};
-
 export default function AdminManualOrder({ adminId }: { adminId: string }) {
   const { items, clearCart } = useCartStore();
-  const [query, setQuery] = useState("");
-  const [results, setResults] = useState<User[]>([]);
-  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [query, setQuery] = useState<any>("");
+  const [results, setResults] = useState<UserProfile[]>([]);
+  const [selectedUser, setSelectedUser] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState<"cash" | "pos">("cash");
-
   const [addresses, setAddresses] = useState<{ id: string; address: string }[]>(
     []
   );
@@ -100,7 +92,7 @@ export default function AdminManualOrder({ adminId }: { adminId: string }) {
         user_id: selectedUser?.id || adminId,
         address: selectedAddress,
         note: note.trim(),
-        payment_method: paymentMethod, // ← این خط تغییر داده شده
+        payment_method: paymentMethod,
         order_type: orderType,
       }),
     });
@@ -147,7 +139,8 @@ export default function AdminManualOrder({ adminId }: { adminId: string }) {
                 setQuery(user.phoneNum);
               }}
             >
-              <span className="font-medium">{user.name || user.email}</span> - {user.phoneNum || user.display_name}
+              <span className="font-medium">{user.name || user.email}</span> -{" "}
+              {user.phoneNum || user.display_name}
             </div>
           ))}
         </div>
@@ -233,8 +226,6 @@ export default function AdminManualOrder({ adminId }: { adminId: string }) {
           placeholder="اگر توضیحی دارید اینجا بنویسید..."
         />
       </div>
-
-      {/* پیش‌نمایش سفارش */}
       <div className="border-t pt-4">
         <h3 className="font-semibold text-lg mb-2">پیش‌نمایش سفارش:</h3>
         {items.length === 0 ? (

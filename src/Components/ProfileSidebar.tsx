@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { usePathname, redirect, useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 
 const links = [
@@ -21,14 +21,12 @@ export default function ProfileSideBar() {
 
   return (
     <>
-      {/* Mobile Top Bar */}
       <div className="md:hidden flex items-center justify-center rounded-2xl bg-white shadow w-10 h-10 absolute right-4 top-4 cursor-pointer">
         <button onClick={() => setIsOpen(true)} className="cursor-pointer">
           <img src="/images/SVG/menu.svg" alt="menu" width={25} />
         </button>
       </div>
 
-      {/* Sidebar Drawer for Mobile */}
       <div
         className={`fixed inset-0 z-50 bg-black/50 transition-opacity duration-200 ${
           isOpen ? "opacity-100 visible" : "opacity-0 invisible"
@@ -80,8 +78,6 @@ export default function ProfileSideBar() {
           </div>
         </aside>
       </div>
-
-      {/* Sidebar for Desktop */}
       <aside className="hidden md:flex flex-col h-screen w-60 bg-gray-100 p-4 border-l sticky top-0">
         <h2 className="text-xl font-bold mb-4">پروفایل</h2>
 

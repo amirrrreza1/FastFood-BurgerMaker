@@ -6,17 +6,7 @@ import { MenuItemSchema } from "@/Lib/schemas/menuSchema";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
 import LoadingSpinner from "@/Components/Loading";
-
-type MenuItem = {
-  id: number;
-  name: string;
-  description: string;
-  price: number;
-  calories: number;
-  category: string;
-  image_url: string;
-  available: boolean;
-};
+import { MenuItem } from "@/types";
 
 const categories = ["پیتزا", "ساندویچ", "سوخاری", "پیش‌غذا", "نوشیدنی"];
 
@@ -38,7 +28,7 @@ export default function MenuManager() {
   });
 
   const [imageFile, setImageFile] = useState<File | null>(null);
-  const [editId, setEditId] = useState<number | null>(null);
+  const [editId, setEditId] = useState<string | null>(null);
 
   const fetchItems = async () => {
     setIsFetching(true);
@@ -121,7 +111,7 @@ export default function MenuManager() {
     setIsLoading(false);
   };
 
-  const deleteItem = async (id: number) => {
+  const deleteItem = async (id: string) => {
     const result = await Swal.fire({
       title: "آیا مطمئن هستید؟",
       text: "آیتم حذف خواهد شد!",
@@ -161,9 +151,7 @@ export default function MenuManager() {
     <div className="p-4 max-w-4xl mx-auto">
       <h2 className="text-2xl font-bold mb-6 text-center">📋 مدیریت منو</h2>
 
-      {/* فرم افزودن یا ویرایش آیتم */}
       <div className="grid gap-3 sm:grid-cols-2 mb-8 border p-4 rounded-lg shadow-sm bg-white">
-        {/* نام آیتم */}
         <div className="col-span-full">
           <label className="block mb-1 text-sm font-medium">نام آیتم</label>
           <input
@@ -174,8 +162,6 @@ export default function MenuManager() {
             className="border p-2 rounded w-full"
           />
         </div>
-
-        {/* قیمت */}
         <div>
           <label className="block mb-1 text-sm font-medium">قیمت (تومان)</label>
           <input
@@ -185,8 +171,6 @@ export default function MenuManager() {
             className="border p-2 rounded w-full"
           />
         </div>
-
-        {/* کالری */}
         <div>
           <label className="block mb-1 text-sm font-medium">کالری</label>
           <input
@@ -196,8 +180,6 @@ export default function MenuManager() {
             className="border p-2 rounded w-full"
           />
         </div>
-
-        {/* دسته‌بندی */}
         <div>
           <label className="block mb-1 text-sm font-medium">دسته‌بندی</label>
           <select
@@ -210,8 +192,6 @@ export default function MenuManager() {
             ))}
           </select>
         </div>
-
-        {/* انتخاب تصویر */}
         <div>
           <label className="block mb-1 text-sm font-medium">تصویر آیتم</label>
           <label className="border p-2 rounded cursor-pointer flex items-center justify-between bg-gray-50 hover:bg-gray-100">
@@ -224,8 +204,6 @@ export default function MenuManager() {
             />
           </label>
         </div>
-
-        {/* توضیحات */}
         <div className="col-span-full">
           <label className="block mb-1 text-sm font-medium">توضیحات</label>
           <textarea
@@ -235,8 +213,6 @@ export default function MenuManager() {
             className="border p-2 rounded w-full"
           />
         </div>
-
-        {/* فعال بودن آیتم */}
         <div className="flex items-center gap-4 col-span-full">
           <label
             htmlFor="available"
@@ -268,8 +244,6 @@ export default function MenuManager() {
             </span>
           </label>
         </div>
-
-        {/* دکمه ثبت */}
         <div className="col-span-full">
           <button
             onClick={handleSubmit}
@@ -286,8 +260,6 @@ export default function MenuManager() {
           </button>
         </div>
       </div>
-
-      {/* لیست آیتم‌ها */}
       {isFetching ? (
         <LoadingSpinner text="در حال بارگذاری آیتم‌ها..." />
       ) : (
@@ -300,7 +272,6 @@ export default function MenuManager() {
           item.available ? "bg-white" : "bg-gray-100 opacity-60 border-red-300"
         }`}
             >
-              {/* نوار برچسب غیرفعال */}
               {!item.available && (
                 <div className="absolute top-0 left-0 z-50 bg-red-500 text-white text-xs px-2 py-1 rounded-br-md">
                   غیرفعال

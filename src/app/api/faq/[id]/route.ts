@@ -1,11 +1,7 @@
 import { supabase } from "@/Lib/supabase";
+import { RouteContext } from "@/types";
 import { NextRequest, NextResponse } from "next/server";
 
-interface RouteContext {
-  params: {
-    id: string;
-  };
-}
 
 export async function DELETE(req: NextRequest, context: any) {
   const id = (context as RouteContext).params.id;

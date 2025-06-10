@@ -9,10 +9,9 @@ interface Props {
 
 export default function MenuItemDetails({ item, onClose }: Props) {
   const imageSrc = item.image_url || "/images/placeholder-food.jpg";
-
   return (
     <div
-      className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center px-4"
+      className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center px-4 backdrop-blur-sm"
       onClick={onClose}
     >
       <div
@@ -22,7 +21,7 @@ export default function MenuItemDetails({ item, onClose }: Props) {
         {/* Close button */}
         <button
           onClick={onClose}
-          className="absolute top-3 left-3 text-gray-500 hover:text-gray-700 text-xl"
+          className="absolute top-2 left-2 text-gray-500 hover:text-gray-700 text-xl"
           aria-label="بستن"
         >
           <img src="/images/SVG/close.svg" alt="Close" width={24} height={24} />

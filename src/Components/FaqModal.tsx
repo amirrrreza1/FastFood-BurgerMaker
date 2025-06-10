@@ -1,18 +1,7 @@
 "use client";
 
+import { Props } from "@/types";
 import React from "react";
-
-type Props = {
-  isOpen: boolean;
-  mode: "add" | "edit";
-  question: string;
-  answer: string;
-  loading: boolean;
-  onClose: () => void;
-  onChangeQuestion: (value: string) => void;
-  onChangeAnswer: (value: string) => void;
-  onSave: () => void;
-};
 
 export default function FaqModal({
   isOpen,
@@ -29,7 +18,7 @@ export default function FaqModal({
 
   return (
     <div
-      className="fixed inset-0 bg-black/50 flex justify-center items-center z-50 p-4"
+      className="fixed inset-0 bg-black/50 flex justify-center items-center z-50 p-4 backdrop-blur-sm"
       role="dialog"
       aria-modal="true"
       aria-labelledby="faq-modal-title"

@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/Lib/supabase";
-import { MenuItem } from "@/types";
+import { CustomBurger, MenuItem } from "@/types";
 import { useRouter, useSearchParams } from "next/navigation";
 import CustomBurgerCard from "@/Components/CustomBurgersCard";
 import MenuItemCard from "@/Components/MenuItemCard";
@@ -14,15 +14,6 @@ const categories: MenuItem["category"][] = [
   "پیش‌غذا",
   "نوشیدنی",
 ];
-
-type CustomBurger = {
-  id: string;
-  name: string;
-  total_price: number;
-  image_url: string;
-  calories: number;
-  description: string;
-};
 
 export default function Menu() {
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
@@ -76,16 +67,11 @@ export default function Menu() {
         if (res.ok) {
           setCustomBurgers(json.burgers || []);
 
-          // اگر همبرگر جدید ساخته شده، scroll یا toast نشون بده (اختیاری)
           if (created) {
-            // مثلاً اسکرول کنه به بخش همبرگرها
             const section = document.getElementById("custom-burgers");
             if (section) {
               section.scrollIntoView({ behavior: "smooth" });
             }
-
-            // یا Toast نمایش بده
-            // toast.success("همبرگر با موفقیت اضافه شد!");
           }
         } else {
           if (res.status === 401 || res.status === 403) {
@@ -114,7 +100,6 @@ export default function Menu() {
 
   return (
     <div className="flex flex-col lg:flex-row gap-6 px-4 md:px-8 py-6 min-h-screen">
-      {/* Sidebar */}
       <aside className="w-full lg:w-60 shrink-0">
         <div className="bg-white shadow-md rounded-lg p-4 space-y-4 sticky top-16">
           <h3 className="text-xl font-bold text-center lg:text-right border-b pb-2">
@@ -134,9 +119,7 @@ export default function Menu() {
         </div>
       </aside>
 
-      {/* Menu Items */}
       <main className="flex-1 space-y-12">
-        {/* Custom Burgers Section */}
         <section id="custom-burgers" className="space-y-4">
           <h2 className="text-2xl font-bold text-gray-800 border-b pb-2">
             🍔 همبرگرهای من
@@ -156,9 +139,6 @@ export default function Menu() {
             </div>
           ) : customBurgers.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-              {/* کارت ساخت همبرگر جدید */}
-
-              {/* همبرگرهای کاربر */}
               {customBurgers.map((burger) => (
                 <CustomBurgerCard key={burger.id} burger={burger} />
               ))}
@@ -191,7 +171,6 @@ export default function Menu() {
           )}
         </section>
 
-        {/* Menu Categories */}
         {categories.map((cat) => {
           const items = menuItems.filter((item) => item.category === cat);
           if (items.length === 0) return null;

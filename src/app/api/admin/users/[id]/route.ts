@@ -5,8 +5,6 @@ import { NextRequest, NextResponse } from "next/server";
 export async function POST(req: NextRequest, context: any) {
   const id = (context as RouteContext).params.id;
   const body = await req.json();
-
-  // فقط فیلدهای مجاز را استخراج و آپدیت می‌کنیم
   const updates: { is_active?: boolean; role?: string } = {};
   if (typeof body.is_active === "boolean") {
     updates.is_active = body.is_active;

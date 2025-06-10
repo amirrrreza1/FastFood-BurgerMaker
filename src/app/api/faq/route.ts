@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
 
   const { data, error } = await supabase
     .from("faqs")
-    .insert([{ question, answer, saved: false }]) // مقدار saved به true
+    .insert([{ question, answer, saved: false }])
     .select();
 
   if (error) {

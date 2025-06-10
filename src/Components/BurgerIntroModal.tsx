@@ -16,7 +16,7 @@ export default function IntroModal() {
   if (!isOpenIntro) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
       <div className="bg-white rounded-2xl shadow-xl p-6 max-w-md w-full mx-4">
         <h2 className="text-xl font-bold mb-4">خوش آمدید به همبرگر ساز</h2>
         <p className="text-gray-700 mb-6">
@@ -31,7 +31,7 @@ export default function IntroModal() {
         </p>
         <button
           onClick={handleClose}
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg transition"
+          className="EditBTN w-full justify-center"
         >
           متوجه شدم
         </button>

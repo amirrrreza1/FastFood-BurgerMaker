@@ -27,14 +27,12 @@ export default function AdminSidebar() {
 
   return (
     <>
-      {/* Mobile Menu Button */}
       <div className="md:hidden flex items-center justify-center rounded-2xl bg-white shadow w-10 h-10 absolute right-4 top-4 z-50">
         <button onClick={() => setIsOpen(true)}>
           <img src="/images/SVG/menu.svg" alt="menu" width={25} />
         </button>
       </div>
 
-      {/* Mobile Sidebar Drawer */}
       <div
         className={`fixed inset-0  bg-black/50 transition-opacity duration-200 z-50 ${
           isOpen ? "opacity-100 visible" : "opacity-0 invisible"
@@ -76,8 +74,6 @@ export default function AdminSidebar() {
           </div>
         </aside>
       </div>
-
-      {/* Desktop Sidebar */}
       <aside className="hidden md:flex h-screen sticky top-0 w-60 bg-gray-100 p-4 border-l flex-col">
         <h2 className="text-xl font-bold mb-4">پنل ادمین</h2>
         <ul className="flex-1 space-y-2 overflow-y-auto">

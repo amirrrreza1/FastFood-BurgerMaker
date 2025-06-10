@@ -1,25 +1,9 @@
 "use client";
 
 import LoadingSpinner from "@/Components/Loading";
+import { Order } from "@/types";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-
-interface OrderItem {
-  id: number;
-  name: string;
-  quantity: number;
-  price: number;
-}
-
-interface Order {
-  id: number;
-  user_id: string;
-  created_at: string;
-  status: string;
-  rejection_reason?: string;
-  items: OrderItem[];
-  order_type: string;
-}
 
 const STATUS_LABELS: Record<string, string> = {
   all: "همه",
@@ -34,14 +18,14 @@ export default function AdminOrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [filteredOrders, setFilteredOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(false);
-  const [cancelComments, setCancelComments] = useState<Record<number, string>>(
+  const [cancelComments, setCancelComments] = useState<Record<string, string>>(
     {}
   );
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
 
   const fetchOrders = async () => {
-    setLoading(true); // Start loading
+    setLoading(true);
     try {
       const res = await fetch("/api/admin/orders");
       const data = await res.json();
@@ -50,7 +34,7 @@ export default function AdminOrdersPage() {
     } catch (err) {
       toast.error("خطا در دریافت سفارش‌ها");
     } finally {
-      setLoading(false); // Stop loading
+      setLoading(false);
     }
   };
 
@@ -75,8 +59,6 @@ export default function AdminOrdersPage() {
         );
       });
     }
-
-    // سفارش‌های "cancelled" و "delivered" را ببر انتهای لیست
     result.sort((a, b) => {
       const isFinalA =
         a.status === "cancelled" || a.status === "delivered" ? 1 : 0;
@@ -89,7 +71,7 @@ export default function AdminOrdersPage() {
   }, [orders, filterStatus, searchTerm]);
 
   const updateStatus = async (
-    orderId: number,
+    orderId: string,
     status: string,
     comment = ""
   ) => {
@@ -113,7 +95,7 @@ export default function AdminOrdersPage() {
     }
   };
 
-  const handleCancelChange = (orderId: number, value: string) => {
+  const handleCancelChange = (orderId: string, value: string) => {
     setCancelComments((prev) => ({ ...prev, [orderId]: value }));
   };
 
@@ -123,7 +105,6 @@ export default function AdminOrdersPage() {
         📦 مدیریت سفارش‌ها
       </h1>
 
-      {/* فیلتر و جستجو */}
       <div className="flex flex-col sm:flex-row gap-4 sm:items-center justify-between">
         <input
           type="text"
@@ -144,8 +125,6 @@ export default function AdminOrdersPage() {
           ))}
         </select>
       </div>
-
-      {/* لودر */}
       {loading ? (
         <LoadingSpinner text="در حال بارگذاری سفارش‌ها..." />
       ) : filteredOrders.length === 0 ? (
@@ -160,9 +139,7 @@ export default function AdminOrdersPage() {
               className="border rounded-xl p-4 shadow-sm bg-white space-y-2"
             >
               <div className="flex flex-col sm:flex-row justify-between text-sm text-gray-700 gap-2">
-                <div>
-                  سفارش {index + 1}
-                </div>
+                <div>سفارش {index + 1}</div>
                 <div>{new Date(order.created_at).toLocaleString("fa-IR")}</div>
               </div>
 
@@ -204,10 +181,8 @@ export default function AdminOrdersPage() {
                 ))}
               </ul>
 
-              {/* دکمه‌های وضعیت */}
               {order.status !== "cancelled" && order.status !== "delivered" && (
                 <div className="flex flex-col sm:flex-row flex-wrap gap-2 items-center mt-2">
-                  {/* سفارش‌های آنلاین با pending شروع می‌شن */}
                   {order.status === "pending" &&
                     order.order_type === "online" && (
                       <>
@@ -238,8 +213,6 @@ export default function AdminOrdersPage() {
                         </button>
                       </>
                     )}
-
-                  {/* شروع مستقیم از preparing برای phone و in_person */}
                   {order.status === "preparing" && (
                     <>
                       {order.order_type !== "in_person" && (

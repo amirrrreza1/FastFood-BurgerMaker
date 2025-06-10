@@ -1,13 +1,12 @@
 "use client";
 
 import { loginSchema } from "@/Lib/schemas/login";
+import { LoginFormProps } from "@/types";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "react-toastify";
 
-interface LoginFormProps {
-  redirect: string;
-}
+
 
 const LoginForm = ({ redirect }: LoginFormProps) => {
   const [email, setEmail] = useState("");

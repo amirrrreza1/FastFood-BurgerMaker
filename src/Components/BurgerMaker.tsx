@@ -9,7 +9,6 @@ import {
   useEffect,
   forwardRef,
   useImperativeHandle,
-  use,
 } from "react";
 
 import {
@@ -45,12 +44,7 @@ type Ingredient =
   | "bread";
 
 type LayerItem = { id: string; type: Ingredient };
-type NotificationType = "error" | "warning" | "info" | "success";
-type NotificationState = {
-  message: string;
-  title: string;
-  type: NotificationType;
-} | null;
+
 
 const prices: Record<Ingredient, number> = {
   meat: 30000,
@@ -132,7 +126,6 @@ const ingredientInfo = [
   },
 ];
 
-// --- MAIN COMPONENT ---
 export default function BurgerBuilderComponent() {
   const Router = useRouter();
   const [layers, setLayers] = useState<LayerItem[]>([]);
@@ -152,9 +145,9 @@ export default function BurgerBuilderComponent() {
     };
 
     fetchUserID();
-  }, []); // FIX: Added empty dependency array to run useEffect only once.
+  }, []);
 
-  const screenshotRef = useRef<{ takeScreenshot: () => string }>(null); // NEW: Define limits for specific ingredients
+  const screenshotRef = useRef<{ takeScreenshot: () => string }>(null);
 
   const ingredientLimits: Partial<Record<Ingredient, number>> = {
     meat: 3,
@@ -173,11 +166,11 @@ export default function BurgerBuilderComponent() {
   const MAX_SAUCES = 3;
 
   const handleSaveAttempt = () => {
-    if (isSaving) return; // FIX: The modal will no longer open if this condition is met.
+    if (isSaving) return;
 
     if (!layers.some((l) => l.type === "meat")) {
       toast.error("برای ذخیره، باید حداقل یک لایه گوشت اضافه کنید.");
-      return; // This prevents the code below from running.
+      return;
     }
 
     setShowNameModal(true);
@@ -204,7 +197,7 @@ export default function BurgerBuilderComponent() {
     if (uploadError) {
       setIsSaving(false);
       toast.error("مشکلی در ذخیره عکس پیش آمد.");
-      return; // Stop execution on error
+      return;
     }
 
     const { data } = supabase.storage.from("burgers").getPublicUrl(filePath);
@@ -222,7 +215,7 @@ export default function BurgerBuilderComponent() {
     if (dbError) {
       setIsSaving(false);
       toast.error("ثبت اطلاعات همبرگر با مشکل مواجه شد.");
-      return; // Stop execution on error
+      return;
     }
 
     setIsSaving(false);
@@ -235,23 +228,21 @@ export default function BurgerBuilderComponent() {
   };
 
   const addLayer = (type: Ingredient) => {
-    // FIX: Updated ingredient limiting logic
-    // 1. Check for total sauce limit
     const sauceCount = layers.filter((l) => sauceTypes.includes(l.type)).length;
     if (sauceTypes.includes(type) && sauceCount >= MAX_SAUCES) {
       toast.warn(`حداکثر می‌توانید ${MAX_SAUCES} سس اضافه کنید.`);
-      return; // Stop the function
-    } // 2. Check for individual ingredient limits
+      return;
+    }
 
     const limit = ingredientLimits[type];
     if (limit) {
       const currentCount = layers.filter((l) => l.type === type).length;
       if (currentCount >= limit) {
-        const label = getLabel(type); // Get the Persian label
+        const label = getLabel(type);
         toast.warn(`بیشتر از ${limit} عدد ${label} نمی‌توانید اضافه کنید.`);
-        return; // Stop the function
+        return;
       }
-    } // If no limits were hit, add the layer
+    }
 
     const newLayer = { id: `layer-${Date.now()}-${Math.random()}`, type };
     setLayers((prev) => [...prev, newLayer]);
@@ -281,10 +272,6 @@ export default function BurgerBuilderComponent() {
       });
     }
   };
-
-  const bottomBunTopY = 0.25;
-  let accumulatedHeight = bottomBunTopY;
-
   return (
     <>
       <IntroModal />
@@ -457,7 +444,6 @@ function dataURLtoFile(dataUrl: string, filename: string): File {
   return new File([u8arr], filename, { type: mime });
 }
 
-// --- 3D MODEL COMPONENTS ---
 function BurgerBreadBottom() {
   return (
     <mesh position={[0, 0, 0]}>
@@ -498,13 +484,11 @@ export function BurgerBreadTop({ y }: { y: number }) {
 
   return (
     <group position={[0, topY, 0]}>
-      {/* نیم‌کره بالا */}
       <mesh>
         <sphereGeometry args={[1.5, 64, 32, 0, Math.PI * 2, 0, Math.PI / 2]} />
         <meshStandardMaterial color="#d5a85e" roughness={0.5} />
       </mesh>
 
-      {/* کف صاف برای بستن کره از پایین */}
       <mesh position={[0, -0.001, 0]} rotation={[-Math.PI / 2, 0, 0]}>
         <circleGeometry args={[1.5, 64]} />
         <meshStandardMaterial color="#d5a85e" roughness={0.5} />
@@ -512,8 +496,6 @@ export function BurgerBreadTop({ y }: { y: number }) {
     </group>
   );
 }
-
-// --- DRAGGABLE LIST ITEM COMPONENT ---
 
 const getLabel = (type: Ingredient): string => {
   const labels: Record<Ingredient, string> = {

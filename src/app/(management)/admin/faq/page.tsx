@@ -1,27 +1,15 @@
 "use client";
 
 import FaqModal from "@/Components/FaqModal";
+import { FAQ, ModalState } from "@/types";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
 
-type FAQ = {
-  id: number;
-  question: string;
-  answer: string;
-  saved?: boolean;
-};
 
-type ModalState = {
-  isOpen: boolean;
-  mode: "add" | "edit";
-  faqToEdit?: FAQ | null;
-};
 
 export default function AdminFAQPage() {
   const [faqs, setFaqs] = useState<FAQ[]>([]);
-  const [changedFaqIds, setChangedFaqIds] = useState<Set<number>>(new Set());
-
   const [modal, setModal] = useState<ModalState>({
     isOpen: false,
     mode: "add",
@@ -67,7 +55,6 @@ export default function AdminFAQPage() {
 
     try {
       if (modal.mode === "add") {
-        // افزودن سوال جدید
         const res = await fetch("/api/faq", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -76,7 +63,7 @@ export default function AdminFAQPage() {
         const data = await res.json();
 
         if (res.ok && data && Array.isArray(data) && data.length > 0) {
-          const newFaq = { ...data[0], saved: false }; // new FAQ with saved false
+          const newFaq = { ...data[0], saved: false };
           setFaqs((prev) => [...prev, newFaq]);
           toast.success("سوال جدید افزوده شد");
           closeModal();
@@ -86,7 +73,6 @@ export default function AdminFAQPage() {
           });
         }
       } else if (modal.mode === "edit" && modal.faqToEdit) {
-        // ویرایش سوال موجود
         const res = await fetch(`/api/faq/${modal.faqToEdit.id}`, {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },

@@ -1,20 +1,11 @@
 "use client";
 
 import LoadingSpinner from "@/Components/Loading";
+import { UserProfile } from "@/types";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
-interface UserProfile {
-  id: string;
-  email: string | null;
-  name: string | null;
-  lastName: string | null;
-  phoneNum: number | null;
-  role: string;
-  subscription_number: number | null;
-  created_at: string;
-  is_active?: boolean;
-}
+
 
 export default function AdminUsersPage() {
   const [users, setUsers] = useState<UserProfile[]>([]);
