@@ -228,7 +228,10 @@ export default function BurgerBuilderComponent() {
     setIsSaving(false);
     toast.success("همبرگر شما با موفقیت ذخیره شد!");
     setBurgerName("");
-    Router.push("/profile/myburgers");
+    const redirectPath =
+      sessionStorage.getItem("redirect_after_burger") || "/profile/myburgers";
+    sessionStorage.removeItem("redirect_after_burger");
+    Router.push(redirectPath);
   };
 
   const addLayer = (type: Ingredient) => {

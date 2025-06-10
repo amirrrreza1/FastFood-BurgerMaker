@@ -1,11 +1,16 @@
-"use client";
+"use client"
 
+
+import { loginSchema } from "@/Lib/schemas/login";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "react-toastify";
-import { useRouter } from "next/navigation";
-import { loginSchema } from "@/Lib/schemas/login";
 
-const LoginForm = () => {
+interface LoginFormProps {
+  redirect: string;
+}
+
+const LoginForm = ({ redirect }: LoginFormProps) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const router = useRouter();
@@ -38,7 +43,8 @@ const LoginForm = () => {
         throw new Error(data.error || "ورود ناموفق بود");
       }
 
-      router.refresh();
+      // موفقیت‌آمیز: ریدایرکت به مسیر اصلی
+      router.push(redirect);
     } catch (error: any) {
       toast.error(error.message || "خطایی رخ داد");
     }
@@ -64,10 +70,7 @@ const LoginForm = () => {
           onChange={(e) => setPassword(e.target.value)}
           required
         />
-        <button
-          type="submit"
-          className="LoginFormBtn"
-        >
+        <button type="submit" className="LoginFormBtn">
           ورود
         </button>
       </form>

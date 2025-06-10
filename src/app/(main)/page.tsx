@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/Lib/supabase";
 import { MenuItem } from "@/types";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import CustomBurgerCard from "@/Components/CustomBurgersCard";
 import MenuItemCard from "@/Components/MenuItemCard";
 
@@ -31,6 +31,8 @@ export default function Menu() {
   const [isAuthenticated, setIsAuthenticated] = useState(true);
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const created = searchParams.get("created");
 
   useEffect(() => {
     const fetchMenu = async () => {
@@ -66,7 +68,6 @@ export default function Menu() {
 
       setMenuItems(itemsWithUrls);
     };
-
     const fetchCustomBurgers = async () => {
       try {
         const res = await fetch("/api/user/hamburgers");
@@ -74,6 +75,18 @@ export default function Menu() {
 
         if (res.ok) {
           setCustomBurgers(json.burgers || []);
+
+          // اگر همبرگر جدید ساخته شده، scroll یا toast نشون بده (اختیاری)
+          if (created) {
+            // مثلاً اسکرول کنه به بخش همبرگرها
+            const section = document.getElementById("custom-burgers");
+            if (section) {
+              section.scrollIntoView({ behavior: "smooth" });
+            }
+
+            // یا Toast نمایش بده
+            // toast.success("همبرگر با موفقیت اضافه شد!");
+          }
         } else {
           if (res.status === 401 || res.status === 403) {
             setIsAuthenticated(false);
@@ -124,7 +137,7 @@ export default function Menu() {
       {/* Menu Items */}
       <main className="flex-1 space-y-12">
         {/* Custom Burgers Section */}
-        <section className="space-y-4">
+        <section id="custom-burgers" className="space-y-4">
           <h2 className="text-2xl font-bold text-gray-800 border-b pb-2">
             🍔 همبرگرهای من
           </h2>
@@ -143,9 +156,27 @@ export default function Menu() {
             </div>
           ) : customBurgers.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+              {/* کارت ساخت همبرگر جدید */}
+
+              {/* همبرگرهای کاربر */}
               {customBurgers.map((burger) => (
                 <CustomBurgerCard key={burger.id} burger={burger} />
               ))}
+              <div
+                onClick={() => {
+                  sessionStorage.setItem(
+                    "redirect_after_burger",
+                    window.location.pathname
+                  );
+                  router.push("/new-burger");
+                }}
+                className="cursor-pointer border-2 border-dashed border-gray-400 rounded-lg flex flex-col items-center justify-center p-4 hover:bg-gray-50 transition min-h-[180px]"
+              >
+                <span className="text-3xl">➕</span>
+                <span className="mt-2 font-semibold text-gray-600">
+                  ساخت همبرگر جدید
+                </span>
+              </div>
             </div>
           ) : (
             <div className="bg-[var(--color-primary)] p-3 rounded-lg text-center h-48 flex flex-col items-center justify-center gap-2">

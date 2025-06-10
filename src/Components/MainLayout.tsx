@@ -27,7 +27,7 @@ const MainLayout = async ({ children }: Props) => {
             <Link href={"/login"} className="CustomBTN">
               {token ? "داشبورد" : "ورود | ثبت‌نام"}
             </Link>
-            {token && <CartModalButton />}
+            <CartModalButton />
           </section>
         </div>
       </header>

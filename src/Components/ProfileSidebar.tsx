@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { usePathname, redirect } from "next/navigation";
+import { usePathname, redirect, useRouter } from "next/navigation";
 import { useState } from "react";
 
 const links = [
@@ -12,10 +12,11 @@ const links = [
 export default function ProfileSideBar() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
+  const Router = useRouter();
 
   const handleLogout = async () => {
     await fetch("/api/auth/logout", { method: "POST" });
-    redirect("/login");
+    Router.push("/");
   };
 
   return (

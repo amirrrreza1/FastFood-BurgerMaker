@@ -142,10 +142,28 @@
   --color-primary: #a58a01;
   --color-gray: #e2ceca;
 }
+
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
 .no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+/* Global scrollbar style */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 8px;
+}
+
+/* ::-webkit-scrollbar-track {
+  background: transparent;
+} */
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(45deg, #888, #555);
+  border-radius: 8px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+  transition: background-color 0.3s ease-in-out;
 }

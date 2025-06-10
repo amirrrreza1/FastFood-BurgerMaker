@@ -21,11 +21,12 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  const protectedPaths = ["/profile", "/admin", "/checkout" , "/new-burger"];
+  const protectedPaths = ["/profile", "/admin", "/checkout", "/new-burger"];
 
   if (protectedPaths.some((protectedPath) => path.startsWith(protectedPath))) {
     if (!token) {
       url.pathname = "/login";
+      url.searchParams.set("redirect", path); // ← ذخیره مسیر
       return NextResponse.redirect(url);
     }
 
@@ -36,7 +37,6 @@ export async function middleware(request: NextRequest) {
         url.pathname = "/blocked";
         return NextResponse.redirect(url);
       }
-      
 
       if (path.startsWith("/admin") && payload.role !== "admin") {
         url.pathname = "/profile";
@@ -59,5 +59,11 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/login", "/profile/:path*", "/admin/:path*", "/checkout" , "/new-burger"],
+  matcher: [
+    "/login",
+    "/profile/:path*",
+    "/admin/:path*",
+    "/checkout",
+    "/new-burger",
+  ],
 };

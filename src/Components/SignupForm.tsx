@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { toast } from "react-toastify";
-import { useRouter } from "next/navigation";
 import { signupSchema, verifyCodeSchema } from "@/Lib/schemas/signup";
 
 const SignupForm = () => {
@@ -11,9 +10,6 @@ const SignupForm = () => {
   const [displayName, setDisplayName] = useState("");
   const [password, setPassword] = useState("");
   const [code, setCode] = useState("");
-  const [resending, setResending] = useState(false);
-
-  const router = useRouter();
 
   const handleSendCode = async (e?: React.FormEvent) => {
     e?.preventDefault();
@@ -82,29 +78,6 @@ const SignupForm = () => {
     }
   };
   
-
-  const handleResendCode = async () => {
-    try {
-      setResending(true);
-      const res = await fetch("/api/auth/send-code", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, displayName }),
-      });
-
-      if (!res.ok) {
-        const errorData = await res.json();
-        throw new Error(errorData.error || "خطا در ارسال مجدد کد");
-      }
-
-      toast.success("کد مجدداً ارسال شد");
-    } catch (error: any) {
-      toast.error(error.message || "خطا در ارسال مجدد کد");
-    } finally {
-      setResending(false);
-    }
-  };
-
   return (
     <div className="p-6 bg-[var(--color-white)] rounded-xl shadow-md w-full max-w-md mx-auto">
       {step === "form" ? (

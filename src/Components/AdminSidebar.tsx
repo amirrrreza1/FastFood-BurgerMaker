@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { redirect, usePathname } from "next/navigation";
+import { redirect, usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 
 const menuItems = [
@@ -16,12 +16,13 @@ const menuItems = [
 export default function AdminSidebar() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
+  const Router = useRouter();
 
   const handleLogout = async () => {
     await fetch("/api/auth/logout", {
       method: "POST",
     });
-    redirect("/login");
+    Router.push("/");
   };
 
   return (
