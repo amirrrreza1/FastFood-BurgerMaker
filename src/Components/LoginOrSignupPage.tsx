@@ -29,13 +29,20 @@ const LoginPage = () => {
 
         {/* فرم‌ها */}
         {isSignup ? <SignupForm /> : <LoginForm redirect={redirect} />}
-
+        <div className="text-center mt-4">
+          <button
+            onClick={() => setIsSignup(!isSignup)}
+            className="text-sm font-medium text-indigo-700 hover:underline transition cursor-pointer"
+          >
+            {isSignup ? "حساب دارید؟ وارد شوید" : "حساب ندارید؟ ثبت‌نام کنید"}
+          </button>
+        </div>
         {/* فراموشی رمز عبور */}
         {!isSignup && (
-          <div className="mt-3 text-center">
+          <div className="text-center mt-1">
             <button
               onClick={() => router.push("/forgot-password")}
-              className="text-sm text-blue-600 hover:underline transition"
+              className="text-sm text-blue-600 hover:underline transition cursor-pointer"
             >
               رمز عبور را فراموش کرده‌اید؟
             </button>
@@ -43,22 +50,14 @@ const LoginPage = () => {
         )}
 
         {/* دکمه تغییر حالت */}
-        <div className="mt-6 text-center">
-          <button
-            onClick={() => setIsSignup(!isSignup)}
-            className="text-sm font-medium text-indigo-700 hover:underline transition"
-          >
-            {isSignup ? "حساب دارید؟ وارد شوید" : "حساب ندارید؟ ثبت‌نام کنید"}
-          </button>
-        </div>
 
         {/* بازگشت به صفحه اصلی */}
-        <div className="mt-4 text-center">
+        <div className="text-center mt-1">
           <Link
             href="/"
-            className="text-xs text-gray-500 hover:text-gray-700 transition"
+            className="text-xs text-gray-500 hover:underline transition"
           >
-            ← بازگشت به صفحه اصلی
+            بازگشت به صفحه اصلی
           </Link>
         </div>
       </div>
