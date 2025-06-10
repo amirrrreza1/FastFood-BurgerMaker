@@ -38,7 +38,7 @@ const SignupForm = () => {
       toast.error(error.message || "خطا در ارسال کد");
     }
   };
-  
+
   const handleVerifyAndSignup = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -77,13 +77,11 @@ const SignupForm = () => {
       toast.error(error.message || "خطا در ثبت‌نام");
     }
   };
-  
+
   return (
-    <div className="p-6 bg-[var(--color-white)] rounded-xl shadow-md w-full max-w-md mx-auto">
+    <div className="w-full max-w-md mx-auto">
       {step === "form" ? (
         <form onSubmit={handleSendCode} className="flex flex-col gap-4">
-          <h2 className="text-xl font-bold text-center">ثبت‌نام</h2>
-
           <input
             type="text"
             placeholder="نام کاربری"
@@ -111,10 +109,7 @@ const SignupForm = () => {
             required
           />
 
-          <button
-            type="submit"
-            className="LoginFormBtn"
-          >
+          <button type="submit" className="ConfirmBTN w-full">
             ارسال کد تأیید
           </button>
         </form>
@@ -131,10 +126,7 @@ const SignupForm = () => {
             required
           />
 
-          <button
-            type="submit"
-            className="LoginFormBtn"
-          >
+          <button type="submit" className="LoginFormBtn">
             تأیید و ساخت اکانت
           </button>
         </form>

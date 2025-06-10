@@ -1,5 +1,4 @@
-"use client"
-
+"use client";
 
 import { loginSchema } from "@/Lib/schemas/login";
 import { useRouter } from "next/navigation";
@@ -29,7 +28,7 @@ const LoginForm = ({ redirect }: LoginFormProps) => {
     }
 
     try {
-      const res = await fetch("api/auth/login", {
+      const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -43,7 +42,6 @@ const LoginForm = ({ redirect }: LoginFormProps) => {
         throw new Error(data.error || "ورود ناموفق بود");
       }
 
-      // موفقیت‌آمیز: ریدایرکت به مسیر اصلی
       router.push(redirect);
     } catch (error: any) {
       toast.error(error.message || "خطایی رخ داد");
@@ -51,26 +49,45 @@ const LoginForm = ({ redirect }: LoginFormProps) => {
   };
 
   return (
-    <div className="p-6 bg-[var(--color-white)] rounded-xl shadow-md w-full max-w-md">
-      <form onSubmit={handleLogin} className="flex flex-col gap-4">
-        <h2 className="text-xl font-bold text-center">ورود</h2>
-        <input
-          type="email"
-          placeholder="ایمیل"
-          className="Input"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-        <input
-          type="password"
-          placeholder="رمز عبور"
-          className="Input"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-        <button type="submit" className="LoginFormBtn">
+    <div className="w-full max-w-md mx-auto">
+      <form onSubmit={handleLogin} className="flex flex-col gap-5">
+        <div className="flex flex-col gap-2">
+          <label htmlFor="email" className="text-sm font-medium text-gray-700">
+            ایمیل
+          </label>
+          <input
+            id="email"
+            type="email"
+            placeholder="your@email.com"
+            className="Input"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <label
+            htmlFor="password"
+            className="text-sm font-medium text-gray-700"
+          >
+            رمز عبور
+          </label>
+          <input
+            id="password"
+            type="password"
+            placeholder="••••••••"
+            className="Input"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+        </div>
+
+        <button
+          type="submit"
+          className="ConfirmBTN w-full"
+        >
           ورود
         </button>
       </form>
