@@ -183,8 +183,8 @@ export default function ChangePasswordModal() {
                   <img
                     src={
                       repeatPasswordVisible
-                        ? "/images/svg/eye-hide.svg"
-                        : "/images/svg/eye-show.svg"
+                        ? "/images/SVG/eye-hide.svg"
+                        : "/images/SVG/eye-show.svg"
                     }
                     alt="eye"
                     width={20}
