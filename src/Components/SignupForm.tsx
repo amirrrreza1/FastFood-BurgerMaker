@@ -178,7 +178,7 @@ const SignupForm = () => {
             required
           />
 
-          <button type="submit" className="LoginFormBtn">
+          <button type="submit" className="ConfirmBTN">
             تأیید و ساخت اکانت
           </button>
         </form>
