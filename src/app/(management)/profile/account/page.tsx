@@ -16,6 +16,7 @@ export default function AccountPage() {
   const [phone, setPhone] = useState("");
   const [birthDate, setBirthDate] = useState<string | null>(null);
   const [subscription_number, setSubscriptionNumber] = useState("");
+  const [username, setUsername] = useState("");
   const [addresses, setAddresses] = useState<Address[]>([]);
   const [userId, setUserId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -38,7 +39,9 @@ export default function AccountPage() {
 
       const { data: profile } = await supabase
         .from("profiles")
-        .select("name, lastName, phoneNum, birthDate , subscription_number")
+        .select(
+          "name, lastName, phoneNum, birthDate , subscription_number , display_name"
+        )
         .eq("id", user_id)
         .single();
 
@@ -48,6 +51,7 @@ export default function AccountPage() {
         setPhone(profile.phoneNum || "");
         setBirthDate(profile.birthDate || null);
         setSubscriptionNumber(profile.subscription_number || "");
+        setUsername(profile.display_name || "");
       }
 
       const { data: addressData } = await supabase
@@ -118,6 +122,10 @@ export default function AccountPage() {
           <div>
             <span className="text-sm text-gray-700">تاریخ تولد:</span>
             <p className="p-2 border rounded bg-white">{birthDateFormatted}</p>
+          </div>
+          <div>
+            <span className="text-sm text-gray-700">نام کاربری</span>
+            <p className="p-2 border rounded bg-white">{username}</p>
           </div>
           <div>
             <span className="text-sm text-gray-700">شماره اشتراک:</span>

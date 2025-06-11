@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
     password,
     email_confirm: true,
     user_metadata: {
-      display_name: displayName,
+      display_name: trimesDisplayName,
     },
   });
 
@@ -51,7 +51,7 @@ export async function POST(req: NextRequest) {
   const insertResult = await supabase.from("profiles").insert({
     id: data.user.id,
     email,
-    display_name: displayName,
+    display_name: trimesDisplayName,
     username_normalized: usernameNormalized,
     role: "user",
     subscription_number: subscriptionNumber,
