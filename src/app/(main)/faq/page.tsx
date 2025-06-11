@@ -5,10 +5,7 @@ export default async function FAQPage() {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL;
 
   const res = await fetch(`${baseUrl}/api/faq`, {
-    next: { tags: ["faq"] }, // تعریف تگ برای revalidation دستی
-    headers: {
-      cookie: cookies().toString(),
-    },
+    cache: "force-cache",
   });
 
   const faqs: FAQ[] = await res.json();
