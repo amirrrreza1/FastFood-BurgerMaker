@@ -5,7 +5,7 @@ export default async function FAQPage() {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL;
 
   const res = await fetch(`${baseUrl}/api/faq`, {
-    next: { revalidate: false },
+    next: { tags: ["faq"] }, // تعریف تگ برای revalidation دستی
     headers: {
       cookie: cookies().toString(),
     },
@@ -14,7 +14,10 @@ export default async function FAQPage() {
   const faqs: FAQ[] = await res.json();
 
   return (
-    <div className="max-w-3xl mx-auto p-4 sm:p-6 space-y-6" style={{ minHeight: `calc(100vh - 280px)` }}>
+    <div
+      className="max-w-3xl mx-auto p-4 sm:p-6 space-y-6"
+      style={{ minHeight: `calc(100vh - 280px)` }}
+    >
       <h1 className="text-3xl font-bold text-center text-gray-800">
         سوالات متداول
       </h1>

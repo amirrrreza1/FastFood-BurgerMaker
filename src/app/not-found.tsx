@@ -7,7 +7,7 @@ const NotFound = () => {
       <div>
         <p className="text-white text-xl font-bold text-center">همممممم...</p>
         <Image
-          src="/images/svg/guy-staring-at-computer-meme.svg"
+          src="/images/SVG/guy-staring-at-computer-meme.svg"
           alt="meme"
           width={500}
           height={500}
