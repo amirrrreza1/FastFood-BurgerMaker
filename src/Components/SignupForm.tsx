@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { signupSchema, verifyCodeSchema } from "@/Lib/schemas/signup";
 
@@ -10,6 +10,9 @@ const SignupForm = () => {
   const [displayName, setDisplayName] = useState("");
   const [password, setPassword] = useState("");
   const [code, setCode] = useState("");
+  const [usernameStatus, setUsernameStatus] = useState<
+    "checking" | "available" | "taken" | null
+  >(null);
 
   const handleSendCode = async (e?: React.FormEvent) => {
     e?.preventDefault();
@@ -78,6 +81,35 @@ const SignupForm = () => {
     }
   };
 
+  useEffect(() => {
+    const trimmed = displayName.trim();
+    const normalized = trimmed.toLowerCase(); // 👈 یکسان‌سازی
+
+    if (!normalized) {
+      setUsernameStatus(null);
+      return;
+    }
+
+    const delay = setTimeout(async () => {
+      setUsernameStatus("checking");
+
+      try {
+        const res = await fetch("/api/auth/check-username", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ displayName: normalized }),
+        });
+
+        const data = await res.json();
+        setUsernameStatus(data.exists ? "taken" : "available");
+      } catch {
+        setUsernameStatus(null);
+      }
+    }, 500);
+
+    return () => clearTimeout(delay);
+  }, [displayName]);
+
   return (
     <div className="w-full max-w-md mx-auto">
       {step === "form" ? (
@@ -90,6 +122,20 @@ const SignupForm = () => {
             onChange={(e) => setDisplayName(e.target.value)}
             required
           />
+
+          {usernameStatus === "checking" && (
+            <p className="text-sm text-gray-500">در حال بررسی...</p>
+          )}
+          {usernameStatus === "available" && (
+            <p className="text-sm text-green-600">
+              این نام کاربری قابل استفاده است
+            </p>
+          )}
+          {usernameStatus === "taken" && (
+            <p className="text-sm text-red-600">
+              این نام کاربری قبلاً استفاده شده است
+            </p>
+          )}
 
           <input
             type="email"
@@ -109,7 +155,13 @@ const SignupForm = () => {
             required
           />
 
-          <button type="submit" className="ConfirmBTN w-full">
+          <button
+            type="submit"
+            className="ConfirmBTN w-full"
+            disabled={
+              usernameStatus === "taken" || usernameStatus === "checking"
+            }
+          >
             ارسال کد تأیید
           </button>
         </form>

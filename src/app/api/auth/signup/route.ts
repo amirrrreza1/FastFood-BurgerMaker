@@ -28,6 +28,8 @@ async function generateUniqueSubscriptionNumber(): Promise<number> {
 
 export async function POST(req: NextRequest) {
   const { email, password, displayName } = await req.json();
+  const trimesDisplayName = displayName.trim();
+  const usernameNormalized = trimesDisplayName.toLowerCase();
   const { data, error } = await supabase.auth.admin.createUser({
     email,
     password,
@@ -50,6 +52,7 @@ export async function POST(req: NextRequest) {
     id: data.user.id,
     email,
     display_name: displayName,
+    username_normalized: usernameNormalized,
     role: "user",
     subscription_number: subscriptionNumber,
   });
