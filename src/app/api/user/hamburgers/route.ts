@@ -6,10 +6,7 @@ export async function GET(req: NextRequest) {
   const token = req.cookies.get("token")?.value;
 
   if (!token) {
-    return NextResponse.json(
-      { error: "توکن دریافت نشده" },
-      { status: 401 }
-    );
+    return NextResponse.json({ error: "توکن دریافت نشده" }, { status: 401 });
   }
 
   let user;
@@ -17,10 +14,7 @@ export async function GET(req: NextRequest) {
   try {
     user = await verifyToken(token);
   } catch (err) {
-    return NextResponse.json(
-      { error: "توکن نامعتبر است" },
-      { status: 401 }
-    );
+    return NextResponse.json({ error: "توکن نامعتبر است" }, { status: 401 });
   }
 
   const user_id = user.uid;
@@ -30,11 +24,9 @@ export async function GET(req: NextRequest) {
     .select("is_active")
     .eq("id", user_id)
     .single();
-
   if (userError || !userData) {
     return NextResponse.json({ error: "User not found" }, { status: 404 });
   }
-
 
   const { data: burgers, error } = await supabase
     .from("custom_burgers")
@@ -46,5 +38,8 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  return NextResponse.json({ burgers });
+  return NextResponse.json({
+    burgers,
+    is_active: userData.is_active,
+  });
 }

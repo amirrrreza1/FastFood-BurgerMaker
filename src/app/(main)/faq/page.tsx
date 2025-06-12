@@ -1,5 +1,4 @@
 import { FAQ } from "@/types";
-import { cookies } from "next/headers";
 
 export default async function FAQPage() {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL;

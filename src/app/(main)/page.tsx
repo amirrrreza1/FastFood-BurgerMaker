@@ -26,9 +26,9 @@ export default function Menu() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const created = searchParams.get("created");
-
   const [isMenuLoading, setIsMenuLoading] = useState(true);
   const [isBurgersLoading, setIsBurgersLoading] = useState(true);
+  const [isActive, setIsActive] = useState(true); // ✅ جدید
 
   useEffect(() => {
     const fetchMenu = async () => {
@@ -78,6 +78,8 @@ export default function Menu() {
 
         if (res.ok) {
           setCustomBurgers(json.burgers || []);
+          setIsActive(json.is_active); // ✅ این خط را اضافه کن
+
           if (created) {
             const section = document.getElementById("custom-burgers");
             if (section) {
@@ -157,6 +159,13 @@ export default function Menu() {
               >
                 ورود به حساب
               </button>
+            </div>
+          ) : !isActive ? (
+            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative h-48 flex flex-col items-center justify-center text-center shadow-md">
+              <strong className="font-bold">حساب شما غیرفعال است.</strong>
+              <span className="block text-sm mt-2">
+                لطفاً با پشتیبانی تماس بگیرید.
+              </span>
             </div>
           ) : customBurgers.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">

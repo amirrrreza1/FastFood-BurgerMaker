@@ -1,9 +1,8 @@
-import type { Metadata } from "next";
-import "./globals.css";
-import { ToastContainer } from "react-toastify";
+import { Metadata } from "next";
+import React from "react";
 
 export const metadata: Metadata = {
-  title: "رستوران فست‌فود | Fast Food Restaurant",
+  title: "پنل کاربری",
   description:
     "سفارش آنلاین غذا با بهترین کیفیت و سریع‌ترین زمان ارسال. تجربه‌ای متفاوت از فست‌فود!",
   applicationName: "AmirFast FastFood",
@@ -26,22 +25,19 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: "/favicon.ico",
-    shortcut: "/images/favicon.ico",
+    shortcut: "/favicon.ico",
     apple: "/images/apple-touch-icon.png",
   },
 };
 
-export default function RootLayout({
+export default function ProfileLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
-    <html lang="en">
-      <body>
-        {children}
-        <ToastContainer position="top-right" />
-      </body>
-    </html>
+    <div className="flex min-h-screen">
+      <main className="flex-1">{children}</main>
+    </div>
   );
 }
