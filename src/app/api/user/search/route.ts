@@ -15,11 +15,14 @@ export async function GET(req: Request) {
     `phoneNum.ilike.%${query}%`,
     `email.ilike.%${query}%`,
     `subscription_number.ilike.%${query}%`,
+    `username_normalized.ilike.%${query}%`,
   ].join(",");
 
   const { data, error } = await supabase
     .from("profiles")
-    .select("id, name, lastName, phoneNum, email, subscription_number , display_name")
+    .select(
+      "id, name, lastName, phoneNum, email, subscription_number , username_normalized"
+    )
     .or(orFilter)
     .limit(10);
 

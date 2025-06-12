@@ -150,7 +150,7 @@ export default function AdminUsersPage() {
                   </td>
                   <td className="p-2 border text-center flex flex-col gap-2 ">
                     <button
-                      className={` ${user.is_active ? "DeleteBTN" : "EditBTN"}`}
+                      className={` ${user.is_active ? "DeleteBTN" : "EditBTN justify-center"}`}
                       onClick={() =>
                         handleToggleActive(user.id, user.is_active)
                       }

@@ -109,6 +109,7 @@ export interface UserProfile {
   created_at: string;
   is_active?: boolean;
   display_name: string;
+  username_normalized: string;
 }
 
 export interface LoadingSpinnerProps {

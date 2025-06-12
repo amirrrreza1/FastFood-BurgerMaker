@@ -140,7 +140,7 @@ export default function AdminManualOrder({ adminId }: { adminId: string }) {
               }}
             >
               <span className="font-medium">{user.name || user.email}</span> -{" "}
-              {user.phoneNum || user.display_name}
+              {user.phoneNum || user.username_normalized}
             </div>
           ))}
         </div>
