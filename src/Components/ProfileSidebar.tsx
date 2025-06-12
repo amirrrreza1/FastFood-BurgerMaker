@@ -16,7 +16,8 @@ export default function ProfileSideBar() {
 
   const handleLogout = async () => {
     await fetch("/api/auth/logout", { method: "POST" });
-    Router.push("/");
+    Router.replace("/");
+    Router.refresh();
   };
 
   return (

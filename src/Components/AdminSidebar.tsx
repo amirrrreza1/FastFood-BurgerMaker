@@ -23,7 +23,8 @@ export default function AdminSidebar() {
     await fetch("/api/auth/logout", {
       method: "POST",
     });
-    Router.push("/");
+    Router.replace("/");
+    Router.refresh();
   };
 
   return (
