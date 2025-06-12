@@ -2,6 +2,7 @@ import Link from "next/link";
 import React from "react";
 import CartModalButton from "./CartModal";
 import { cookies } from "next/headers";
+import NavLinks from "./NavLinks";
 
 type Props = {
   children: React.ReactNode;
@@ -12,10 +13,10 @@ const MainLayout = async ({ children }: Props) => {
 
   return (
     <>
-      <header className="w-full bg-[#A58A01] sticky top-0 z-50 mb-10">
-        <div className="w-full max-w-[1200px] m-auto flex items-center justify-between h-[60px] px-5">
-          <section>
-            <Link href={"/"}>
+      <header className="w-full bg-[#A58A01] sticky top-0 z-50">
+        <div className="w-full max-w-[1200px] m-auto flex items-center justify-between h-[60px] px-5 flex-wrap gap-y-2">
+          <section className="flex items-center gap-4 flex-wrap">
+            <Link href="/">
               <img
                 src="/images/Logo.png"
                 alt="logo"
@@ -23,14 +24,18 @@ const MainLayout = async ({ children }: Props) => {
               />
             </Link>
           </section>
-          <section className="flex items-center gap-4">
-            <Link href={"/login"} className="CustomBTN">
+
+          {/* Auth & Cart */}
+          <section className="flex items-center gap-3 sm:gap-4 text-sm">
+            <Link href="/login" className="CustomBTN whitespace-nowrap">
               {token ? "داشبورد" : "ورود | ثبت‌نام"}
             </Link>
             <CartModalButton />
           </section>
         </div>
       </header>
+      <NavLinks />
+
       <main>{children}</main>
       <footer className="w-full bg-[#A58A01] text-white p-5 mt-10 h-[140px]">
         <div className="w-full max-w-[1200px] mx-auto mb-5 flex flex-col-reverse md:flex-row justify-between items-center gap-3">

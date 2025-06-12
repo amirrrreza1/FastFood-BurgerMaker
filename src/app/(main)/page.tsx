@@ -6,6 +6,8 @@ import { CustomBurger, MenuItem } from "@/types";
 import { useRouter, useSearchParams } from "next/navigation";
 import CustomBurgerCard from "@/Components/CustomBurgersCard";
 import MenuItemCard from "@/Components/MenuItemCard";
+import CustomBurgerCardSkeleton from "@/Components/CustomBurgerSkeleton";
+import MenuItemCardSkeleton from "@/Components/MenuItemSkeleton";
 
 const categories: MenuItem["category"][] = [
   "پیتزا",
@@ -25,40 +27,50 @@ export default function Menu() {
   const searchParams = useSearchParams();
   const created = searchParams.get("created");
 
+  const [isMenuLoading, setIsMenuLoading] = useState(true);
+  const [isBurgersLoading, setIsBurgersLoading] = useState(true);
+
   useEffect(() => {
     const fetchMenu = async () => {
-      const { data, error } = await supabase.from("menu_items").select("*");
-      if (error) {
-        console.error("خطا در بارگیری منو:", error);
-        return;
-      }
+      try {
+        const { data, error } = await supabase.from("menu_items").select("*");
+        if (error) {
+          console.error("خطا در بارگیری منو:", error);
+          return;
+        }
 
-      const itemsWithUrls =
-        data?.map((item) => {
-          let publicURL = "";
-
-          if (item.image_url) {
-            const res = supabase.storage
-              .from("menu-images")
-              .getPublicUrl(item.image_url);
-
-            if (
-              "data" in res &&
-              res.data &&
-              typeof res.data === "object" &&
-              "publicUrl" in res.data
-            ) {
-              publicURL = res.data.publicUrl;
-            } else {
-              console.error("getPublicUrl returned unexpected data:", res);
+        const itemsWithUrls =
+          data?.map((item) => {
+            let publicURL = "";
+            if (item.image_url) {
+              const res = supabase.storage
+                .from("menu-images")
+                .getPublicUrl(item.image_url);
+              if (
+                "data" in res &&
+                res.data &&
+                typeof res.data === "object" &&
+                "publicUrl" in res.data
+              ) {
+                publicURL = res.data.publicUrl;
+              } else {
+                console.error("getPublicUrl returned unexpected data:", res);
+              }
             }
-          }
-
-          return { ...item, image: publicURL };
-        }) || [];
-
-      setMenuItems(itemsWithUrls);
+            return { ...item, image: publicURL };
+          }) || [];
+        setMenuItems(itemsWithUrls);
+      } catch (error) {
+        console.error(
+          "An unexpected error occurred while fetching the menu:",
+          error
+        );
+      } finally {
+        // +++ UPDATE LOADING STATE +++
+        setIsMenuLoading(false);
+      }
     };
+
     const fetchCustomBurgers = async () => {
       try {
         const res = await fetch("/api/user/hamburgers");
@@ -66,7 +78,6 @@ export default function Menu() {
 
         if (res.ok) {
           setCustomBurgers(json.burgers || []);
-
           if (created) {
             const section = document.getElementById("custom-burgers");
             if (section) {
@@ -83,12 +94,15 @@ export default function Menu() {
       } catch (err) {
         console.error("خطا در ارتباط با سرور:", err);
         setIsAuthenticated(false);
+      } finally {
+        // +++ UPDATE LOADING STATE +++
+        setIsBurgersLoading(false);
       }
     };
 
     fetchMenu();
     fetchCustomBurgers();
-  }, []);
+  }, [created]); // Added `created` to dependency array as it's used inside
 
   const scrollToCategory = (category: string) => {
     const target = categoryRefs.current[category];
@@ -105,6 +119,7 @@ export default function Menu() {
           <h3 className="text-xl font-bold text-center lg:text-right border-b pb-2">
             دسته‌بندی‌ها
           </h3>
+
           <div className="flex gap-2 overflow-x-auto no-scrollbar sm:flex-wrap sm:overflow-visible">
             {categories.map((cat) => (
               <button
@@ -124,12 +139,18 @@ export default function Menu() {
           <h2 className="text-2xl font-bold text-gray-800 border-b pb-2">
             🍔 همبرگرهای من
           </h2>
-
-          {!isAuthenticated ? (
+          {isBurgersLoading ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+              {[...Array(3)].map((_, i) => (
+                <CustomBurgerCardSkeleton key={i} />
+              ))}
+            </div>
+          ) : !isAuthenticated ? (
             <div className="bg-[var(--color-primary)] p-3 rounded-lg text-center h-48 flex flex-col items-center justify-center gap-2 shadow-md">
               <p className="text-white">
                 برای دیدن همبرگرهای خود ابتدا وارد شوید.
               </p>
+
               <button
                 onClick={() => router.push("/login")}
                 className="CustomBTN"
@@ -142,6 +163,7 @@ export default function Menu() {
               {customBurgers.map((burger) => (
                 <CustomBurgerCard key={burger.id} burger={burger} />
               ))}
+
               <div
                 onClick={() => {
                   sessionStorage.setItem(
@@ -153,6 +175,7 @@ export default function Menu() {
                 className="cursor-pointer border-2 border-dashed border-gray-400 rounded-lg flex flex-col items-center justify-center p-4 hover:bg-gray-50 transition min-h-[180px]"
               >
                 <span className="text-3xl">➕</span>
+
                 <span className="mt-2 font-semibold text-gray-600">
                   ساخت همبرگر جدید
                 </span>
@@ -161,6 +184,7 @@ export default function Menu() {
           ) : (
             <div className="bg-[var(--color-primary)] p-3 rounded-lg text-center h-48 flex flex-col items-center justify-center gap-2">
               <p className="text-white">شما هنوز هیچ همبرگری نساختید.</p>
+
               <button
                 onClick={() => router.push("/new-burger")}
                 className="CustomBTN"
@@ -170,31 +194,50 @@ export default function Menu() {
             </div>
           )}
         </section>
-
-        {categories.map((cat) => {
-          const items = menuItems.filter((item) => item.category === cat);
-          if (items.length === 0) return null;
-
-          return (
+        {/* +++ MENU SKELETONS +++ */}
+        {isMenuLoading &&
+          categories.map((cat) => (
             <section
-              key={cat}
-              ref={(el) => {
-                if (el) categoryRefs.current[cat] = el as HTMLDivElement;
-              }}
+              key={`${cat}-skeleton`}
               className="scroll-mt-24 space-y-6 sm:space-y-8 md:space-y-10"
             >
               <h2 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-gray-800 border-b border-gray-300 pb-2">
-                {cat}
+                <div className="h-8 w-32 bg-gray-300 rounded animate-pulse"></div>
               </h2>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5 lg:gap-6">
-                {items.map((item) => (
-                  <MenuItemCard key={item.id} item={item} />
+                {[...Array(4)].map((_, i) => (
+                  <MenuItemCardSkeleton key={i} />
                 ))}
               </div>
             </section>
-          );
-        })}
+          ))}
+        {/* +++ ACTUAL MENU DATA +++ */}
+        {!isMenuLoading &&
+          categories.map((cat) => {
+            const items = menuItems.filter((item) => item.category === cat);
+            if (items.length === 0) return null;
+
+            return (
+              <section
+                key={cat}
+                ref={(el) => {
+                  if (el) categoryRefs.current[cat] = el as HTMLDivElement;
+                }}
+                className="scroll-mt-24 space-y-6 sm:space-y-8 md:space-y-10"
+              >
+                <h2 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-gray-800 border-b border-gray-300 pb-2">
+                  {cat}
+                </h2>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5 lg:gap-6">
+                  {items.map((item) => (
+                    <MenuItemCard key={item.id} item={item} />
+                  ))}
+                </div>
+              </section>
+            );
+          })}
       </main>
     </div>
   );

@@ -5,7 +5,6 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { CustomBurger, Order } from "@/types";
 
-
 const ITEM_NAME_TRANSLATIONS: Record<string, string> = {
   meat: "گوشت",
   cheese: "پنیر",
@@ -92,53 +91,44 @@ const KitchenDisplayPage = () => {
               </span>
             </div>
 
-            <ul className="text-sm list-disc px-4 space-y-1 mb-2 text-gray-800">
+
+            <div className="space-y-3 mb-3">
               {order.items.map((item) => {
-                const isCustom = customBurgerIds.includes(item.id);
-                return (
-                  <li key={item.id}>
-                    {isCustom ? "🍔 همبرگر سفارشی" : item.name} ×{" "}
-                    {item.quantity}
-                  </li>
-                );
-              })}
-            </ul>
+                const custom = customBurgers.find((b) => b.id === item.id);
 
-            {order.items.map((item) => {
-              const custom = customBurgers.find((b) => b.id === item.id);
+                if (custom) {
+                  const layers =
+                    typeof custom.layers === "string"
+                      ? JSON.parse(custom.layers)
+                      : custom.layers;
 
-              if (custom) {
-                const layers =
-                  typeof custom.layers === "string"
-                    ? JSON.parse(custom.layers)
-                    : custom.layers;
+                  return (
+                    <div
+                      key={`custom-${item.id}`}
+                      className="text-sm bg-gray-100 rounded p-3 border border-gray-300"
+                    >
+                      <div className="font-semibold text-gray-800 mb-1">
+                        🍔 همبرگر سفارشی × {item.quantity}
+                      </div>
 
-                return (
-                  <div
-                    key={`custom-${item.id}`}
-                    className="text-sm bg-gray-100 rounded p-3 mb-3 border border-gray-300"
-                  >
-                    <div className="font-semibold text-gray-800 mb-1">
-                      🍔 همبرگر سفارشی × {item.quantity}
+                      <ul className="list-disc list-inside text-gray-700 text-sm">
+                        {layers.map((layer: string, idx: number) => (
+                          <li key={idx}>
+                            {ITEM_NAME_TRANSLATIONS[layer] || layer}
+                          </li>
+                        ))}
+                      </ul>
                     </div>
+                  );
+                }
 
-                    <ul className="list-disc list-inside text-gray-700 text-sm">
-                      {layers.map((layer: string, idx: number) => (
-                        <li key={idx}>
-                          {ITEM_NAME_TRANSLATIONS[layer] || layer}
-                        </li>
-                      ))}
-                    </ul>
+                return (
+                  <div key={item.id} className="text-sm text-gray-800">
+                    {item.name} × {item.quantity}
                   </div>
                 );
-              }
-
-              return (
-                <li key={item.id} className="text-gray-800 text-sm">
-                  {item.name} × {item.quantity}
-                </li>
-              );
-            })}
+              })}
+            </div>
 
             {order.note && (
               <div className="text-sm bg-yellow-50 border-l-4 border-yellow-400 p-2 rounded text-gray-700 mb-2">

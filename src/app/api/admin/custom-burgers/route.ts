@@ -1,4 +1,3 @@
-// /app/api/admin/custom-burgers/route.ts
 import { supabase } from "@/Lib/supabase";
 import { NextResponse } from "next/server";
 

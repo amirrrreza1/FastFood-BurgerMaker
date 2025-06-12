@@ -37,8 +37,8 @@ export default function CustomBurgerCard({ burger }: { burger: CustomBurger }) {
           {burger.description}
         </p>
 
-        {burger.calories > 0 && (
-          <div className="text-xs text-gray-500">کالری: {burger.calories}</div>
+        {burger.total_calories > 0 && (
+          <div className="text-xs text-gray-500">کالری: {burger.total_calories}</div>
         )}
 
         <div className="font-semibold text-amber-600 text-base">

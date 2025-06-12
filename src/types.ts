@@ -45,7 +45,6 @@ export type CustomBurger = {
   id: string;
   name: string;
   total_price: number;
-  calories: number;
   description: string;
   layers: string[] | string;
   image_url?: string;

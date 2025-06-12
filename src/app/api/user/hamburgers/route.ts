@@ -38,7 +38,7 @@ export async function GET(req: NextRequest) {
 
   const { data: burgers, error } = await supabase
     .from("custom_burgers")
-    .select("id, name, image_url , total_price")
+    .select("id, name, image_url , total_price , total_calories")
     .eq("user_id", user_id)
     .order("created_at", { ascending: false });
 
