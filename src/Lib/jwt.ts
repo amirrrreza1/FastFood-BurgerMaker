@@ -4,7 +4,12 @@ const secret = new TextEncoder().encode(process.env.JWT_SECRET!);
 const alg = "HS256";
 
 export const signToken = async (
-  payload: JWTPayload & { uid: string; email: string; role: string }
+  payload: JWTPayload & {
+    uid: string;
+    email: string;
+    role: string;
+    is_active: boolean;
+  }
 ) => {
   return await new SignJWT(payload)
     .setProtectedHeader({ alg })
