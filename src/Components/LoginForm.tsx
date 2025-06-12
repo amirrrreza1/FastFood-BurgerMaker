@@ -42,6 +42,7 @@ const LoginForm = ({ redirect }: LoginFormProps) => {
       }
 
       router.push(redirect);
+      router.refresh();
     } catch (error: any) {
       toast.error(error.message || "خطایی رخ داد");
     }
