@@ -3,8 +3,6 @@ import { supabase } from "@/Lib/supabase";
 export default async function BlogDetailPage({ params }: any) {
   const { id } = await params;
 
-  
-
   const blogId = Number(id);
   if (isNaN(blogId)) {
     return (
@@ -19,6 +17,21 @@ export default async function BlogDetailPage({ params }: any) {
     .select("*")
     .eq("id", blogId)
     .single();
+
+  const iframeContent = `
+    <html dir="rtl">
+      <head>
+        <style>
+          body {
+            font-family: Shabnam;
+          }
+        </style>
+      </head>
+      <body>
+        ${blog.content || "<p>محتوایی برای نمایش وجود ندارد.</p>"}
+      </body>
+    </html>
+  `;
 
   if (error) {
     console.error(error);
@@ -68,14 +81,12 @@ export default async function BlogDetailPage({ params }: any) {
           تصویری موجود نیست
         </div>
       )}
-
-      <div
-        className="prose prose-lg prose-slate rtl text-right max-w-none leading-8"
+      <iframe
+        srcDoc={iframeContent}
+        className="w-full h-[600px] border rounded-md p-2"
         dir="rtl"
-        dangerouslySetInnerHTML={{
-          __html: blog.content || "<p>محتوایی برای نمایش وجود ندارد.</p>",
-        }}
-      />
+        sandbox=""
+      ></iframe>
     </div>
   );
 }
