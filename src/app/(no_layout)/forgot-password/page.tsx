@@ -16,10 +16,12 @@ export default function ForgotPassword() {
       return;
     }
 
+    const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL;
+
     setLoading(true);
 
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/reset-password`,
+      redirectTo: `${BASE_URL}/reset-password`,
     });
 
     setLoading(false);
