@@ -21,7 +21,7 @@ export default function ForgotPassword() {
     setLoading(true);
 
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${BASE_URL}/reset-password`,
+      redirectTo: "https://www.amirfast.ir/reset-password",
     });
 
     setLoading(false);
