@@ -3,41 +3,45 @@ import { createClient } from "@supabase/supabase-js";
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
+  process.env.SUPABASE_SERVICE_ROLE_KEY! // فقط در سرور استفاده شود!
 );
 
-export async function POST(request: NextRequest) {
+export async function POST(req: NextRequest) {
   try {
-    const { access_token, new_password } = await request.json();
+    const body = await req.json();
+    const { access_token, new_password } = body;
 
     if (!access_token || !new_password) {
-      return NextResponse.json({ error: "Invalid data" }, { status: 400 });
+      return NextResponse.json({ error: "اطلاعات ناقص است" }, { status: 400 });
     }
 
-    const {
-      data: { user },
-      error: userError,
-    } = await supabaseAdmin.auth.getUser(access_token);
+    const { data: userData, error: getUserError } =
+      await supabaseAdmin.auth.getUser(access_token);
 
-    if (userError || !user) {
+    if (getUserError || !userData?.user?.id) {
       return NextResponse.json(
-        { error: "Invalid access token" },
+        { error: "کاربر یافت نشد یا توکن نامعتبر است" },
         { status: 401 }
       );
     }
 
-    const user_id = user.id;
+    const { error: updateError } =
+      await supabaseAdmin.auth.admin.updateUserById(userData.user.id, {
+        password: new_password,
+      });
 
-    const { error } = await supabaseAdmin.auth.admin.updateUserById(user_id, {
-      password: new_password,
-    });
-
-    if (error) {
-      return NextResponse.json({ error: error.message }, { status: 400 });
+    if (updateError) {
+      return NextResponse.json(
+        { error: "خطا در تغییر رمز عبور" },
+        { status: 500 }
+      );
     }
 
-    return NextResponse.json({ message: "Password updated" }, { status: 200 });
-  } catch (err: any) {
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    return NextResponse.json({ success: true });
+  } catch (error: any) {
+    return NextResponse.json(
+      { error: error.message || "خطای ناشناخته" },
+      { status: 500 }
+    );
   }
 }
