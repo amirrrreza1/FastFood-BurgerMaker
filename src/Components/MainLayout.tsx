@@ -37,8 +37,8 @@ const MainLayout = async ({ children }: Props) => {
       <NavLinks />
 
       <main>{children}</main>
-      <footer className="w-full bg-[#A58A01] text-white p-5 mt-10 h-[140px]">
-        <div className="w-full max-w-[1200px] mx-auto mb-5 flex flex-col-reverse md:flex-row justify-between items-center gap-3">
+      <footer className="w-full bg-[#A58A01] text-white p-4 mt-10 h-[140px]">
+        <div className="w-full max-w-[1200px] mx-auto mb-3 flex flex-col-reverse md:flex-row justify-between items-center gap-3">
           <div>
             طراحی و توسعه توسط <strong>امیررضا آذریون</strong>
           </div>
@@ -50,8 +50,8 @@ const MainLayout = async ({ children }: Props) => {
         </div>
         <div className="max-w-[1200px] m-auto flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="flex gap-2">
-            <h3 className="text-lg font-semibold mb-2"> ارتباط با من :</h3>
-            <div className="flex gap-4 text-2xl">
+            <h3 className="text-lg font-semibold mb-0"> ارتباط با من :</h3>
+            <div className="flex gap-4">
               <Link
                 href="https://t.me/amirreza_work"
                 target="_blank"
