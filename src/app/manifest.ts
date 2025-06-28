@@ -8,7 +8,7 @@ export default function manifest(): MetadataRoute.Manifest {
       "A fast food restaurant offering online food ordering with the best quality and fastest delivery.",
     start_url: "/",
     display: "standalone",
-    background_color: "#ffffff",
+    background_color: "#000",
     theme_color: "#a58a01",
     icons: [
       {
