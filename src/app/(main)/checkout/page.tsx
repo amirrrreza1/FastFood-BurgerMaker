@@ -158,7 +158,7 @@ export default function CheckoutPage() {
                     value={selectedAddressId}
                     onChange={(e) => {
                       const id = e.target.value;
-                      const selected = addresses.find((a) => a.id === id); // ✅ درست شد
+                      const selected = addresses.find((a) => a.id === id);
                       setSelectedAddressId(id);
                       setSelectedAddress(selected ? selected.address : "");
                     }}

@@ -1,5 +1,3 @@
-// app/api/me/route.ts
-import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 import { verifyToken } from "@/Lib/jwt";
 

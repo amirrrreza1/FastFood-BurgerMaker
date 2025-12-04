@@ -28,7 +28,7 @@ export default function Menu() {
   const created = searchParams.get("created");
   const [isMenuLoading, setIsMenuLoading] = useState(true);
   const [isBurgersLoading, setIsBurgersLoading] = useState(true);
-  const [isActive, setIsActive] = useState(true); // ✅ جدید
+  const [isActive, setIsActive] = useState(true);
 
   useEffect(() => {
     const fetchMenu = async () => {
@@ -66,7 +66,6 @@ export default function Menu() {
           error
         );
       } finally {
-        // +++ UPDATE LOADING STATE +++
         setIsMenuLoading(false);
       }
     };
@@ -78,7 +77,7 @@ export default function Menu() {
 
         if (res.ok) {
           setCustomBurgers(json.burgers || []);
-          setIsActive(json.is_active); // ✅ این خط را اضافه کن
+          setIsActive(json.is_active);
 
           if (created) {
             const section = document.getElementById("custom-burgers");
@@ -97,14 +96,13 @@ export default function Menu() {
         console.error("خطا در ارتباط با سرور:", err);
         setIsAuthenticated(false);
       } finally {
-        // +++ UPDATE LOADING STATE +++
         setIsBurgersLoading(false);
       }
     };
 
     fetchMenu();
     fetchCustomBurgers();
-  }, [created]); // Added `created` to dependency array as it's used inside
+  }, [created]);
 
   const scrollToCategory = (category: string) => {
     const target = categoryRefs.current[category];

@@ -1,4 +1,3 @@
-// app/api/send-code/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { codeStore } from "@/Lib/codeStore";
 

@@ -11,7 +11,6 @@ export async function middleware(request: NextRequest) {
     path.startsWith(publicPath)
   );
 
-  // اگر مسیر پابلیک باشد
   if (isPublicPath) {
     if (token) {
       try {
@@ -25,13 +24,12 @@ export async function middleware(request: NextRequest) {
         url.pathname = payload.role === "admin" ? "/admin" : "/profile";
         return NextResponse.redirect(url);
       } catch {
-        return NextResponse.next(); // توکن نامعتبر → اجازه ورود به لاگین
+        return NextResponse.next();
       }
     }
     return NextResponse.next();
   }
 
-  // مسیرهای محافظت‌شده (غیر پابلیک)
   if (!token) {
     url.pathname = "/login";
     url.searchParams.set("redirect", path);
@@ -45,8 +43,7 @@ export async function middleware(request: NextRequest) {
       url.pathname = "/blocked";
       return NextResponse.redirect(url);
     }
-
-    // نقش‌ها
+    
     if (path.startsWith("/admin") && payload.role !== "admin") {
       url.pathname = "/profile";
       return NextResponse.redirect(url);

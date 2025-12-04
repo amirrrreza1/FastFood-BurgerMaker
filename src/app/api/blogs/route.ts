@@ -42,7 +42,6 @@ export async function POST(request: Request) {
       }
     }
 
-    // درج اطلاعات بلاگ در جدول blogs
     const { data, error: insertError } = await supabase
       .from("blogs")
       .insert({

@@ -163,7 +163,7 @@ export default function EditBlogPage() {
       <Editor
         apiKey="xhz3fm1wrv4r3f1trc0ebey5g3ol3cvoy11r6ikit4hqdak1"
         onInit={(_, editor) => (editorRef.current = editor)}
-        initialValue={content} // ✅ فقط یک بار مقدار اولیه را ست می‌کند
+        initialValue={content}
         init={{
           height: 380,
           directionality: "rtl",

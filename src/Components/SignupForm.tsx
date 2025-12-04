@@ -83,7 +83,7 @@ const SignupForm = () => {
 
   useEffect(() => {
     const trimmed = displayName.trim();
-    const normalized = trimmed.toLowerCase(); // 👈 یکسان‌سازی
+    const normalized = trimmed.toLowerCase();
 
     if (!normalized) {
       setUsernameStatus(null);
