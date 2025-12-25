@@ -63,7 +63,7 @@ export default function AddAddressModal({
 
     if (!result.success) {
       toast.error(
-        "خطا در فرم: " + result.error.errors.map((e) => e.message).join("، ")
+        "خطا در فرم: " + result.error.issues.map((e) => e.message).join("، ")
       );
       return;
     }

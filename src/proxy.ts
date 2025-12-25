@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyToken } from "@/Lib/jwt";
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const token = request.cookies.get("token")?.value;
   const url = request.nextUrl.clone();
   const path = url.pathname;
@@ -43,7 +43,7 @@ export async function middleware(request: NextRequest) {
       url.pathname = "/blocked";
       return NextResponse.redirect(url);
     }
-    
+
     if (path.startsWith("/admin") && payload.role !== "admin") {
       url.pathname = "/profile";
       return NextResponse.redirect(url);

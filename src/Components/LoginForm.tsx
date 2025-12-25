@@ -21,7 +21,7 @@ const LoginForm = ({ redirect }: LoginFormProps) => {
     if (!result.success) {
       toast.error(
         "ورود نامعتبر است: " +
-          result.error.errors.map((e) => e.message).join("، ")
+          result.error.issues.map((e) => e.message).join("، ")
       );
       return;
     }

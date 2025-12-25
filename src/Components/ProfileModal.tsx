@@ -42,7 +42,6 @@ export default function EditProfileModal({
   const [loading, setLoading] = useState(false);
   const ValueDate = new Date(birthDate).toLocaleDateString("fa-IR");
 
-
   useEffect(() => {
     if (isOpen) {
       setFirstName(initialData.firstName || "");
@@ -72,7 +71,7 @@ export default function EditProfileModal({
     if (!result.success) {
       toast.error(
         "فرم نامعتبر است: " +
-          result.error.errors.map((e) => e.message).join("، ")
+          result.error.issues.map((e) => e.message).join("، ")
       );
       return;
     }

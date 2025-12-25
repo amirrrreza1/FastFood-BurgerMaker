@@ -19,7 +19,7 @@ const SignupForm = () => {
 
     const validation = signupSchema.safeParse({ email, password, displayName });
     if (!validation.success) {
-      toast.error(validation.error.errors.map((err) => err.message).join("، "));
+      toast.error(validation.error.issues.map((err) => err.message).join("، "));
       return;
     }
 
@@ -47,7 +47,7 @@ const SignupForm = () => {
 
     const validation = verifyCodeSchema.safeParse({ email, code });
     if (!validation.success) {
-      toast.error(validation.error.errors.map((err) => err.message).join("، "));
+      toast.error(validation.error.issues.map((err) => err.message).join("، "));
       return;
     }
 

@@ -115,7 +115,7 @@ export default function Menu() {
   return (
     <div className="flex flex-col lg:flex-row gap-6 px-4 md:px-8 py-6 min-h-screen">
       <aside className="w-full lg:w-60 shrink-0">
-        <div className="bg-white shadow-md rounded-lg p-4 space-y-4 sticky top-16">
+        <div className="bg-white shadow-md rounded-lg p-4 space-y-4 sticky top-28">
           <h3 className="text-xl font-bold text-center lg:text-right border-b pb-2">
             دسته‌بندی‌ها
           </h3>
