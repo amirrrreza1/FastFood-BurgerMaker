@@ -50,12 +50,11 @@ export default function MenuItemDetails({ item, onClose }: Props) {
         <div className="flex flex-col gap-2 text-sm sm:text-base text-gray-700">
           {item.calories > 0 && (
             <div className="flex items-center gap-2">
-              <span className="text-red-500 text-lg">🔥</span>
               کالری: {item.calories}
             </div>
           )}
           <div className="flex items-center gap-2">
-            <span className="text-amber-500 text-lg">💰</span>
+            <span className="text-amber-500 text-lg"></span>
             قیمت:{" "}
             <span className="text-amber-600 font-semibold">
               {item.price.toLocaleString()} تومان

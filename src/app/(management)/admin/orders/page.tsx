@@ -101,9 +101,7 @@ export default function AdminOrdersPage() {
 
   return (
     <div className="space-y-6 p-4 max-w-5xl mx-auto">
-      <h1 className="text-2xl font-bold text-center mb-6">
-        📦 مدیریت سفارش‌ها
-      </h1>
+      <h1 className="text-2xl font-bold text-center mb-6">مدیریت سفارش‌ها</h1>
 
       <div className="flex flex-col sm:flex-row gap-4 sm:items-center justify-between">
         <input
@@ -158,10 +156,10 @@ export default function AdminOrdersPage() {
                       : "text-green-600"
                   }`}
                 >
-                  {order.status === "pending" && "در انتظار تایید 🕓"}
-                  {order.status === "preparing" && "در حال آماده‌سازی 🍳"}
+                  {order.status === "pending" && "در انتظار تایید "}
+                  {order.status === "preparing" && "در حال آماده‌سازی "}
                   {order.status === "delivering" && "در حال ارسال 🚚"}
-                  {order.status === "delivered" && "تحویل داده شد ✅"}
+                  {order.status === "delivered" && "تحویل داده شد "}
                   {order.status === "cancelled" && "لغو شده ❌"}
                 </span>
               </div>
@@ -191,7 +189,7 @@ export default function AdminOrdersPage() {
                           onClick={() => updateStatus(order.id, "preparing")}
                           disabled={loading}
                         >
-                          ✅ تایید سفارش
+                          تایید سفارش
                         </button>
                         <input
                           type="text"
@@ -230,7 +228,7 @@ export default function AdminOrdersPage() {
                           onClick={() => updateStatus(order.id, "delivered")}
                           disabled={loading}
                         >
-                          ✅ تحویل داده شد
+                          تحویل داده شد
                         </button>
                       )}
                     </>
@@ -242,7 +240,7 @@ export default function AdminOrdersPage() {
                       onClick={() => updateStatus(order.id, "delivered")}
                       disabled={loading}
                     >
-                      ✅ تحویل داده شد
+                      تحویل داده شد
                     </button>
                   )}
                 </div>

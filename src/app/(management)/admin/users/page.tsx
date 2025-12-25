@@ -5,8 +5,6 @@ import { UserProfile } from "@/types";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
-
-
 export default function AdminUsersPage() {
   const [users, setUsers] = useState<UserProfile[]>([]);
   const [loading, setLoading] = useState(true);
@@ -143,14 +141,16 @@ export default function AdminUsersPage() {
                     {new Date(user.created_at).toLocaleDateString("fa-IR")}
                   </td>
                   <td className="p-2 border text-center">
-                    {user.is_active ? "✅" : "❌"}
+                    {user.is_active ? "" : "❌"}
                   </td>
                   <td className="p-2 border text-center">
                     {user.role === "admin" ? "ادمین" : "کاربر عادی"}
                   </td>
                   <td className="p-2 border text-center flex flex-col gap-2 ">
                     <button
-                      className={` ${user.is_active ? "DeleteBTN" : "EditBTN justify-center"}`}
+                      className={` ${
+                        user.is_active ? "DeleteBTN" : "EditBTN justify-center"
+                      }`}
                       onClick={() =>
                         handleToggleActive(user.id, user.is_active)
                       }
@@ -208,7 +208,7 @@ export default function AdminUsersPage() {
                 <div>
                   <strong>فعال:</strong>{" "}
                   {user.is_active ? (
-                    <span className="text-green-600">✅</span>
+                    <span className="text-green-600"></span>
                   ) : (
                     <span className="text-red-600">❌</span>
                   )}
@@ -216,7 +216,7 @@ export default function AdminUsersPage() {
                 <div>
                   <strong>ادمین:</strong>{" "}
                   {user.role === "admin" ? (
-                    <span className="text-green-600">✅</span>
+                    <span className="text-green-600"></span>
                   ) : (
                     <span className="text-red-600">❌</span>
                   )}

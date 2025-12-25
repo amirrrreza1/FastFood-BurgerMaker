@@ -49,11 +49,11 @@ export default function MenuItemCard({ item }: Props) {
 
         <div className="p-3 sm:p-4 space-y-2 text-center sm:text-right">
           <h3 className="text-base sm:text-lg font-bold text-gray-800 flex items-center justify-center sm:justify-start gap-1">
-            🍽️ {item.name}
+          {item.name}
           </h3>
 
           <div className="text-xs text-gray-500 flex items-center justify-center sm:justify-start gap-1">
-            🔥 کالری: {item.calories}
+            کالری: {item.calories}
           </div>
 
           <div className="text-base font-semibold text-[var(--color-primary)]">
@@ -62,7 +62,7 @@ export default function MenuItemCard({ item }: Props) {
 
           {item.available === false ? (
             <div className="text-red-600 text-sm mt-2 flex items-center justify-center gap-1">
-              ⚠️ ناموجود
+              ناموجود
             </div>
           ) : cartItem ? (
             <div className="flex items-center justify-center sm:justify-start gap-2 mt-3">
@@ -82,18 +82,18 @@ export default function MenuItemCard({ item }: Props) {
             </div>
           ) : (
             <button onClick={handleAddToCart} className="AddTocartBTN">
-              🛒 افزودن به سبد خرید
+              افزودن به سبد خرید
             </button>
           )}
 
           <button onClick={() => setShowModal(true)} className="SeeDetailsBTN">
-            🔍 مشاهده جزئیات
+            مشاهده جزئیات
           </button>
         </div>
 
         {item.available === false && (
           <span className="absolute top-2 right-2 bg-red-500 text-white text-xs px-2 py-1 rounded-md shadow flex items-center gap-1">
-            ⚠️ ناموجود
+          ناموجود
           </span>
         )}
       </div>

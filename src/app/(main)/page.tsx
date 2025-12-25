@@ -137,7 +137,7 @@ export default function Menu() {
       <main className="flex-1 space-y-12">
         <section id="custom-burgers" className="space-y-4">
           <h2 className="text-2xl font-bold text-gray-800 border-b pb-2">
-            🍔 همبرگرهای من
+            همبرگرهای من
           </h2>
           {isBurgersLoading ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
@@ -181,7 +181,7 @@ export default function Menu() {
                 }}
                 className="cursor-pointer border-2 border-dashed border-gray-400 rounded-lg flex flex-col items-center justify-center p-4 hover:bg-gray-50 transition min-h-[180px]"
               >
-                <span className="text-3xl">➕</span>
+                <span className="text-3xl">+</span>
 
                 <span className="mt-2 font-semibold text-gray-600">
                   ساخت همبرگر جدید
@@ -196,7 +196,7 @@ export default function Menu() {
                 onClick={() => router.push("/new-burger")}
                 className="CustomBTN"
               >
-                ساخت همبرگر جدید 🍔
+                ساخت همبرگر جدید
               </button>
             </div>
           )}

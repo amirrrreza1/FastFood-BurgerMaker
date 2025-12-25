@@ -30,7 +30,7 @@ export default function CustomBurgerCard({ burger }: { burger: CustomBurger }) {
 
       <div className="p-4 space-y-2 text-center sm:text-right">
         <h3 className="text-base sm:text-lg font-bold text-gray-800 flex items-center justify-center sm:justify-start gap-1">
-          🍔 {burger.name}
+          {burger.name}
         </h3>
 
         <p className="text-sm text-gray-600 line-clamp-2">
@@ -38,7 +38,9 @@ export default function CustomBurgerCard({ burger }: { burger: CustomBurger }) {
         </p>
 
         {burger.total_calories > 0 && (
-          <div className="text-xs text-gray-500">کالری: {burger.total_calories}</div>
+          <div className="text-xs text-gray-500">
+            کالری: {burger.total_calories}
+          </div>
         )}
 
         <div className="font-semibold text-amber-600 text-base">

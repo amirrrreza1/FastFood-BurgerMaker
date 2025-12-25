@@ -45,7 +45,6 @@ type Ingredient =
 
 type LayerItem = { id: string; type: Ingredient };
 
-
 const prices: Record<Ingredient, number> = {
   meat: 30000,
   cheese: 10000,
@@ -284,9 +283,7 @@ export default function BurgerBuilderComponent() {
           onSave={handleFinalSave}
         />
         <div className="w-full md:w-96 p-4 flex flex-col shadow-lg overflow-y-auto">
-          <p className="text-center text-gray-400 mb-4">
-            همبرگر خود را بسازید 🍔
-          </p>
+          <p className="text-center text-gray-400 mb-4">همبرگر خود را بسازید</p>
           <div className="flex flex-col gap-4 mb-4 text-center">
             <div className="bg-gray-200 p-1 rounded-lg">
               <div className="text-sm text-black">قیمت نهایی</div>

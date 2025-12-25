@@ -149,7 +149,7 @@ export default function MenuManager() {
 
   return (
     <div className="p-4 max-w-4xl mx-auto">
-      <h2 className="text-2xl font-bold mb-6 text-center">📋 مدیریت منو</h2>
+      <h2 className="text-2xl font-bold mb-6 text-center">مدیریت منو</h2>
 
       <div className="grid gap-3 sm:grid-cols-2 mb-8 border p-4 rounded-lg shadow-sm bg-white">
         <div className="col-span-full">
@@ -291,16 +291,13 @@ export default function MenuManager() {
               <div className="font-bold text-lg">{item.name}</div>
               <div className="text-sm text-gray-600">{item.description}</div>
               <div className="text-sm">
-                💰 {item.price.toLocaleString()} تومان | 🔥 {item.calories}{" "}
-                کالری
+                {item.price.toLocaleString()} تومان | {item.calories} کالری
               </div>
-              <div className="text-sm text-gray-500">📂 {item.category}</div>
+              <div className="text-sm text-gray-500"> {item.category}</div>
               <span
                 className={item.available ? "text-green-600" : "text-red-500"}
               >
-                {item.available
-                  ? "🟢 فعال برای سفارش"
-                  : "🔴 غیرفعال برای سفارش"}
+                {item.available ? " فعال برای سفارش" : "غیرفعال برای سفارش"}
               </span>
 
               <div className="flex gap-2 mt-2">

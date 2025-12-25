@@ -20,10 +20,10 @@ const ITEM_NAME_TRANSLATIONS: Record<string, string> = {
 };
 
 const STATUS_LABELS: Record<string, string> = {
-  pending: "⏳ در انتظار تأیید",
-  preparing: "🧑‍🍳 در حال آماده‌سازی",
-  delivered: "✅ تحویل داده شده",
-  canceled: "❌ لغو شده",
+  pending: "در انتظار تأیید",
+  preparing: " در حال آماده‌سازی",
+  delivered: " تحویل داده شده",
+  canceled: "لغو شده",
 };
 
 const KitchenDisplayPage = () => {
@@ -91,7 +91,6 @@ const KitchenDisplayPage = () => {
               </span>
             </div>
 
-
             <div className="space-y-3 mb-3">
               {order.items.map((item) => {
                 const custom = customBurgers.find((b) => b.id === item.id);
@@ -108,7 +107,7 @@ const KitchenDisplayPage = () => {
                       className="text-sm bg-gray-100 rounded p-3 border border-gray-300"
                     >
                       <div className="font-semibold text-gray-800 mb-1">
-                        🍔 همبرگر سفارشی × {item.quantity}
+                        همبرگر سفارشی × {item.quantity}
                       </div>
 
                       <ul className="list-disc list-inside text-gray-700 text-sm">
@@ -132,7 +131,7 @@ const KitchenDisplayPage = () => {
 
             {order.note && (
               <div className="text-sm bg-yellow-50 border-l-4 border-yellow-400 p-2 rounded text-gray-700 mb-2">
-                📝 <span className="font-semibold">توضیح:</span> {order.note}
+                <span className="font-semibold">توضیح:</span> {order.note}
               </div>
             )}
 
@@ -148,7 +147,7 @@ const KitchenDisplayPage = () => {
                 onClick={() => markAsDelivered(order)}
                 className="w-full py-2 rounded bg-green-600 hover:bg-green-700 text-white text-sm font-semibold transition"
               >
-                تحویل داده شد ✅
+                تحویل داده شد
               </button>
             </div>
           </div>
