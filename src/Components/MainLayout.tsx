@@ -25,7 +25,6 @@ const MainLayout = async ({ children }: Props) => {
             </Link>
           </section>
 
-          {/* Auth & Cart */}
           <section className="flex items-center gap-3 sm:gap-4 text-sm">
             <Link href="/login" className="CustomBTN whitespace-nowrap">
               {token ? "داشبورد" : "ورود | ثبت‌نام"}

@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { redirect, usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
+import { useAuthSession } from "@/Lib/useAuthSession";
 
 const menuItems = [
   { label: "مدیریت منو", href: "/admin/menu" },
@@ -18,6 +19,7 @@ export default function AdminSidebar() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const Router = useRouter();
+  const { isGuest } = useAuthSession();
 
   const handleLogout = async () => {
     await fetch("/api/auth/logout", {
@@ -46,7 +48,10 @@ export default function AdminSidebar() {
           onClick={(e) => e.stopPropagation()}
         >
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold">پنل ادمین</h2>
+            <h2 className="text-xl font-bold ">پنل ادمین</h2>
+            {isGuest && (
+              <h5 className="text-xs font-medium text-blue-700">مهمان</h5>
+            )}
             <button onClick={() => setIsOpen(false)}>
               <img src="/images/SVG/close.svg" alt="close" width={25} />
             </button>
@@ -77,7 +82,13 @@ export default function AdminSidebar() {
         </aside>
       </div>
       <aside className="hidden md:flex h-screen sticky top-0 w-60 bg-gray-100 p-4 border-l flex-col">
-        <h2 className="text-xl font-bold mb-4">پنل ادمین</h2>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-xl font-bold ">پنل ادمین</h2>
+          {isGuest && (
+            <h5 className="text-xs font-medium text-blue-700">مهمان</h5>
+          )}
+        </div>
+
         <ul className="flex-1 space-y-2 overflow-y-auto">
           {menuItems.map((item) => (
             <li key={item.href}>

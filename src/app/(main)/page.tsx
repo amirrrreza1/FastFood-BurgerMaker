@@ -201,7 +201,6 @@ export default function Menu() {
             </div>
           )}
         </section>
-        {/* +++ MENU SKELETONS +++ */}
         {isMenuLoading &&
           categories.map((cat) => (
             <section
@@ -219,7 +218,6 @@ export default function Menu() {
               </div>
             </section>
           ))}
-        {/* +++ ACTUAL MENU DATA +++ */}
         {!isMenuLoading &&
           categories.map((cat) => {
             const items = menuItems.filter((item) => item.category === cat);
@@ -237,7 +235,7 @@ export default function Menu() {
                   {cat}
                 </h2>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5 lg:gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 sm:gap-5 lg:gap-6">
                   {items.map((item) => (
                     <MenuItemCard key={item.id} item={item} />
                   ))}

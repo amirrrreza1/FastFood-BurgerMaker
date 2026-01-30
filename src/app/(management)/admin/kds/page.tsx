@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { CustomBurger, Order } from "@/types";
+import { useAuthSession } from "@/Lib/useAuthSession";
 
 const ITEM_NAME_TRANSLATIONS: Record<string, string> = {
   meat: "گوشت",
@@ -29,6 +30,7 @@ const STATUS_LABELS: Record<string, string> = {
 const KitchenDisplayPage = () => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [customBurgers, setCustomBurgers] = useState<CustomBurger[]>([]);
+  const { isGuest } = useAuthSession();
 
   const fetchOrders = async () => {
     try {
@@ -137,7 +139,7 @@ const KitchenDisplayPage = () => {
 
             <div className="mt-auto">
               <div className="text-sm text-gray-600 mb-2">
-                وضعیت:{" "}
+                وضعیت:
                 <span className="font-bold text-indigo-700">
                   {STATUS_LABELS[order.status]}
                 </span>
@@ -145,7 +147,8 @@ const KitchenDisplayPage = () => {
 
               <button
                 onClick={() => markAsDelivered(order)}
-                className="w-full py-2 rounded bg-green-600 hover:bg-green-700 text-white text-sm font-semibold transition"
+                className="w-full py-2 rounded bg-green-600 hover:bg-green-700 text-white text-sm font-semibold transition disabled:opacity-50 disabled:bg-green-600"
+                disabled={isGuest}
               >
                 تحویل داده شد
               </button>

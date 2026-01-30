@@ -5,6 +5,7 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter, useParams } from "next/navigation";
 import type { Editor as TinyMCEEditor } from "tinymce";
 import { supabase } from "@/Lib/supabase";
+import { useAuthSession } from "@/Lib/useAuthSession";
 
 const Editor = dynamic(
   () => import("@tinymce/tinymce-react").then((mod) => mod.Editor),
@@ -23,6 +24,7 @@ export default function EditBlogPage() {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { isGuest } = useAuthSession();
 
   useEffect(() => {
     if (!blogId) return;
@@ -218,7 +220,7 @@ export default function EditBlogPage() {
         }}
       />
 
-      <button type="submit" disabled={loading} className="ConfirmBTN">
+      <button type="submit" disabled={loading || isGuest} className="ConfirmBTN">
         {loading ? "در حال ذخیره..." : "ذخیره تغییرات"}
       </button>
     </form>

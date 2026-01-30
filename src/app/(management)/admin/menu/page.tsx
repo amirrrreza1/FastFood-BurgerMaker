@@ -7,6 +7,7 @@ import { toast } from "react-toastify";
 import Swal from "sweetalert2";
 import LoadingSpinner from "@/Components/Loading";
 import { MenuItem } from "@/types";
+import { useAuthSession } from "@/Lib/useAuthSession";
 
 const categories = ["پیتزا", "ساندویچ", "سوخاری", "پیش‌غذا", "نوشیدنی"];
 
@@ -29,6 +30,7 @@ export default function MenuManager() {
 
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [editId, setEditId] = useState<string | null>(null);
+  const { isGuest } = useAuthSession();
 
   const fetchItems = async () => {
     setIsFetching(true);
@@ -248,15 +250,15 @@ export default function MenuManager() {
           <button
             onClick={handleSubmit}
             className="ConfirmBTN w-full hover:scale-100"
-            disabled={isLoading}
+            disabled={isGuest ||isLoading}
           >
             {isLoading
               ? editId
                 ? "در حال ویرایش..."
                 : "در حال افزودن..."
               : editId
-              ? "ویرایش آیتم"
-              : "افزودن آیتم"}
+                ? "ویرایش آیتم"
+                : "افزودن آیتم"}
           </button>
         </div>
       </div>
@@ -273,7 +275,7 @@ export default function MenuManager() {
         }`}
             >
               {!item.available && (
-                <div className="absolute top-0 left-0 z-50 bg-red-500 text-white text-xs px-2 py-1 rounded-br-md">
+                <div className="absolute top-0 left-0 z-50 bg-red-500 text-white text-xs px-2 py-1 rounded-br-md rounded-tl-md">
                   غیرفعال
                 </div>
               )}
@@ -311,7 +313,7 @@ export default function MenuManager() {
                 <button
                   onClick={() => deleteItem(item.id)}
                   className="flex-1 DeleteBTN justify-center"
-                  disabled={isLoading}
+                  disabled={isLoading || isGuest}
                 >
                   حذف
                 </button>

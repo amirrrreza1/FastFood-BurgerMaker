@@ -8,9 +8,22 @@ import { useState } from "react";
 
 const LoginPage = () => {
   const [isSignup, setIsSignup] = useState(false);
+  const [guestLoading, setGuestLoading] = useState(false);
   const searchParams = useSearchParams();
   const redirect = searchParams.get("redirect") || "/";
   const router = useRouter();
+
+  const handleGuestLogin = async () => {
+    setGuestLoading(true);
+    try {
+      const res = await fetch("/api/auth/guest", { method: "POST" });
+      if (res.ok) {
+        router.push("/admin");
+      }
+    } finally {
+      setGuestLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-100 to-purple-200 px-4">
@@ -27,6 +40,19 @@ const LoginPage = () => {
         </div>
 
         {isSignup ? <SignupForm /> : <LoginForm redirect={redirect} />}
+        {!isSignup && (
+          <div className="text-center mt-2">
+            <button
+              onClick={handleGuestLogin}
+              disabled={guestLoading}
+              className="ConfirmBTN bg-transparent text-green-500 border-1 border-green-500 w-full"
+            >
+              {guestLoading
+                ? "در حال ورود به عنوان مهمان"
+                : "ورود به عنوان مهمان"}
+            </button>
+          </div>
+        )}
         <div className="text-center mt-4">
           <button
             onClick={() => setIsSignup(!isSignup)}
@@ -45,7 +71,6 @@ const LoginPage = () => {
             </button>
           </div>
         )}
-
 
         <div className="text-center mt-1">
           <Link

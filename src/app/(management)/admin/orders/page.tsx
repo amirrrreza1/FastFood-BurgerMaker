@@ -1,6 +1,7 @@
 "use client";
 
 import LoadingSpinner from "@/Components/Loading";
+import { useAuthSession } from "@/Lib/useAuthSession";
 import { Order } from "@/types";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
@@ -19,10 +20,11 @@ export default function AdminOrdersPage() {
   const [filteredOrders, setFilteredOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(false);
   const [cancelComments, setCancelComments] = useState<Record<string, string>>(
-    {}
+    {},
   );
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
+  const { isGuest } = useAuthSession();
 
   const fetchOrders = async () => {
     setLoading(true);
@@ -73,7 +75,7 @@ export default function AdminOrdersPage() {
   const updateStatus = async (
     orderId: string,
     status: string,
-    comment = ""
+    comment = "",
   ) => {
     setLoading(true);
     try {
@@ -142,25 +144,25 @@ export default function AdminOrdersPage() {
               </div>
 
               <div className="text-sm">
-                وضعیت:{" "}
+                وضعیت:
                 <span
                   className={`font-bold ${
                     order.status === "cancelled"
                       ? "text-red-600"
                       : order.status === "pending"
-                      ? "text-yellow-500"
-                      : order.status === "preparing"
-                      ? "text-blue-500"
-                      : order.status === "delivering"
-                      ? "text-purple-600"
-                      : "text-green-600"
+                        ? "text-yellow-500"
+                        : order.status === "preparing"
+                          ? "text-blue-500"
+                          : order.status === "delivering"
+                            ? "text-purple-600"
+                            : "text-green-600"
                   }`}
                 >
                   {order.status === "pending" && "در انتظار تایید "}
                   {order.status === "preparing" && "در حال آماده‌سازی "}
-                  {order.status === "delivering" && "در حال ارسال 🚚"}
+                  {order.status === "delivering" && "در حال ارسال"}
                   {order.status === "delivered" && "تحویل داده شد "}
-                  {order.status === "cancelled" && "لغو شده ❌"}
+                  {order.status === "cancelled" && "لغو شده"}
                 </span>
               </div>
 
@@ -173,8 +175,8 @@ export default function AdminOrdersPage() {
               <ul className="list-disc px-5 text-sm text-gray-800">
                 {order.items.map((item) => (
                   <li key={item.id}>
-                    {item.name} × {item.quantity} -{" "}
-                    {item.price.toLocaleString()} تومان
+                    {item.name} × {item.quantity} -{item.price.toLocaleString()}{" "}
+                    تومان
                   </li>
                 ))}
               </ul>
@@ -187,7 +189,7 @@ export default function AdminOrdersPage() {
                         <button
                           className="ConfirmBTN"
                           onClick={() => updateStatus(order.id, "preparing")}
-                          disabled={loading}
+                          disabled={loading || isGuest}
                         >
                           تایید سفارش
                         </button>
@@ -205,7 +207,7 @@ export default function AdminOrdersPage() {
                           onClick={() =>
                             updateStatus(order.id, "cancelled", comment)
                           }
-                          disabled={loading || comment.trim() === ""}
+                          disabled={loading || comment.trim() === "" || isGuest}
                         >
                           لغو سفارش
                         </button>
@@ -217,16 +219,16 @@ export default function AdminOrdersPage() {
                         <button
                           className="EditBTN"
                           onClick={() => updateStatus(order.id, "delivering")}
-                          disabled={loading}
+                          disabled={loading || isGuest}
                         >
-                          🚚 ارسال سفارش
+                          ارسال سفارش
                         </button>
                       )}
                       {order.order_type === "in_person" && (
                         <button
                           className="ConfirmBTN"
                           onClick={() => updateStatus(order.id, "delivered")}
-                          disabled={loading}
+                          disabled={loading || isGuest}
                         >
                           تحویل داده شد
                         </button>
@@ -238,7 +240,7 @@ export default function AdminOrdersPage() {
                     <button
                       className="ConfirmBTN"
                       onClick={() => updateStatus(order.id, "delivered")}
-                      disabled={loading}
+                      disabled={loading || isGuest}
                     >
                       تحویل داده شد
                     </button>

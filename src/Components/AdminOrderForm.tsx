@@ -1,5 +1,6 @@
 "use client";
 
+import { useAuthSession } from "@/Lib/useAuthSession";
 import { useCartStore } from "@/store/cartStore";
 import { UserProfile } from "@/types";
 import { useState, useEffect } from "react";
@@ -13,25 +14,26 @@ export default function AdminManualOrder({ adminId }: { adminId: string }) {
   const [loading, setLoading] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState<"cash" | "pos">("cash");
   const [addresses, setAddresses] = useState<{ id: string; address: string }[]>(
-    []
+    [],
   );
   const [selectedAddressId, setSelectedAddressId] = useState<string | null>(
-    null
+    null,
   );
   const [manualAddress, setManualAddress] = useState("");
   const [note, setNote] = useState("");
   const [orderType, setOrderType] = useState<"in_person" | "phone">(
-    "in_person"
+    "in_person",
   );
+  const { isGuest } = useAuthSession();
 
   const total = items.reduce(
     (acc, item) => acc + item.price * item.quantity,
-    0
+    0,
   );
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      if (query.trim().length > 2) {
+      if (query && query.trim().length > 2) {
         fetch(`/api/user/search?q=${query}`)
           .then((res) => res.json())
           .then((data) => setResults(data.users || []));
@@ -39,7 +41,6 @@ export default function AdminManualOrder({ adminId }: { adminId: string }) {
         setResults([]);
       }
     }, 500);
-
     return () => clearTimeout(timer);
   }, [query]);
 
@@ -56,7 +57,7 @@ export default function AdminManualOrder({ adminId }: { adminId: string }) {
         setAddresses(data.addresses || []);
         if ((data.addresses || []).length > 0) {
           const defaultAddress = data.addresses.find(
-            (addr: any) => addr.is_default
+            (addr: any) => addr.is_default,
           );
           setSelectedAddressId(defaultAddress?.id || data.addresses[0].id);
         } else {
@@ -136,10 +137,10 @@ export default function AdminManualOrder({ adminId }: { adminId: string }) {
               onClick={() => {
                 setSelectedUser(user);
                 setResults([]);
-                setQuery(user.phoneNum);
+                setQuery(user.phoneNum || user.username_normalized || "");
               }}
             >
-              <span className="font-medium">{user.name || user.email}</span> -{" "}
+              <span className="font-medium">{user.name || user.email}</span> -
               {user.phoneNum || user.username_normalized}
             </div>
           ))}
@@ -181,9 +182,9 @@ export default function AdminManualOrder({ adminId }: { adminId: string }) {
 
       {orderType === "phone" && (
         <div className="space-y-3">
-          {selectedUser && addresses.length > 0 && (
-            <div>
-              <label className="font-semibold block">آدرس‌های ذخیره شده:</label>
+          <div>
+            <label className="font-semibold block">آدرس‌های ذخیره شده:</label>
+            {selectedUser && addresses.length > 0 ? (
               <select
                 value={selectedAddressId || ""}
                 onChange={(e) => {
@@ -198,8 +199,12 @@ export default function AdminManualOrder({ adminId }: { adminId: string }) {
                   </option>
                 ))}
               </select>
-            </div>
-          )}
+            ) : (
+              <p className="text-gray-500 text-sm mt-2">
+                هیچ آدرسی ذخیره نشده است.
+              </p>
+            )}
+          </div>
 
           <div>
             <label className="font-semibold block">آدرس دستی:</label>
@@ -252,7 +257,7 @@ export default function AdminManualOrder({ adminId }: { adminId: string }) {
 
       <button
         onClick={handleSubmit}
-        disabled={loading || items.length === 0}
+        disabled={loading || items.length === 0 || isGuest}
         className="ConfirmBTN w-full disabled:opacity-50 hover:scale-100 flex items-center justify-center gap-2"
       >
         {loading ? "در حال ارسال..." : "ثبت سفارش"}

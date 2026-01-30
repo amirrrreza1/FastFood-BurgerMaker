@@ -101,7 +101,7 @@ export default function CartModalButton() {
             {items.length > 0 && (
               <div className="pt-4 border-t space-y-3">
                 <p className="text-base font-semibold text-center">
-                  مجموع:{" "}
+                  مجموع:
                   <span className="text-[var(--color-primary)] font-bold">
                     {totalPrice.toLocaleString()} تومان
                   </span>

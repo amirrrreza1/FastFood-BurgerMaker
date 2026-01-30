@@ -91,13 +91,13 @@ export default function CustomBurgersPage() {
               </div>
               <div className="mt-3 flex flex-wrap gap-2 mb-3 text-gray-700 text-sm font-medium">
                 <span className="flex items-center gap-1">
-                  <span>کالری:</span>{" "}
+                  <span>کالری:</span>
                   <span className="font-semibold">
                     {burger.total_calories.toLocaleString()} کیلوکالری
                   </span>
                 </span>
                 <span className="flex items-center gap-1">
-                  <span>قیمت:</span>{" "}
+                  <span>قیمت:</span>
                   <span className="font-semibold">
                     {burger.total_price.toLocaleString()} تومان
                   </span>

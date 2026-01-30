@@ -101,7 +101,7 @@ export default function CheckoutPage() {
 
         if (addressesArray.length > 0) {
           const defaultAddress = addressesArray.find(
-            (addr: any) => addr.is_default
+            (addr: any) => addr.is_default,
           );
           if (defaultAddress) {
             setSelectedAddressId(defaultAddress.id);
@@ -248,9 +248,9 @@ export default function CheckoutPage() {
                 {(
                   items.reduce(
                     (sum, item) => sum + item.price * item.quantity,
-                    0
+                    0,
                   ) + 20000
-                ).toLocaleString()}{" "}
+                ).toLocaleString()}
                 تومان
               </div>
             </div>

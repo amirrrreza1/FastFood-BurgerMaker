@@ -18,7 +18,6 @@ export default function MenuItemDetails({ item, onClose }: Props) {
         className="bg-white rounded-2xl shadow-xl w-full max-w-md p-5 sm:p-6 relative"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Close button */}
         <button
           onClick={onClose}
           className="absolute top-2 left-2 text-gray-500 hover:text-gray-700 text-xl"
@@ -27,7 +26,6 @@ export default function MenuItemDetails({ item, onClose }: Props) {
           <img src="/images/SVG/close.svg" alt="Close" width={24} height={24} />
         </button>
 
-        {/* Image */}
         <div className="rounded-xl overflow-hidden mb-4">
           <img
             src={imageSrc}
@@ -36,17 +34,14 @@ export default function MenuItemDetails({ item, onClose }: Props) {
           />
         </div>
 
-        {/* Title */}
         <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-2 text-center">
           {item.name}
         </h2>
 
-        {/* Description */}
         <p className="text-sm text-gray-600 mb-3 text-justify leading-relaxed">
           {item.description}
         </p>
 
-        {/* Info Rows */}
         <div className="flex flex-col gap-2 text-sm sm:text-base text-gray-700">
           {item.calories > 0 && (
             <div className="flex items-center gap-2">
@@ -55,7 +50,7 @@ export default function MenuItemDetails({ item, onClose }: Props) {
           )}
           <div className="flex items-center gap-2">
             <span className="text-amber-500 text-lg"></span>
-            قیمت:{" "}
+            قیمت:
             <span className="text-amber-600 font-semibold">
               {item.price.toLocaleString()} تومان
             </span>

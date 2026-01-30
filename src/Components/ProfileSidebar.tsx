@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
+import { useAuthSession } from "@/Lib/useAuthSession";
 
 const links = [
   { href: "/profile/account", label: "حساب کاربری" },
@@ -13,6 +14,15 @@ export default function ProfileSideBar() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const Router = useRouter();
+  const { isGuest } = useAuthSession();
+
+  const filteredLinks = isGuest
+    ? links.filter(
+        (link) =>
+          link.href !== "/profile/account" &&
+          link.href !== "/profile/myburgers"
+      )
+    : links;
 
   const handleLogout = async () => {
     await fetch("/api/auth/logout", { method: "POST" });
@@ -47,7 +57,7 @@ export default function ProfileSideBar() {
 
           <div className="flex-1 overflow-y-auto">
             <ul className="space-y-2">
-              {links.map((link) => (
+              {filteredLinks.map((link) => (
                 <li key={link.href}>
                   <Link
                     href={link.href}
@@ -84,7 +94,7 @@ export default function ProfileSideBar() {
 
         <div className="flex-1 overflow-y-auto">
           <ul className="space-y-2">
-            {links.map((link) => (
+            {filteredLinks.map((link) => (
               <li key={link.href}>
                 <Link
                   href={link.href}

@@ -2,8 +2,17 @@ import { z } from "zod";
 import { supabase } from "@/Lib/supabase";
 import { NextRequest, NextResponse } from "next/server";
 import { MenuItemSchema } from "@/Lib/schemas/menuSchema";
+import { getAuthPayload } from "@/Lib/auth";
 
 export async function POST(req: NextRequest) {
+  const auth = await getAuthPayload(req);
+  if (!auth) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  if (auth.role !== "admin") {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
   const body = await req.json();
   const parse = MenuItemSchema.safeParse(body);
 

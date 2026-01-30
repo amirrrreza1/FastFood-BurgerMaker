@@ -1,6 +1,7 @@
 "use client";
 
 import LoadingSpinner from "@/Components/Loading";
+import { useAuthSession } from "@/Lib/useAuthSession";
 import { UserProfile } from "@/types";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
@@ -9,6 +10,7 @@ export default function AdminUsersPage() {
   const [users, setUsers] = useState<UserProfile[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const { isGuest } = useAuthSession();
 
   const handleChangeRole = async (userId: string, newRole: string) => {
     const res = await fetch(`/api/admin/users/${userId}`, {
@@ -23,12 +25,12 @@ export default function AdminUsersPage() {
     }
 
     setUsers((prev) =>
-      prev.map((u) => (u.id === userId ? { ...u, role: newRole } : u))
+      prev.map((u) => (u.id === userId ? { ...u, role: newRole } : u)),
     );
     toast.success(
       `کاربر با موفقیت به ${
         newRole === "admin" ? "ادمین" : "کاربر عادی"
-      } تغییر یافت`
+      } تغییر یافت`,
     );
   };
 
@@ -57,7 +59,7 @@ export default function AdminUsersPage() {
 
   const handleToggleActive = async (
     userId: string,
-    currentStatus: boolean | undefined
+    currentStatus: boolean | undefined,
   ) => {
     const newStatus = !currentStatus;
     const res = await fetch(`/api/admin/users/${userId}`, {
@@ -72,7 +74,7 @@ export default function AdminUsersPage() {
     }
 
     setUsers((prev) =>
-      prev.map((u) => (u.id === userId ? { ...u, is_active: newStatus } : u))
+      prev.map((u) => (u.id === userId ? { ...u, is_active: newStatus } : u)),
     );
     toast.success(`وضعیت کاربر با موفقیت ${newStatus ? "فعال" : "غیرفعال"} شد`);
   };
@@ -106,7 +108,6 @@ export default function AdminUsersPage() {
         <p className="text-center">کاربری یافت نشد.</p>
       ) : (
         <div className="overflow-x-auto">
-          {/* نمایش جدول در سایزهای بزرگ */}
           <table className="hidden lg:table w-full text-sm border">
             <thead className="bg-gray-100">
               <tr>
@@ -154,6 +155,7 @@ export default function AdminUsersPage() {
                       onClick={() =>
                         handleToggleActive(user.id, user.is_active)
                       }
+                      disabled={isGuest}
                     >
                       {user.is_active ? "غیرفعال کردن" : "فعال‌سازی"}
                     </button>
@@ -161,6 +163,7 @@ export default function AdminUsersPage() {
                       <button
                         className="CancelBTN flex justify-center mt-2 w-full"
                         onClick={() => handleChangeRole(user.id, "user")}
+                        disabled={isGuest}
                       >
                         تغییر به کاربر عادی
                       </button>
@@ -168,6 +171,7 @@ export default function AdminUsersPage() {
                       <button
                         className="EditBTN flex justify-center mt-2 w-full"
                         onClick={() => handleChangeRole(user.id, "admin")}
+                        disabled={isGuest}
                       >
                         ارتقا به ادمین
                       </button>
@@ -178,7 +182,6 @@ export default function AdminUsersPage() {
             </tbody>
           </table>
 
-          {/* نمایش کارت‌ها در موبایل */}
           <div className="lg:hidden flex flex-col gap-4">
             {filteredUsers.map((user) => (
               <div
@@ -198,15 +201,15 @@ export default function AdminUsersPage() {
                   <strong>شماره همراه:</strong> {user.phoneNum || "-"}
                 </div>
                 <div>
-                  <strong>شماره اشتراک:</strong>{" "}
+                  <strong>شماره اشتراک:</strong>
                   {user.subscription_number || "-"}
                 </div>
                 <div>
-                  <strong>تاریخ ساخت:</strong>{" "}
+                  <strong>تاریخ ساخت:</strong>
                   {new Date(user.created_at).toLocaleDateString("fa-IR")}
                 </div>
                 <div>
-                  <strong>فعال:</strong>{" "}
+                  <strong>فعال:</strong>
                   {user.is_active ? (
                     <span className="text-green-600"></span>
                   ) : (
@@ -214,7 +217,7 @@ export default function AdminUsersPage() {
                   )}
                 </div>
                 <div>
-                  <strong>ادمین:</strong>{" "}
+                  <strong>ادمین:</strong>
                   {user.role === "admin" ? (
                     <span className="text-green-600"></span>
                   ) : (
@@ -227,6 +230,7 @@ export default function AdminUsersPage() {
                       user.is_active ? "DeleteBTN" : "ConfirmBTN"
                     } text-white`}
                     onClick={() => handleToggleActive(user.id, user.is_active)}
+                    disabled={isGuest}
                   >
                     {user.is_active ? "غیرفعال کردن" : "فعال‌سازی"}
                   </button>
@@ -234,6 +238,7 @@ export default function AdminUsersPage() {
                     <button
                       className="CancelBTN w-full flex justify-center mt-2"
                       onClick={() => handleChangeRole(user.id, "user")}
+                      disabled={isGuest}
                     >
                       تغییر به کاربر عادی
                     </button>
@@ -241,6 +246,7 @@ export default function AdminUsersPage() {
                     <button
                       className="EditBTN w-full flex justify-center mt-2"
                       onClick={() => handleChangeRole(user.id, "admin")}
+                      disabled={isGuest}
                     >
                       ارتقا به ادمین
                     </button>

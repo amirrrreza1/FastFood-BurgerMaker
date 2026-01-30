@@ -62,6 +62,7 @@
     direction: rtl;
     /* background-color: var(--color-primary); */
   }
+
   * {
     box-sizing: border-box;
     margin: 0;
@@ -73,13 +74,16 @@
 @layer components {
   .SocialIconFooter {
     transition: scale 0.3s ease;
+
     &:hover {
       scale: 1.1;
     }
   }
+
   .Input {
     @apply w-full pl-12 pr-4 py-3 text-right bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-shadow duration-200;
   }
+
   .CustomBTN {
     color: white;
     border: 1px solid white;
@@ -90,10 +94,12 @@
     overflow: hidden;
     z-index: 1;
   }
+
   .LoginFormBtn {
     @apply bg-primary rounded-lg px-4 py-2 hover:bg-gray;
     transition: all 0.3s ease;
   }
+
   .CustomBTN::before {
     content: "";
     position: absolute;
@@ -106,35 +112,54 @@
     z-index: -1;
     transition: width 0.3s ease;
   }
+
   .CustomBTN:hover::before {
     width: 100%;
   }
+
   .CustomBTN:hover {
     color: #ffd700;
     border-color: #ffd700;
   }
+
   .ConfirmBTN {
     @apply px-6 py-2 rounded-xl bg-green-500 text-white shadow-md transform transition-all duration-300 hover:scale-105 hover:shadow-green-400 hover:-translate-y-1 cursor-pointer active:scale-95;
   }
+
+  .ConfirmBTN:disabled {
+    @apply disabled:opacity-50 disabled:hover:translate-y-0 disabled:hover:scale-100 disabled:hover:shadow-none disabled:hover:bg-green-500 cursor-default;
+  }
+
   .CancelBTN {
     @apply px-6 py-2 rounded-xl bg-gray-200 text-gray-800 shadow-md transform transition-all duration-300 hover:scale-105 hover:shadow-gray-400 hover:-translate-y-1 cursor-pointer active:scale-95;
   }
+
+  .CancelBTN:disabled {
+    @apply disabled:opacity-50 disabled:hover:translate-y-0 disabled:hover:scale-100 disabled:hover:shadow-none disabled:hover:bg-gray-200 cursor-default;
+  }
+
   .DeleteBTN {
     @apply px-6 py-2 rounded-xl bg-red-500 text-white shadow-md transform transition-all duration-300 hover:scale-105 hover:shadow-red-500 hover:-translate-y-1 active:scale-95 cursor-pointer;
   }
+
   .EditBTN {
     @apply flex items-center gap-2 px-6 py-2 rounded-xl bg-blue-500 text-white shadow-md transform transition-all duration-300 hover:scale-105 hover:shadow-blue-400 hover:-translate-y-1 active:scale-95 cursor-pointer;
   }
+
+  .EditBTN:disabled {
+    @apply disabled:opacity-50 disabled:hover:translate-y-0 disabled:hover:scale-100 disabled:hover:shadow-none disabled:hover:bg-blue-500 cursor-default;
+  }
+
   .DeleteBTN:disabled {
-    @apply disabled:opacity-50 disabled:hover:translate-y-0 disabled:hover:scale-100 disabled:hover:shadow-none disabled:hover:bg-red-500;
+    @apply disabled:opacity-50 disabled:hover:translate-y-0 disabled:hover:scale-100 disabled:hover:shadow-none disabled:hover:bg-red-500 cursor-default;
   }
+
   .AddTocartBTN {
-    @apply w-full py-2 px-4 bg-[var(--color-primary)] text-white rounded-lg text-sm font-semibold flex items-center justify-center gap-2 
-    hover:shadow-lg transition duration-300 hover:-translate-y-1;
+    @apply w-full py-2 px-4 bg-[var(--color-primary)] text-white rounded-lg text-sm font-semibold flex items-center justify-center gap-2 hover:shadow-lg transition duration-300 hover:-translate-y-1;
   }
+
   .SeeDetailsBTN {
-    @apply w-full py-2 px-4 border bg-[var(--color-primary)]/70 text-white rounded-lg text-sm font-medium flex items-center justify-center gap-2
-    hover:shadow-lg transition duration-300 hover:scale-105;
+    @apply w-full py-2 px-4 border bg-[var(--color-primary)]/70 text-white rounded-lg text-sm font-medium flex items-center justify-center gap-2 hover:shadow-lg transition duration-300 hover:scale-105;
   }
 }
 
@@ -146,10 +171,12 @@
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
+
 .no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
 /* Global scrollbar style */
 ::-webkit-scrollbar {
   width: 10px;

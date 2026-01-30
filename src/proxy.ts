@@ -8,7 +8,7 @@ export async function proxy(request: NextRequest) {
 
   const publicPaths = ["/login", "/blocked"];
   const isPublicPath = publicPaths.some((publicPath) =>
-    path.startsWith(publicPath)
+    path.startsWith(publicPath),
   );
 
   if (isPublicPath) {
@@ -18,6 +18,11 @@ export async function proxy(request: NextRequest) {
 
         if (!payload.is_active) {
           url.pathname = "/blocked";
+          return NextResponse.redirect(url);
+        }
+
+        if (payload.role === "guest") {
+          url.pathname = "/admin";
           return NextResponse.redirect(url);
         }
 
@@ -44,12 +49,19 @@ export async function proxy(request: NextRequest) {
       return NextResponse.redirect(url);
     }
 
-    if (path.startsWith("/admin") && payload.role !== "admin") {
+    if (
+      path.startsWith("/admin") &&
+      payload.role !== "admin" &&
+      payload.role !== "guest"
+    ) {
       url.pathname = "/profile";
       return NextResponse.redirect(url);
     }
 
-    if (path.startsWith("/profile") && payload.role !== "user") {
+    if (
+      path.startsWith("/profile") &&
+      payload.role !== "user"
+    ) {
       url.pathname = "/admin";
       return NextResponse.redirect(url);
     }

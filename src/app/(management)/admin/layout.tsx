@@ -1,4 +1,5 @@
 import AdminSidebar from "@/Components/AdminSidebar";
+import GuestBanner from "@/Components/GuestBanner";
 import { Metadata } from "next";
 import { ReactNode } from "react";
 
@@ -35,7 +36,10 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
   return (
     <div className="min-h-screen flex bg-gray-100">
       <AdminSidebar />
-      <main className="flex-1">{children}</main>
+      <main className="flex-1">
+        <GuestBanner />
+        {children}
+      </main>
     </div>
   );
 }

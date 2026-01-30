@@ -1,5 +1,6 @@
 "use client";
 
+import { useAuthSession } from "@/Lib/useAuthSession";
 import { Props } from "@/types";
 import React from "react";
 
@@ -15,6 +16,7 @@ export default function FaqModal({
   onSave,
 }: Props) {
   if (!isOpen) return null;
+  const { isGuest } = useAuthSession();
 
   return (
     <div
@@ -74,8 +76,8 @@ export default function FaqModal({
           </button>
           <button
             onClick={onSave}
-            disabled={loading}
-            className={`px-5 py-2 rounded-md text-white transition-colors duration-150
+            disabled={loading || isGuest}
+            className={`px-5 py-2 rounded-md text-white transition-colors duration-150 disabled:opacity-50 disabled:hover:bg-blue-600
               ${
                 loading
                   ? "bg-blue-300 cursor-not-allowed"

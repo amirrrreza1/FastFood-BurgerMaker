@@ -1,12 +1,11 @@
 "use client";
 
 import FaqModal from "@/Components/FaqModal";
+import { useAuthSession } from "@/Lib/useAuthSession";
 import { FAQ, ModalState } from "@/types";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
-
-
 
 export default function AdminFAQPage() {
   const [faqs, setFaqs] = useState<FAQ[]>([]);
@@ -18,6 +17,7 @@ export default function AdminFAQPage() {
   const [form, setForm] = useState({ question: "", answer: "", saved: false });
   const [loadingSave, setLoadingSave] = useState(false);
   const [loadingDeleteId, setLoadingDeleteId] = useState<number | null>(null);
+  const { isGuest } = useAuthSession();
 
   useEffect(() => {
     fetch("/api/faq")
@@ -89,8 +89,8 @@ export default function AdminFAQPage() {
                     answer: form.answer,
                     saved: false,
                   }
-                : f
-            )
+                : f,
+            ),
           );
           toast.success("ویرایش با موفقیت انجام شد");
           closeModal();
@@ -142,7 +142,7 @@ export default function AdminFAQPage() {
       });
 
       if (!res.ok) {
-        toast.error("خطا در revalidate");
+        toast.error("خطا در دخیره تغییرات");
         return;
       }
       if (unsavedFaqs.length === 0) {
@@ -170,8 +170,8 @@ export default function AdminFAQPage() {
       if (success) {
         setFaqs((prev) =>
           prev.map((faq) =>
-            faq.saved === false ? { ...faq, saved: true } : faq
-          )
+            faq.saved === false ? { ...faq, saved: true } : faq,
+          ),
         );
         toast.success("همه تغییرات ذخیره شدند");
       }
@@ -186,10 +186,18 @@ export default function AdminFAQPage() {
         مدیریت سوالات متداول
       </h2>
       <div className="flex justify-center md:justify-start items-center gap-4 mb-5">
-        <button onClick={handleRevalidate} className="EditBTN">
+        <button
+          onClick={handleRevalidate}
+          className="EditBTN"
+          disabled={isGuest}
+        >
           ذخیره تغییرات
         </button>
-        <button onClick={openAddModal} className="ConfirmBTN">
+        <button
+          onClick={openAddModal}
+          className="ConfirmBTN"
+          disabled={isGuest}
+        >
           افزودن سوال جدید
         </button>
       </div>
@@ -218,14 +226,13 @@ export default function AdminFAQPage() {
               </button>
               <button
                 onClick={() => handleDelete(faq.id)}
-                disabled={loadingDeleteId === faq.id}
+                disabled={loadingDeleteId === faq.id || isGuest}
                 className="DeleteBTN w-fit"
               >
                 {loadingDeleteId === faq.id ? "در حال حذف..." : "حذف"}
               </button>
             </div>
             <div className="flex  items-center gap-2 text-lg sm:text-xl font-semibold text-gray-900 mb-2">
-              {" "}
               {faq.saved === false && (
                 <span className="w-3 h-3 block bg-orange-500 border border-orange-400 rounded-full absolute top-2 left-2"></span>
               )}

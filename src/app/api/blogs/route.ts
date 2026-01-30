@@ -1,7 +1,16 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { supabase } from "@/Lib/supabase";
+import { getAuthPayload } from "@/Lib/auth";
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
+  const auth = await getAuthPayload(request);
+  if (!auth) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  if (auth.role !== "admin") {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
   try {
     const formData = await request.formData();
 
@@ -54,7 +63,7 @@ export async function POST(request: Request) {
 
     if (insertError) {
       console.error("خطا در ثبت بلاگ:", insertError);
-      return NextResponse.json({ error: "خطا در ثبت بلاگ" }, { status: 500 });
+      return NextResponse.json({ error: insertError.message }, { status: 500 });
     }
 
     return NextResponse.json({

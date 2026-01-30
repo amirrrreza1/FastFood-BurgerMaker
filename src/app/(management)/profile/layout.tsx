@@ -1,4 +1,5 @@
 import ProfileSideBar from "@/Components/ProfileSidebar";
+import GuestBanner from "@/Components/GuestBanner";
 import { Metadata } from "next";
 import React from "react";
 
@@ -39,7 +40,10 @@ export default function ProfileLayout({
   return (
     <div className="flex min-h-screen">
       <ProfileSideBar />
-      <main className="flex-1">{children}</main>
+      <main className="flex-1">
+        <GuestBanner />
+        {children}
+      </main>
     </div>
   );
 }

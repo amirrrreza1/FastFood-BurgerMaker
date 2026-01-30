@@ -1,19 +1,30 @@
 "use client";
 
+import LoadingSpinner from "@/Components/Loading";
 import { supabase } from "@/Lib/supabase";
+import { useAuthSession } from "@/Lib/useAuthSession";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 import Swal from "sweetalert2";
 
 export default function AdminBlogPage() {
   const [blogs, setBlogs] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const { isGuest } = useAuthSession();
 
   const fetchBlogs = async () => {
-    const { data } = await supabase
-      .from("blogs")
-      .select("*")
-      .order("created_at", { ascending: false });
-    if (data) setBlogs(data);
+    try {
+      const { data } = await supabase
+        .from("blogs")
+        .select("*")
+        .order("created_at", { ascending: false });
+      if (data) setBlogs(data);
+    } catch (error) {
+      toast.error("خطا در دریافت مطالب بلاگ");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -46,55 +57,61 @@ export default function AdminBlogPage() {
   return (
     <div className="max-w-3xl mx-auto px-1 sm:px-6 lg:px-8 py-10">
       <div className="flex flex-col md:flex-row items-center justify-between mb-8 gap-3">
-        <h1 className="text-3xl font-bold text-gray-800 text-center">مدیریت مطالب بلاگ</h1>
-        <Link
-          href="/admin/blog/new"
-          className="EditBTN justify-center"
-        >
+        <h1 className="text-3xl font-bold text-gray-800 text-center">
+          مدیریت مطالب بلاگ
+        </h1>
+        <Link href="/admin/blog/new" className="EditBTN justify-center">
           افزودن مطلب جدید
         </Link>
       </div>
 
-      {blogs?.length === 0 ? (
-        <p className="text-center text-gray-500">
-          هیچ مطلبی هنوز ثبت نشده است.
-        </p>
+      {isLoading ? (
+        <LoadingSpinner text="در حال دریافت مطالب بلاگ..." />
       ) : (
-        <div className="overflow-x-auto">
-          <table className="min-w-full bg-white border rounded-xl shadow mx-auto">
-            <thead className="bg-gray-100 text-gray-700 text-sm">
-              <tr>
-                <th className="px-4 py-3 text-center">عنوان</th>
-                <th className="px-4 py-3 text-center">تاریخ</th>
-                <th className="px-4 py-3 text-center">عملیات</th>
-              </tr>
-            </thead>
-            <tbody className="text-sm divide-y">
-              {blogs.map((blog) => (
-                <tr key={blog.id} className="hover:bg-gray-50">
-                  <td className="px-4 py-3 text-center">{blog.title}</td>
-                  <td className="px-4 py-3 text-center">
-                    {new Date(blog.created_at).toLocaleDateString("fa-IR")}
-                  </td>
-                  <td className="px-4 py-3 flex justify-center items-center gap-2 text-center">
-                    <Link
-                      href={`/admin/blog/edit/${blog.id}`}
-                      className="EditBTN justify-center"
-                    >
-                      ویرایش
-                    </Link>
-                    <button
-                      className="DeleteBTN"
-                      onClick={() => handleDelete(blog.id)}
-                    >
-                      حذف
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <>
+          {blogs?.length === 0 ? (
+            <p className="text-center text-gray-500">
+              هیچ مطلبی هنوز ثبت نشده است.
+            </p>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="min-w-full bg-white border rounded-xl shadow mx-auto">
+                <thead className="bg-gray-100 text-gray-700 text-sm">
+                  <tr>
+                    <th className="px-4 py-3 text-center">عنوان</th>
+                    <th className="px-4 py-3 text-center">تاریخ</th>
+                    <th className="px-4 py-3 text-center">عملیات</th>
+                  </tr>
+                </thead>
+                <tbody className="text-sm divide-y">
+                  {blogs.map((blog) => (
+                    <tr key={blog.id} className="hover:bg-gray-50">
+                      <td className="px-4 py-3 text-center">{blog.title}</td>
+                      <td className="px-4 py-3 text-center">
+                        {new Date(blog.created_at).toLocaleDateString("fa-IR")}
+                      </td>
+                      <td className="px-4 py-3 flex justify-center items-center gap-2 text-center">
+                        <Link
+                          href={`/admin/blog/edit/${blog.id}`}
+                          className="EditBTN justify-center"
+                        >
+                          ویرایش
+                        </Link>
+                        <button
+                          className="DeleteBTN"
+                          onClick={() => handleDelete(blog.id)}
+                          disabled={isGuest}
+                        >
+                          حذف
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </>
       )}
     </div>
   );

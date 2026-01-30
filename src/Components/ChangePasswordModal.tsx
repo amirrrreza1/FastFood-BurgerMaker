@@ -188,7 +188,7 @@ export default function ChangePasswordModal() {
                     }
                     alt="eye"
                     width={20}
-                  />{" "}
+                  />
                 </button>
               </div>
             </div>

@@ -33,7 +33,6 @@ const NavLinks = () => {
             >
               {link.label}
 
-              {/* Underline for active */}
               {isActive && (
                 <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-3/4 h-[4px] bg-[var(--color-primary)] rounded-full" />
               )}

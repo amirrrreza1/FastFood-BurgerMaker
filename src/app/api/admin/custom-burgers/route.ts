@@ -1,7 +1,15 @@
 import { supabase } from "@/Lib/supabase";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+import { getAuthPayload } from "@/Lib/auth";
 
-export async function GET() {
+export async function GET(req: NextRequest) {
+  const auth = await getAuthPayload(req);
+  if (!auth) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  if (auth.role !== "admin" && auth.role !== "guest") {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
 
   const { data, error } = await supabase
     .from("custom_burgers")

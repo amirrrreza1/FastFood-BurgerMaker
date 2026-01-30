@@ -1,45 +1,68 @@
 "use client";
-
 import dynamic from "next/dynamic";
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { Editor as TinyMCEEditor } from "tinymce";
+import { toast } from "react-toastify";
+import { useAuthSession } from "@/Lib/useAuthSession";
 
+// لود داینامیک ادیتور
 const Editor = dynamic(
   () => import("@tinymce/tinymce-react").then((mod) => mod.Editor),
-  { ssr: false }
+  { ssr: false },
 );
 
 export default function NewBlogPage() {
   const editorRef = useRef<TinyMCEEditor | null>(null);
   const router = useRouter();
-
   const [title, setTitle] = useState("");
   const [image, setImage] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
+  const [isEditorReady, setIsEditorReady] = useState(false);
+  const { isGuest } = useAuthSession();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!isEditorReady) {
+      alert("لطفاً تا بارگذاری کامل ادیتور صبر کنید");
+      return;
+    }
+
     setLoading(true);
 
-    const content = editorRef.current?.getContent() || "";
+    const content = editorRef.current?.getContent({ format: "html" }) || "";
+
+    if (!content.trim() && !image) {
+      alert("لطفاً محتوا یا تصویر وارد کنید");
+      setLoading(false);
+      return;
+    }
+
     const formData = new FormData();
     formData.append("title", title);
     formData.append("content", content);
     if (image) formData.append("image", image);
 
-    const res = await fetch("/api/blogs", {
-      method: "POST",
-      body: formData,
-    });
+    try {
+      const res = await fetch("/api/blogs", {
+        method: "POST",
+        body: formData,
+      });
 
-    if (res.ok) {
-      router.push("/admin/blog");
-    } else {
-      alert("خطا در ذخیره بلاگ");
+      const data = await res.json();
+
+      if (res.ok) {
+        router.push("/admin/blog");
+      } else {
+        toast(`خطا در ذخیره بلاگ: ${data.error || "خطای ناشناخته"}`);
+      }
+    } catch (error) {
+      console.error("Network Error:", error);
+      alert("خطا در ارتباط با سرور");
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   return (
@@ -82,6 +105,7 @@ export default function NewBlogPage() {
           apiKey="xhz3fm1wrv4r3f1trc0ebey5g3ol3cvoy11r6ikit4hqdak1"
           onInit={(_, editor) => {
             editorRef.current = editor;
+            setIsEditorReady(true);
           }}
           init={{
             height: 380,
@@ -143,7 +167,11 @@ forecolor backcolor | link image media table emoticons | removeformat | fullscre
         />
       </div>
 
-      <button type="submit" disabled={loading} className="ConfirmBTN">
+      <button
+        type="submit"
+        disabled={loading || !isEditorReady || isGuest}
+        className="ConfirmBTN"
+      >
         {loading ? "در حال ارسال..." : "ذخیره بلاگ"}
       </button>
     </form>
